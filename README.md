@@ -6,7 +6,7 @@
   * González Vera Bryan Moisés
   * Íñiguez Rodríguez Mariana Midory
   * Lomeli Jimenez Jose Octavio
-  * Razón Gómez Fernando Samuel
+  * Razón Gómez Fernando Samue
 ```
 
 ## Resumen del proyecto
