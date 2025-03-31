@@ -33,9 +33,9 @@ body{
 .header{
     display: flex;
     justify-content: space-between;
-    width: 80%;
+    width: 85%;
     max-width: 1000px;
-    margin: 65px 125px;
+    margin: 60px 225px;
     border-radius: 30px;
     overflow: hidden;
     text-align: center;
@@ -44,7 +44,7 @@ body{
 
 /*Como se vera el texto de "Bienvenido"*/
 .text{
-    color: #3c009d;
+    color: #2B59B0;
     font-size: 48px;
     font-weight: 700;
 }
@@ -55,7 +55,7 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #1620db;
+    background-color: #2B59B0;
     padding: 80px 100px;
 }
 
@@ -111,7 +111,7 @@ body{
 
 /*La opción de picar para recuperar la contraseña*/
 .forgot-password span{
-    color: #3c009d;
+    color: #2B59B0;
     cursor: pointer;
 }
 
@@ -130,7 +130,7 @@ body{
     width: 200px;
     height: 58px;
     color: #fff;
-    background: #4c00b4;
+    background: #2B59B0;
     border-radius: 50px;
     font-size: 18px;
     font-weight: 700;
