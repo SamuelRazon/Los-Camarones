@@ -1,16 +1,24 @@
 # Los camarones 
-> Integrantes:
+> Autores:
 
 ```
   * De la Torre Hernández Emiliano
   * González Vera Bryan Moisés
   * Íñiguez Rodríguez Mariana Midory
-  * Lomeli Jimenez Jose Octavio
-  * Razón Gómez Fernando Samue
+  * Lomeli Jimenez José Octavio
+  * Razón Gómez Fernando Samuel
 ```
 
-## Resumen del proyecto
-si
+## Acerca del proyecto
+
+Este proyecto constituye al desarrollo de la aplicación para generar reportes y guardado de la información para los docentes y investigadores. Esta app está escrita con React + Vite. Consiste en una app de páginas varibles. La aplicación fue inicializada utilizando [pon lo que pusiste Sam].
+
+## Entorno 
+
+Para la ejecución de la app, es necesario contar con una instalación de React y NodeJS en el servidor. Estas dependencias ya deberían estar instaladas. 
+
+> [!NOTE]
+> Las credenciales de acceso al servidor deben de consultarse con el encargado del proyecto.
 
 ## Herramientas
 ### Font-end
@@ -38,7 +46,4 @@ si
 <img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white" />
 
 ## Licencias 
-si
-
-## Descargas (explicación)
-si
+En git puedes hacer otro readme pero solo de licencias, el que haga esto, que lo revise. 
