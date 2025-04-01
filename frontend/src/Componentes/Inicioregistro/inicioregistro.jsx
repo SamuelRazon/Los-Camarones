@@ -1,5 +1,6 @@
 import React, { act, useActionState, useState } from 'react'
 import './inicioregistro.css'
+import { Link } from 'react-router-dom';
 
 const Inicioregistro = () => {
     const [titulo, setTitulo] = useState(true); // Controla el texto (Bienvenido / Inicio de sesión)
@@ -42,7 +43,9 @@ const Inicioregistro = () => {
                     </div>
                     <div className='submit-container'> {/* Botones */}
                         <div className="submit" onClick={cambiarTexto}>{sesionregistro ? "Inicio de sesión" : "Registro"}</div>
-                        <div className="submit">Login</div>
+                        <Link to ={'/registro'}>
+                            <div className="submit">Login</div> {/*Como le muevo para cada uno?*/}
+                        </Link>
                     </div>
                 </div>
             </div>
