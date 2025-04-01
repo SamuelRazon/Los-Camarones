@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import Inicioregistro from './Componentes/Inicioregistro/inicioregistro'
-import Registro from './Componentes/Inicioregistro/registro'
-import Login from './Componentes/Inicioregistro/login'
+import Inicioregistro from './pages/inicioregistro/inicioregistro'
+import Registro from './components/registro'
+import Login from './components/login'
 
 import {
   createBrowserRouter,
