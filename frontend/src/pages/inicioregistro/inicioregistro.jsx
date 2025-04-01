@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 const Inicioregistro = () => {
     const [titulo, setTitulo] = useState(true); // Controla el texto (Bienvenido / Inicio de sesión)
     const [mostrarNombre, setMostrarNombre] = useState(false); // Controla la visibilidad del campo Nombre
-    const [sesionregistro, setBoton] = useState(true); // Controla el testo del boton inicio de sesion
+    const [sesionregistro, setBoton] = useState(false); // Controla el testo del boton inicio de sesion
 
     const cambiarTexto = () => {
         /* El uso de estos es solamente para cambiar el texto a la otra opcion que esta por defecto instanciada 
@@ -38,10 +38,12 @@ const Inicioregistro = () => {
                 </div> 
                 
                 <div className='submit-container'> {/* Botones */}
-                    <div className="submit" onClick={cambiarTexto}>{sesionregistro ? "Iniciar sesión" : "Registrarse"}</div>
+                    
                     <Link to ={'/registro'}>
-                        <div className="submit">Login</div> {/*Como le muevo para cada uno?*/}
+                        <div className="submit">{sesionregistro ? "Registrarse" : "Iniciar sesión"}</div> {/*Como le muevo para cada uno?*/}
                     </Link>
+                    <div className="submit" onClick={cambiarTexto}>{sesionregistro ? "Volver" : "Registrarse"}</div>
+                    
                 </div>
 
                 <div className='forgot-password'> 

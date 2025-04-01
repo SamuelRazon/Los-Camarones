@@ -105,9 +105,12 @@
   }
   
   .submit {
+
+    background-color: white;
+    color: #2e5aaa;
+    border: 1px solid #2e5aaa;
     flex: 1;
-    background-color: #2e5aaa;
-    color: white;
+    
     padding: 12px;
     border-radius: 5px;
     text-align: center;
@@ -117,7 +120,7 @@
   }
   
   .submit:hover {
-    background-color: #1e4a9a;
+    background-color: #f0f2f5;
   }
   
   /* Style for the second button (Register) */
@@ -127,11 +130,11 @@
   }
   
   .submit-container a .submit {
-    background-color: white;
-    color: #2e5aaa;
-    border: 1px solid #2e5aaa;
+    background-color: #2e5aaa;
+    color: white;
   }
   
   .submit-container a .submit:hover {
-    background-color: #f0f2f5;
+    
+    background-color: #1e4a9a;
   }
