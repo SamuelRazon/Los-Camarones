@@ -1,0 +1,11 @@
+.conta{
+    width: 100%;
+}
+
+.top{
+    display: flex;
+    flex-direction: row;
+    position: top ;
+    gap: 15px;
+    font-size: 18px;
+}

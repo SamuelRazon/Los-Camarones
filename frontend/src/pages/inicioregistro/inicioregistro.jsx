@@ -39,7 +39,7 @@ const Inicioregistro = () => {
                 
                 <div className='submit-container'> {/* Botones */}
                     
-                    <Link to ={'/registro'}>
+                    <Link to ={'/Dashboard'}>
                         <div className="submit">{sesionregistro ? "Registrarse" : "Iniciar sesión"}</div> {/*Como le muevo para cada uno?*/}
                     </Link>
                     <div className="submit" onClick={cambiarTexto}>{sesionregistro ? "Volver" : "Registrarse"}</div>
