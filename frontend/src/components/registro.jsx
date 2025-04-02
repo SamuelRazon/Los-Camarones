@@ -9,12 +9,12 @@ const registro = () => {
             <p>Elige las áreas que entran en tu contexto o crea tu propio contexto desde cero.</p>
             <div className='inputss'>
                 <div className='inputt'>
-                    <h2>Maestro</h2>
+                    <h3>Maestro</h3>
                     <img src="" alt="" /> {/* Imagen pendiente */}
                     <p>Información de lo que contendra.</p>
                 </div>
                 <div className='inputt'>
-                    <h2>Investigador</h2>
+                    <h3>Investigador</h3>
                     <img src="" alt="" /> {/* Imagen pendiente */}
                     <p>Información de lo que contendra.</p>
                 </div>

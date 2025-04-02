@@ -9,22 +9,20 @@
 /*Todo el contenido en de atras, tecnicamente*/
 body{
     background-color: white;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-attachment: fixed;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 } 
   
   
 /*Todo el diseño del contenido, este une todo*/
 .cotaineer{
-      width: 100%;
-      min-height: 100vh;
-      background-color: #fff;
-      display: flex;
-      flex-direction: column;
-      padding-bottom: 18px;
-      
+    width: 100%;
+    height: 560px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 18px;
 }
   
 /*Todo el encabezado, el que se encarga de que se vea el inicio y se vea bonito*/
@@ -45,12 +43,13 @@ body{
       margin-top: 45px;
       flex-direction: column;
       color: #2B59B0;
-      font-size: 45px;
-      font-weight: 650;
+      font-size: 24px;
+      font-weight: bold;
 }
 
 .headeer p{
     margin-top: 25px;
+    font-size: 15px;
 }
 
 .center{
@@ -59,69 +58,78 @@ body{
 
 /*Es el contender de como se acomodaran los elementos de relleno*/
 .inputss{
-      display: flex;
-      flex-direction: row;
-      width: 100%;
-      gap: 10px;
-      margin: 45px 150px;
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    margin-bottom: 15px;
+    margin: 45px 150px;
+}
+
+.inputt {
+    position: relative;
 }
   
 /*Cada uno de los elementos que se rellena, como se vera*/
 .inputt{
-    margin-top: 5px;
+    margin-top: 3px;
     display: block;
-    width: 380px;
-    height: 100px;
+    width: 100%;
+    height: 75px;
+    border: 1px solid #ddd;
     background-color: #eaeaea;
-    border-radius: 6px;
+    border-radius: 5px;
     cursor: pointer;
 }
   
 /*La imagen que tendra, aún le falta la imagen*/
-.input img{
+.inputt img{
     margin: 0px 30px;
     float: none;
 }
 
-.input p{
+.inputt p{
     margin-top: 5px;
-    margin-left: 45px;
-    gap: 25px;
+    margin-left: 18px;
+    gap: 15px;
     display: flex;
 }
   
 /*El contenido de los botones*/
 .submit-containere{
     display: flex;
-    gap: 25px;
-    margin: 55px 15px;
+    justify-content: space-between;
+    gap: 18px;
 }
   
 /*Cada botón*/
 .submits{
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 200px;
-      height: 58px;
-      color: #fff;
-      background: #2B59B0;
-      border-radius: 50px;
-      font-size: 18px;
-      font-weight: 700;
-      cursor: pointer;
-      padding: 12px 15px;
-      margin-top: 35px;
+    background-color: white;
+    color: #2e5aaa;
+    border: 1px solid #2e5aaa;
+    flex: 1;
+    
+    padding: 12px;
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.submits:hover {
+    background-color: #f0f2f5;
+}
+
+.submit-containere a {
+    flex: 1;
+    text-decoration: none;
 }
   
+.submit-containere a .submit {
+    background-color: #2e5aaa;
+    color: white;
+}
   
-/*Intento de hacer responsivo pero no me jala, pipipi*/
-@media (max-width: 960px) {
-    .header,.cotainer{
-        flex-flow: column;
-    }
-  
-    .article, .aside{
-        width: 100%;
-    }
+.submit-containere a .submit:hover { 
+    background-color: #1e4a9a;
 }
