@@ -16,42 +16,44 @@ const Inicioregistro = () => {
     };
 
     return (
-        <div className="container"> {/* Contenido de todo el inicio */}
-            <div className='logo'></div> {/* Apartado de la izquierda, el logo */}
-            <div className='aside'> {/* Contenido del formulario */}
-                <div className='text'>{titulo ? "Inicio de sesión" : "Registrarse"}</div> {/* Texto que cambiará */}
-                <div className='inputs'>
-                    {mostrarNombre && (
+        <div className='body'> {/* Contenido de todo el diseño*/}
+            <div className="container"> {/* Contenido de todo el inicio */}
+                <div className='logo'></div> {/* Apartado de la izquierda, el logo */}
+                <div className='aside'> {/* Contenido del formulario */}
+                    <div className='text'>{titulo ? "Inicio de sesión" : "Registrarse"}</div> {/* Texto que cambiará */}
+                    <div className='inputs'>
+                        {mostrarNombre && (
+                            <div className='input'>
+                                <img src="" alt="" /> {/* Imagen pendiente */}
+                                <input type="text" placeholder='Nombre' />
+                            </div>
+                        )}
                         <div className='input'>
                             <img src="" alt="" /> {/* Imagen pendiente */}
-                            <input type="text" placeholder='Nombre' />
+                            <input type="email" placeholder='Correo electrónico' />
                         </div>
-                    )}
-                    <div className='input'>
-                        <img src="" alt="" /> {/* Imagen pendiente */}
-                        <input type="email" placeholder='Correo electrónico' />
-                    </div>
-                    <div className='input'>
-                        <img src="" alt="" /> {/* Imagen pendiente */}
-                        <input type="password" placeholder='Contraseña' />
-                    </div>
-                </div> 
-                
-                <div className='submit-container'> {/* Botones */}
+                        <div className='input'>
+                            <img src="" alt="" /> {/* Imagen pendiente */}
+                            <input type="password" placeholder='Contraseña' />
+                        </div>
+                    </div> 
                     
-                    <Link to ={'/Dashboard'}>
-                        <div className="submit">{sesionregistro ? "Registrarse" : "Iniciar sesión"}</div> {/*Como le muevo para cada uno?*/}
-                    </Link>
-                    <div className="submit" onClick={cambiarTexto}>{sesionregistro ? "Volver" : "Registrarse"}</div>
-                    
-                </div>
+                    <div className='submit-container'> {/* Botones */}
+                        
+                        <Link to ={'/Dashboard'}>
+                            <div className="submit">{sesionregistro ? "Registrarse" : "Iniciar sesión"}</div> {/*Como le muevo para cada uno?*/}
+                        </Link>
+                        <div className="submit" onClick={cambiarTexto}>{sesionregistro ? "Volver" : "Registrarse"}</div>
+                        
+                    </div>
 
-                <div className='forgot-password'> 
-                    ¿Olvidaste la contraseña? <br/>
-                    <span>Haz click aquí</span>
+                    <div className='forgot-password'> 
+                        ¿Olvidaste la contraseña? <br/>
+                        <span>Haz click aquí</span>
+                    </div>
                 </div>
+        
             </div>
-    
         </div>
     );
 };
