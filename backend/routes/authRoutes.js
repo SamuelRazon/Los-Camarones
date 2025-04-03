@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const Usuario = require('../models/User')
 const RubroPersonalizado = require('../models/personalized_category')
-
+const { authMiddleware } = require('../middleware/auth')
 const router = express.Router()
 
 // Registro
@@ -99,20 +99,6 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ error: 'Error en el inicio de sesión' })
   }
 })
-
-// Middleware de autenticación
-const authMiddleware = (req, res, next) => {
-  const token = req.header('Authorization')
-  if (!token) return res.status(401).json({ error: 'Acceso denegado' })
-
-  try {
-    const verified = jwt.verify(token, process.env.JWT_SECRET)
-    req.user = verified
-    next()
-  } catch (error) {
-    res.status(400).json({ error: 'Token inválido' })
-  }
-}
 
 // Ruta protegida para obtener el perfil del usuario
 router.get('/perfil', authMiddleware, async (req, res) => {
