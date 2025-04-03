@@ -36,6 +36,15 @@ router.post('/register', async (req, res) => {
     })
 
     await nuevoUsuario.save()
+      .then(() => console.log('Usuario guardado con éxito'))
+      .catch(err => {
+        // Detectar si el usuario ya ha sido registrado
+        if (err.code === 11000 && err.keyPattern && err.keyPattern.correo) {
+          return res.status(400).json({ error: 'El correo ya está registrado' })
+        }
+        // Error interno desconocido
+        return res.status(500).json({ error: 'Error registrando usuario' })
+      })
 
     // Si se envía un objeto customRubro, se crea el rubro personalizado
     if (
