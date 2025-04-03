@@ -1,64 +1,120 @@
 const express = require('express')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const User = require('../models/User')
+const Usuario = require('../models/User')
+const RubroPersonalizado = require('../models/personalized_category')
 
 const router = express.Router()
 
 // Registro
 router.post('/register', async (req, res) => {
-  const { username, email, password } = req.body
+  const { username, email, password, foto, customRubro } = req.body
 
   try {
+    // Validación básica de datos requeridos
+    if (!username || !email || !password) {
+      return res.status(400).json({ error: 'Faltan datos requeridos' })
+    }
+
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(password, salt)
 
-    const newUser = new User({ username, email, password: hashedPassword })
-    await newUser.save()
+    // Se crea el usuario usando los campos del modelo:
+    // - correo: a partir de email
+    // - contraseña: password hasheado
+    // - username: de req.body
+    // - foto: opcional (se envía o se asigna cadena vacía)
+    // - rubrosDefault: inicialmente se deja vacío (ya que se trabajarán de forma predefinida)
+    // - rubrosPersonalizados: se llenará si el usuario crea alguno
+    const nuevoUsuario = new Usuario({
+      username,
+      correo: email,
+      contraseña: hashedPassword,
+      foto: foto || '',
+      rubrosDefault: [],
+      rubrosPersonalizados: []
+    })
 
-    res.status(201).json({ message: 'Usuario registrado con exito' })
+    await nuevoUsuario.save()
+
+    // Si se envía un objeto customRubro, se crea el rubro personalizado
+    if (
+      customRubro &&
+      customRubro.nombre &&
+      Array.isArray(customRubro.propiedades) &&
+      customRubro.propiedades.length > 0
+    ) {
+      const nuevoRubroPersonalizado = new RubroPersonalizado({
+        usuarioId: nuevoUsuario._id,
+        nombre: customRubro.nombre,
+        // La fecha se asigna automáticamente con default: Date.now
+        propiedades: customRubro.propiedades
+      })
+
+      const rubroGuardado = await nuevoRubroPersonalizado.save()
+
+      // Se actualiza el usuario para incluir el nuevo rubro personalizado
+      nuevoUsuario.rubrosPersonalizados.push(rubroGuardado._id)
+      await nuevoUsuario.save()
+    }
+
+    res.status(201).json({ message: 'Usuario registrado con éxito' })
   } catch (error) {
+    console.error(error)
     res.status(500).json({ error: 'Error registrando usuario' })
   }
 })
 
-// Inicio de sesion
+// Inicio de sesión
 router.post('/login', async (req, res) => {
   const { email, password } = req.body
 
   try {
-    const user = await User.findOne({ email })
-    if (!user) return res.status(400).json({ error: 'Usuario no encontrado' })
+    const usuario = await Usuario.findOne({ correo: email })
+    if (!usuario) return res.status(400).json({ error: 'Usuario no encontrado' })
 
-    const isMatch = await bcrypt.compare(password, user.password)
-    if (!isMatch) return res.status(400).json({ error: 'Contraseña no valida' })
+    const isMatch = await bcrypt.compare(password, usuario.contraseña)
+    if (!isMatch) return res.status(400).json({ error: 'Contraseña no válida' })
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' })
+    const token = jwt.sign({ id: usuario._id }, process.env.JWT_SECRET, { expiresIn: '1h' })
 
-    res.json({ token, user: { id: user._id, username: user.username, email: user.email } })
+    res.json({
+      token,
+      user: {
+        id: usuario._id,
+        username: usuario.username,
+        correo: usuario.correo
+      }
+    })
   } catch (error) {
-    res.status(500).json({ error: 'Error en el inicio de sesion' })
+    res.status(500).json({ error: 'Error en el inicio de sesión' })
   }
 })
 
-// Validar token
+// Middleware de autenticación
 const authMiddleware = (req, res, next) => {
   const token = req.header('Authorization')
-  if (!token) return res.status(401).json({ error: 'Accesos denegado' })
+  if (!token) return res.status(401).json({ error: 'Acceso denegado' })
 
   try {
     const verified = jwt.verify(token, process.env.JWT_SECRET)
     req.user = verified
     next()
   } catch (error) {
-    res.status(400).josn({ error: 'Token invalido' })
+    res.status(400).json({ error: 'Token inválido' })
   }
 }
 
-// Ruta protegida
+// Ruta protegida para obtener el perfil del usuario
 router.get('/perfil', authMiddleware, async (req, res) => {
-  const user = await User.findById(req.user.id).select('-password')
-  res.json(user)
+  try {
+    const usuario = await Usuario.findById(req.user.id)
+      .select('-contraseña')
+      .populate('rubrosPersonalizados')
+    res.json(usuario)
+  } catch (error) {
+    res.status(500).json({ error: 'Error obteniendo el perfil' })
+  }
 })
 
 module.exports = router
