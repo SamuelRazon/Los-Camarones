@@ -1,4 +1,5 @@
 const express = require('express')
+const mongoose = require('mongoose')
 const RubroPersonalizado = require('../models/personalized_category')
 const { authMiddleware } = require('../middleware/auth')
 
@@ -6,17 +7,26 @@ const router = express.Router()
 
 // Crear un nuevo rubro personalizado
 router.post('/', authMiddleware, async (req, res) => {
-  const { nombre, propiedades } = req.body
+  const { nombre, propiedades, propiedadtipo, propiedadesobligatorio } = req.body
 
-  if (!nombre || !Array.isArray(propiedades) || propiedades.length === 0) {
+  /* Este if se asegura que los espacios de dichas propiedades si tengan algun contenido */
+  if (!nombre || !Array.isArray(propiedades) || propiedades.length === 0 ||
+      !Array.isArray(propiedadtipo) || !Array.isArray(propiedadesobligatorio)) {
     return res.status(400).json({ error: 'Nombre y propiedades son requeridos' })
+  }
+
+  /* Este if se asegura que los arrays propiedades tengan la misma cantidad de indices */
+  if (propiedades.length !== propiedadtipo.length || propiedades.length !== propiedadesobligatorio.length) {
+    return res.status(400).json({ error: 'Los arrays propiedades, propiedadtipo y propiedadesobligatorio deben tener la misma longitud' });
   }
 
   try {
     const nuevoRubro = new RubroPersonalizado({
       usuarioId: req.user.id,
       nombre,
-      propiedades
+      propiedades,
+      propiedadtipo,
+      propiedadesobligatorio
     })
     const rubroGuardado = await nuevoRubro.save()
     res.status(201).json(rubroGuardado)
@@ -35,9 +45,13 @@ router.get('/', authMiddleware, async (req, res) => {
   }
 })
 
-// Actualizar un rubro personalizado PREFERENTEMENT NO USAR O NOS METEMOS EN PEDOS, igual hay queda por si llegara a hacer falta
+// Actualizar un rubro personalizado (Ta disponible, pero cuidadito, siento que faltan cosas)
 router.put('/:id', authMiddleware, async (req, res) => {
-  const { nombre, propiedades } = req.body
+  const { nombre, propiedades, propiedadtipo, propiedadesobligatorio } = req.body
+
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({ error: 'ID inválido' });
+  }
 
   try {
     const rubro = await RubroPersonalizado.findOne({ _id: req.params.id, usuarioId: req.user.id })
@@ -45,6 +59,8 @@ router.put('/:id', authMiddleware, async (req, res) => {
 
     rubro.nombre = nombre || rubro.nombre
     rubro.propiedades = propiedades || rubro.propiedades
+    rubro.propiedadtipo = propiedadtipo || rubro.propiedadtipo
+    rubro.propiedadesobligatorio = propiedadesobligatorio || rubro.propiedadesobligatorio
     const rubroActualizado = await rubro.save()
     res.json(rubroActualizado)
   } catch (error) {
@@ -54,6 +70,10 @@ router.put('/:id', authMiddleware, async (req, res) => {
 
 // Eliminar un rubro personalizado
 router.delete('/:id', authMiddleware, async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({ error: 'ID inválido' });
+  }
+
   try {
     const rubro = await RubroPersonalizado.findOneAndDelete({ _id: req.params.id, usuarioId: req.user.id })
     if (!rubro) return res.status(404).json({ error: 'Rubro no encontrado' })
