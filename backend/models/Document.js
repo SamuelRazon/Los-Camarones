@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 
 const DocumentSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'Usuario', required: true },
   rubro: { type: String, required: true },
   s3Url: { type: String, required: true },
   fileName: { type: String },
