@@ -129,12 +129,24 @@
     text-decoration: none;
   }
   
-  .submit-container a .submit {
-    background-color: #2e5aaa;
-    color: white;
-  }
-  
-  .submit-container a .submit:hover {
-    
-    background-color: #1e4a9a;
-  }
+  /* Estilo para el botón azul: "Iniciar sesión" */
+.first-button {
+  background-color: #2e5aaa;
+  color: white;
+  border: 1px solid #2e5aaa;
+}
+
+.first-button:hover {
+  background-color: #1e4a9a;
+}
+
+/* Estilo para el botón blanco con borde azul: "Registrarse" */
+.second-button {
+  background-color: white;
+  color: #2e5aaa;
+  border: 1px solid #2e5aaa;
+}
+
+.second-button:hover {
+  background-color: #f0f2f5;
+}

@@ -1,7 +1,5 @@
-import { useState } from 'react'
-import Inicioregistro from './pages/inicioregistro/inicioregistro'
-import Registro from './components/registro'
-import Login from './components/login'
+import Register from './pages/register/Register'
+import Login from './pages/login/Login'
 import Dashboard from './pages/main/Dashboard'
 
 import {
@@ -12,14 +10,14 @@ import {
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <div><Inicioregistro /></div>
+    element: <div><Login /></div>
   },
   {
-    path: '/registro',
-    element: <div><Registro /></div>
+    path: '/Register',
+    element: <div><Register /></div>
   },
   {
-    path: '/login',
+    path: '/Login',
     element: <div><Login /></div>
   },
   {
