@@ -36,7 +36,7 @@ const Form = ({ isLogin, route1, route2 }) => {
             const data = await response.json();
 
             if (!response.ok) {
-                toast.error(data.error || 'Ocurrió un error');
+                toast.error('Las credenciales proporcionadas no son válidas. Por favor, intenta nuevamente.');
                 return;
             }
 
