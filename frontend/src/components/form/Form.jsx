@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import './form.css';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Form = ({ isLogin, route1, route2 }) => {
     const [name, setName] = useState('');
@@ -10,6 +12,12 @@ const Form = ({ isLogin, route1, route2 }) => {
     const navigate = useNavigate();
 
     const handleRegister = async () => {
+        // Validación básica
+        if ((!isLogin && name.trim() === '') || email.trim() === '' || password.trim() === '') {
+            toast.error('Por favor, completa todos los campos.');
+            return;
+        }
+
         try {
             const url = isLogin
                 ? 'http://localhost:5000/api/auth/login'
@@ -17,12 +25,7 @@ const Form = ({ isLogin, route1, route2 }) => {
 
             const payload = isLogin
                 ? { email, password }
-                : {
-                    username: name,
-                    email,
-                    password,
-                    foto: ''
-                };
+                : { username: name, email, password, foto: '' };
 
             const response = await fetch(url, {
                 method: 'POST',
@@ -33,27 +36,32 @@ const Form = ({ isLogin, route1, route2 }) => {
             const data = await response.json();
 
             if (!response.ok) {
-                alert(data.error || 'Ocurrió un error');
+                toast.error(data.error || 'Ocurrió un error');
                 return;
             }
 
             if (isLogin) {
-                // Guardar token en cookie
-                Cookies.set('token', data.token, { expires: 1, secure: false }); // secure: true en producción con HTTPS
-                console.log('Token guardado:', data.token);
-                navigate('/Dashboard'); // Redirige al Dashboard después de login
+                Cookies.set('token', data.token, { expires: 1, secure: false });
+                toast.success('Inicio de sesión exitoso');
+                navigate('/Dashboard');
             } else {
-                console.log('Usuario registrado:', data.message);
-                navigate(route1); // Después del registro, va a login
+                toast.success('Registrado con éxito');
+                // Limpiar campos
+                setName('');
+                setEmail('');
+                setPassword('');
+                navigate(route1); // Redirige al login
             }
 
         } catch (error) {
             console.error('Error:', error);
+            toast.error('Error en la petición');
         }
     };
 
     return (
         <div className='body'>
+            <ToastContainer />
             <div className="container">
                 <div className='logo'></div>
                 <div className='aside'>
