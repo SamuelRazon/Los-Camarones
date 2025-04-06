@@ -11,10 +11,20 @@ const Form = ({ isLogin, route1, route2 }) => {
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
+    const isValidEmail = (email) => {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return regex.test(email);
+    };
+
     const handleRegister = async () => {
-        // Validación básica
-        if ((!isLogin && name.trim() === '') || email.trim() === '' || password.trim() === '') {
+        // Validación
+        if (!email.trim() || !password.trim() || (!isLogin && !name.trim())) {
             toast.error('Por favor, completa todos los campos.');
+            return;
+        }
+
+        if (!isValidEmail(email)) {
+            toast.error('Por favor, ingresa un correo electrónico válido.');
             return;
         }
 
@@ -50,7 +60,7 @@ const Form = ({ isLogin, route1, route2 }) => {
                 setName('');
                 setEmail('');
                 setPassword('');
-                navigate(route1); // Redirige al login
+                navigate(route1);
             }
 
         } catch (error) {
@@ -102,7 +112,7 @@ const Form = ({ isLogin, route1, route2 }) => {
                         <button className="submit second-button" onClick={() => navigate(route2)}>
                             {isLogin ? "Registrarse" : "Volver"}
                         </button>
-                    </div>  
+                    </div>
 
                     {isLogin && (
                         <div className='forgot-password'>
