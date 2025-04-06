@@ -17,3 +17,7 @@ app.use('/api/perCat', perCatRoutes)
 
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => console.log(`Server online in ${PORT}`))
+
+
+const documentRoutes = require('./routes/docRoutes'); // Importa las rutas de documentos
+app.use('/api/documents', documentRoutes); // Registra las rutas

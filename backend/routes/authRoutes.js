@@ -41,7 +41,7 @@ router.post('/register', async (req, res) => {
     } catch (err) {
       console.error('Error al guardar:', err)
       if (err.code === 11000 && err.keyPattern && err.keyPattern.correo) {
-        return res.status(400).json({ error: 'El correo ya está registrado' })
+        return res.status(409).json({ error: 'El correo ya está registrado' })
       }
       return res.status(500).json({ error: 'Error registrando usuario' })
     }
@@ -97,6 +97,26 @@ router.post('/login', async (req, res) => {
     })
   } catch (error) {
     res.status(500).json({ error: 'Error en el inicio de sesión' })
+  }
+})
+
+// Autenticar un token
+router.get('/', authMiddleware, async (req, res) => {
+  try {
+    const usuario = await Usuario.findById(req.user.id).select('-contraseña')
+    if (!usuario) {
+      return res.status(404).json({ error: 'Usuario no encontrado' })
+    }
+    res.json({ 
+      message: 'Token válido',
+      user: {
+        id: usuario._id,
+        username: usuario.username,
+        correo: usuario.correo
+      }
+    })
+  } catch (error) {eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZWY0OTdiNjE4YWE5NjVjYTU1NzAyNCIsImlhdCI6MTc0Mzg5MDA4OCwiZXhwIjoxNzQzODkzNjg4fQ.Xrp3BvmWOFmiAfIgXAaqSc9Lqx49AbShjHyuzVD79eU
+    res.status(500).json({ error: 'Error autenticando el token' })
   }
 })
 
