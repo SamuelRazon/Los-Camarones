@@ -45,6 +45,26 @@ router.get('/', authMiddleware, async (req, res) => {
   }
 })
 
+// Obtener un rubro personalizado por ID
+router.get('/:id', authMiddleware, async (req, res) => {
+  const { id } = req.params
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ error: 'ID inválido' })
+  }
+
+  try {
+    const rubro = await RubroPersonalizado.findOne({ _id: id, usuarioId: req.user.id })
+    if (!rubro) {
+      return res.status(404).json({ error: 'Rubro no encontrado' })
+    }
+    res.json(rubro)
+  } catch (error) {
+    res.status(500).json({ error: 'Error al obtener el rubro personalizado' })
+  }
+})
+
+
 // Actualizar un rubro personalizado (Ta disponible, pero cuidadito, siento que faltan cosas)
 router.put('/:id', authMiddleware, async (req, res) => {
   const { nombre, propiedades, propiedadtipo, propiedadesobligatorio } = req.body
