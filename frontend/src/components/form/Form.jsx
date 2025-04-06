@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './form.css';
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 const Form = ({ isLogin, route1, route2 }) => {
     const [name, setName] = useState('');
@@ -9,31 +10,45 @@ const Form = ({ isLogin, route1, route2 }) => {
     const navigate = useNavigate();
 
     const handleRegister = async () => {
-        if (!isLogin) {
-            try {
-                const response = await fetch('http://localhost:5000/api/auth/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        username: name,
-                        email,
-                        password,
-                        foto: '' // Puedes capturar una URL si luego agregas ese campo
-                    })
-                });
+        try {
+            const url = isLogin
+                ? 'http://localhost:5000/api/auth/login'
+                : 'http://localhost:5000/api/auth/register';
 
-                const data = await response.json();
-                console.log('Respuesta del registro:', data);
+            const payload = isLogin
+                ? { email, password }
+                : {
+                    username: name,
+                    email,
+                    password,
+                    foto: ''
+                };
 
-                // Redirige después del registro exitoso
-                navigate(route1);
-            } catch (error) {
-                console.error('Error en el registro:', error);
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                alert(data.error || 'Ocurrió un error');
+                return;
             }
-        } else {
-            navigate(route1); // Login simulado
+
+            if (isLogin) {
+                // Guardar token en cookie
+                Cookies.set('token', data.token, { expires: 1, secure: false }); // secure: true en producción con HTTPS
+                console.log('Token guardado:', data.token);
+                navigate('/Dashboard'); // Redirige al Dashboard después de login
+            } else {
+                console.log('Usuario registrado:', data.message);
+                navigate(route1); // Después del registro, va a login
+            }
+
+        } catch (error) {
+            console.error('Error:', error);
         }
     };
 
@@ -79,7 +94,7 @@ const Form = ({ isLogin, route1, route2 }) => {
                         <button className="submit second-button" onClick={() => navigate(route2)}>
                             {isLogin ? "Registrarse" : "Volver"}
                         </button>
-                    </div>
+                    </div>  
 
                     {isLogin && (
                         <div className='forgot-password'>

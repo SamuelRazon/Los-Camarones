@@ -11,11 +11,11 @@ const Dashboard = () => {
           </div>
           <div className='search'>
               <p>Buscar</p>
-              <img src="" alt="" /> {/* Imagen pendiente */}
+              <img src="#" alt="" /> {/* Imagen pendiente */}
           </div>
           <div className='search-deployment'>
               <p>Ciclo</p>
-              <img src="" alt="" /> {/* Imagen pendiente */}
+              <img src="#" alt="" /> {/* Imagen pendiente */}
           </div>
           <div className='picture'>
             <a>fotito</a>
@@ -28,7 +28,7 @@ const Dashboard = () => {
           {/* Llamar el componente  */}
           <div className='buttonCV'>
               <p>Generar CV</p>
-              <img src="" alt="" /> {/* Imagen pendiente */}
+              <img src="#" alt="" /> {/* Imagen pendiente */}
           </div>
         </div> {/* Fin de la clase sidebar */}
         <div className='main-container'>
