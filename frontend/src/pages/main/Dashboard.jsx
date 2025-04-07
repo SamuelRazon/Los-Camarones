@@ -1,5 +1,7 @@
 import React from 'react'
 import './Dashboard.css'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {faCircleUser} from '@fortawesome/free-solid-svg-icons'
 
 const Dashboard = () => {
   return (
@@ -7,7 +9,7 @@ const Dashboard = () => {
       <div className='hea'>
         <div className='top'>
           <div className='picture'>
-            <a>fotito</a>
+            <a><FontAwesomeIcon icon={faCircleUser} /></a>
           </div>
           <div className='search'>
               <p>Buscar</p>

@@ -4,6 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {faEnvelope} from '@fortawesome/free-solid-svg-icons'
+import {faLock} from '@fortawesome/free-solid-svg-icons'
+import {faUser} from '@fortawesome/free-solid-svg-icons'
 
 const Form = ({ isLogin, route1, route2 }) => {
     const [name, setName] = useState('');
@@ -76,6 +80,7 @@ const Form = ({ isLogin, route1, route2 }) => {
                     <div className='inputs'>
                         {!isLogin && (
                             <div className='input'>
+                                <FontAwesomeIcon icon={faUser} className="icon" />
                                 <input
                                     type="text"
                                     placeholder='Nombre'
@@ -85,6 +90,7 @@ const Form = ({ isLogin, route1, route2 }) => {
                             </div>
                         )}
                         <div className='input'>
+                            <FontAwesomeIcon icon={faEnvelope} className="icon" />
                             <input
                                 type="email"
                                 placeholder='Correo electrónico'
@@ -93,6 +99,7 @@ const Form = ({ isLogin, route1, route2 }) => {
                             />
                         </div>
                         <div className='input'>
+                            <FontAwesomeIcon icon={faLock} className="icon" />
                             <input
                                 type="password"
                                 placeholder='Contraseña'

@@ -26,7 +26,8 @@ body{
 
 /* Imagen de la persona */
 .picture{
-    min-width: 50px;
+    width: 65px;
+    height: 60px;
     display: flex;
     justify-content: space-around;
 }
@@ -34,7 +35,6 @@ body{
 /* Diseño de la imagen de la persona */
 .picture a{
     text-decoration: none;
-    font-size: 18px;
     width: 65px;
     height: 60px;
     line-height: 60px;

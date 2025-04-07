@@ -73,6 +73,16 @@
     position: relative;
   }
   
+  .input .icon {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    color: #335C94;
+    font-size: 16px;
+    pointer-events: none;
+  }
+
   .input input {
     width: 100%;
     padding: 12px 15px 12px 40px;
