@@ -20,4 +20,4 @@ app.listen(PORT, () => console.log(`Server online in ${PORT}`))
 
 
 const documentRoutes = require('./routes/docRoutes'); // Importa las rutas de documentos
-app.use('/api/documents', documentRoutes); // Registra las rutas
+app.use('/api/documentos', documentRoutes); // Registra las rutas

@@ -23,7 +23,7 @@ const uploadDocument = async (req, res) => {
 
     // Crear nuevo documento
     const newDoc = new Document({
-      usuarioId,
+      usuario: usuarioId,
       rubro,
       rubroModel,
       propiedadesnombre: JSON.parse(propiedadesnombre), 
