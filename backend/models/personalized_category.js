@@ -11,6 +11,6 @@ const RubroPersonalizadoSchema = new Schema({
     enum: ['string', 'number', 'date', 'boolean'] // Tipos de datos permitidos
   },
   propiedadobligatorio: { type: [Boolean], required: true } // Booleano que indica si la propiedad es obligatoria o no
-});
+}, {collection: 'rubrosPersonalizados'});
 
 module.exports = mongoose.model('RubroPersonalizado', RubroPersonalizadoSchema);

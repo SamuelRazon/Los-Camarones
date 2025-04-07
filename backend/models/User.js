@@ -10,6 +10,6 @@ const UsuarioSchema = new Schema({
   // Referencias a rubrosDefault y rubrosPersonalizados
   rubrosDefault: [{ type: Schema.Types.ObjectId, ref: 'RubroDefault' }], // Rubros default referenciados
   rubrosPersonalizados: [{ type: Schema.Types.ObjectId, ref: 'RubroPersonalizado' }] // Rubros personalizados
-});
+},{collection: 'usuario'});
 
 module.exports = mongoose.model('Usuario', UsuarioSchema);
