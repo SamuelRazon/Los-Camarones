@@ -1,6 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const RubroPersonalizado = require('../models/personalized_category')
+const Usuario = require('../models/User');
 const { authMiddleware } = require('../middleware/auth')
 
 const router = express.Router()
@@ -29,6 +30,14 @@ router.post('/', authMiddleware, async (req, res) => {
       propiedadesobligatorio
     })
     const rubroGuardado = await nuevoRubro.save()
+
+    // Actualizamos el array de rubros personalizados del usuario que creo el rubro
+    await Usuario.findByIdAndUpdate(
+      req.user.id,
+      { $push: { rubrosPersonalizados: rubroGuardado._id } },
+      { new: true }
+    );
+    
     res.status(201).json(rubroGuardado)
   } catch (error) {
     res.status(500).json({ error: 'Error creando el rubro personalizado' })
