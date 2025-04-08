@@ -5,7 +5,7 @@ const Register = () => {
     return ( 
 
         <div>
-            <Form isLogin={false} route1={'#'} route2={'/login'}></Form>
+            <Form isLogin={false}  route2={'/login'}></Form>
         </div>
 
     ); 
