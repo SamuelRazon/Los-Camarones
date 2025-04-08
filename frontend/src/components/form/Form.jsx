@@ -27,7 +27,10 @@ const Form = ({ isLogin, route1, route2 }) => {
             return;
         }
 
-    
+        if (!isValidEmail(email)) {
+            toast.error('Por favor, introduce un correo electrónico válido.');
+            return;
+        }
 
         try {
             const url = isLogin

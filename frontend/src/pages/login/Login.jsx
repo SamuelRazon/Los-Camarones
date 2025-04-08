@@ -5,7 +5,7 @@ const Login = () => {
     return ( 
 
         <div>
-            <Form isLogin={true} route1={'/Dashboard'} route2={'/Register'}></Form>
+            <Form isLogin={true} route1={'/dashboard'} route2={'/register'}></Form>
         </div>
 
     ); 

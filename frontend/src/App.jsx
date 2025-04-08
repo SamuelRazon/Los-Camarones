@@ -18,15 +18,15 @@ const router = createBrowserRouter([
       </PrivateRoute>
   )},
   {
-    path: '/Register',
+    path: '/register',
     element: <div><Register /></div>
   },
   {
-    path: '/Login',
+    path: '/login',
     element: <div><Login /></div>
   },
   {
-    path: '/Dashboard',
+    path: '/dashboard',
     element: (
       <PrivateRoute>
         <Dashboard />
