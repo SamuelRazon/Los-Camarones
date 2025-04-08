@@ -8,8 +8,8 @@ router.get('/mycategories', authMiddleware, async (req, res) => {
   try {
     // Encontramos al usuario y poblamos los arrays de rubros
     const usuario = await Usuario.findById(req.user.id)
-      .populate('RubroPersonalizado')  
-      .populate('RubroDefault');
+      .populate('rubroPersonalizado')  
+      .populate('rubroDefault');
       
       /* El metodo populate intercambia los object id que tenemos guardados dentro de los arrays 
          rubrosdefault y personalizados por los documentos completos que corresponden a ese object id */
@@ -19,20 +19,21 @@ router.get('/mycategories', authMiddleware, async (req, res) => {
     }
 
     /* Mapeo de todos los atributos de cada coleccion*/
-    const rubrosPersonalizados = usuario.rubrosPersonalizados.map(rubro => ({
+    const rubrosPersonalizados = (usuario.rubrosPersonalizados || []).map(rubro => ({
       id: rubro._id,
       nombre: rubro.nombre,
-      propiedades: rubro.propiedades, // Array de propiedades
+      propiedades: rubro.propiedades,
       propiedadtipo: rubro.propiedadtipo,
       propiedadesobligatorio: rubro.propiedadesobligatorio,
     }));
-
-    const rubrosDefault = usuario.rubrosDefault.map(rubro => ({
+    
+    const rubrosDefault = (usuario.rubrosDefault || []).map(rubro => ({
       id: rubro._id,
       nombre: rubro.nombre,
-      propiedades: rubro.propiedades, // Array de propiedades
+      propiedades: rubro.propiedades, 
       propiedadtipo: rubro.propiedadtipo,
     }));
+    
 
     // Esto es para enviar los datos del mapeo al frontend
     res.json({

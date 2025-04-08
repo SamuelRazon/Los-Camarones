@@ -5,6 +5,7 @@ const connectDB = require('./config/db')
 const authRoutes = require('./routes/authRoutes')
 const perCatRoutes = require('./routes/perCatRoutes')
 const documentRoutes = require('./routes/docRoutes'); // Importa las rutas de documentos
+const getCatRoutes = require('./routes/getCatRoutes');
 
 dotenv.config()
 connectDB()
@@ -16,6 +17,7 @@ app.use(cors())
 app.use('/api/auth', authRoutes)
 app.use('/api/perCat', perCatRoutes)
 app.use('/api/documents', documentRoutes); // Registra las rutas
+app.use('/api/getroutes', getCatRoutes); // Registra las rutas
 
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => console.log(`Server online in ${PORT}`))
