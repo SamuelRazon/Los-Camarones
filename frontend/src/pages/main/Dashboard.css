@@ -33,16 +33,24 @@ body{
 }
 
 /* Diseño de la imagen de la persona */
-.picture a{
-    text-decoration: none;
-    width: 65px;
+.picture-a{
+    width: 60px;
     height: 60px;
-    line-height: 60px;
     text-align: center;
-    background: #464646;
-    color: #f1f1f1;
+    color: #464646;
+    background-color: #f1f1f1;
     border-radius: 50%;
     box-shadow: 2px 2px 5px  rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all .4s ease-in-out;
+}
+
+.picture-gear{
+    width: 65px;
+    height: 60px;
+    color: #464646;
+    background-color: #F2F5F7;
+    border-radius: 50%;
     cursor: pointer;
     transition: all .4s ease-in-out;
 }
@@ -106,18 +114,29 @@ body{
 
 
 .buttonCV{
-    text-decoration: none;
-    font-size: 14px;
+    display: flex;
     width: 150px;
     height: 45px;
-    line-height: 45px;
-    text-align: center;
+    line-height: 15px;
     background: #FFFFFF;
     color: #335C94;
     border: 1px solid #335C94;
     cursor: pointer;
     transition: all .4s ease-in-out;
     margin: 420px 15px;
+}
+
+.buttonCV p{
+    font-size: 14px;
+    text-align: center;
+    margin-top: 14px;
+}
+
+.move{
+    text-align: left;
+    margin: 10px;
+    width: 25px;
+    height: 25px;
 }
 
 .main-container{
@@ -134,4 +153,16 @@ body{
     height: 45px;
     background: #464646;
     border-radius: 5px;
+}
+
+.icon-right{
+    text-align: right;
+}
+
+.trash{
+    margin: 10px;
+    width: 25px;
+    height: 25px;
+    color: #f1f1f1;
+    cursor: pointer;
 }

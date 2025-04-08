@@ -2,12 +2,13 @@ import Register from './pages/register/Register'
 import Login from './pages/login/Login'
 import Dashboard from './pages/main/Dashboard'
 import PrivateRoute from './components/auth/PrivateRoute'
-
+{/*Extensión para usar el uso entre páginas*/}
 import {
   createBrowserRouter,
   RouterProvider
 } from 'react-router-dom'
 
+{/*Creado para invocar de las páginas, de acuerdo, a lo solicitado*/}
 const router = createBrowserRouter([
   {
     path: '/',

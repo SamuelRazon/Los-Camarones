@@ -1,5 +1,6 @@
 import Form from '../../components/form/Form'
 
+{/*Creado para invocar  ir al registro*/}
 const Register = () => { 
     return ( 
 
