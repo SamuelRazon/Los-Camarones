@@ -95,9 +95,8 @@ body{
     display: column;
     height: 10px;
     margin-top: 50px;
-    gap: 5;
+    gap: 5px;
 }
-
 
 .button{
     text-decoration: none;
@@ -112,6 +111,61 @@ body{
     transition: all .4s ease-in-out;
 }
 
+.category{
+    display: column;
+    text-decoration: none;
+    margin-top: 25px;
+    font-size: 18px;
+}
+
+.category p{
+    margin: 16px 40px;
+}
+
+.shapes{
+    text-align: left;
+    float: left; /*Esto es lo que permite el shapes esten junto al texto*/
+    width: 30px;
+    height: 30px;
+}
+
+.underline{
+    width: 200px;
+    height: 4px;
+    background-color: #464646;
+}
+
+.subcategory{
+    display: column;
+    text-decoration: none;
+    margin-top: 14px;
+    font-size: 15px;
+}
+
+.subcategory p{
+    margin: 20px 35px;
+}
+
+.star{
+    text-align: left;
+    float: left; /*Esto es lo que permite que las estrellas esten junto al texto*/
+}
+
+.newcategory{
+    margin-top: 0px;
+    font-size: 16px;
+}
+
+.newcategory p{
+    margin: 10px 30px;
+}
+
+.plus{
+    margin-top: 8px;
+    float: left; /*Esto es lo que permite que este junto al texto*/
+    width: 22px;
+    height: 22px;
+}
 
 .buttonCV{
     display: flex;
@@ -123,7 +177,7 @@ body{
     border: 1px solid #335C94;
     cursor: pointer;
     transition: all .4s ease-in-out;
-    margin: 420px 15px;
+    margin: 100px 15px; /*Este mueve el lugar del botón*/
 }
 
 .buttonCV p{
@@ -146,6 +200,17 @@ body{
     box-shadow: 2px 2px 5px  rgba(0, 0, 0, 0.1);
     margin: 0px 224px;
     border-radius: 5px;
+}
+
+.speci{
+    display: inline-flex;
+    gap: 380px;
+    margin: 5px 30px;
+}
+
+.speci b{
+    font-size: 18px;
+    text-decoration: underline;
 }
 
 .narbar-mainc{

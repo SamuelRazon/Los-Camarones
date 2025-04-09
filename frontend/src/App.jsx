@@ -3,6 +3,7 @@ import Login from './pages/login/Login'
 import Dashboard from './pages/main/Dashboard'
 import PrivateRoute from './components/auth/PrivateRoute'
 import NotFound from './pages/notfound/NotFound'
+import Docencia from './components/category/Docencia'
 {/*Extensión para usar el uso entre páginas*/}
 import {
   createBrowserRouter,
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
   {
     path: '*', //Ruta para páginas no encontradas
     element: <NotFound />
+  },
+  {
+    path: '*', //Ruta para páginas no encontradas
+    element: <Docencia />
   }
 ])
 
