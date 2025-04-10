@@ -6,6 +6,12 @@ const RubroPersonalizado = require('../models/personalized_category')
 const { authMiddleware } = require('../middleware/auth')
 const router = express.Router()
 
+
+const AWS = require('aws-sdk');
+const Document = require('../models/Document');
+
+
+
 // Registro
 router.post('/register', async (req, res) => {
   const { username, email, password, foto, customRubro } = req.body
@@ -131,5 +137,45 @@ router.get('/perfil', authMiddleware, async (req, res) => {
     res.status(500).json({ error: 'Error obteniendo el perfil' })
   }
 })
+
+
+
+
+
+// Configuración de AWS S3
+const s3 = new AWS.S3({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION,
+});
+
+// Endpoint para descargar el archivo
+router.get('/download/:id', authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Busca el documento en la base de datos
+    const document = await Document.findById(id);
+    if (!document) {
+      return res.status(404).json({ error: 'Documento no encontrado' });
+    }
+
+    // Configurar los parametros para obtener la URL de descarga
+    const params = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: document.urldocumento.split('/').pop(), // Extraer el nombre del archivo desde la URL
+      Expires: 60, // La URL es valida por un minitu  creo que seria mejor borarla perolo la dejo 
+    };
+
+    // Generar la URL de descarga
+    const url = s3.getSignedUrl('getObject', params);
+
+    res.json({ downloadUrl: url });
+  } catch (error) {
+    console.error('Error al generar la URL de descarga:', error);
+    res.status(500).json({ error: 'Error al generar la URL de descarga' });
+  }
+});
+
 
 module.exports = router
