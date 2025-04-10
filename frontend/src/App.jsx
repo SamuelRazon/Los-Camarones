@@ -4,6 +4,7 @@ import Dashboard from "./pages/main/Dashboard";
 import PrivateRoute from "./components/auth/PrivateRoute";
 import NotFound from "./pages/notfound/NotFound";
 import Docencia from "./components/category/Docencia";
+import Modal from "./components/configuration/Modal";
 {
   /*Extensión para usar el uso entre páginas*/
 }
@@ -50,16 +51,20 @@ const router = createBrowserRouter([
     element: <NotFound />,
   },
   {
-    path: "*", //Ruta para páginas no encontradas
+    path: "*", //Ruta del componente de la página de inicio
     element: <Docencia />,
   },
+  {
+    path: "*", //Ruta del componente de la página de inicio
+    element: <Modal />,
+  }
 ]);
 
 function App() {
   return (
     <div>
-      <RouterProvider router={router} />
-    </div>
+      <RouterProvider router={router} /> 
+    </div> //Invocación de los cambios de la ruta 
   );
 }
 
