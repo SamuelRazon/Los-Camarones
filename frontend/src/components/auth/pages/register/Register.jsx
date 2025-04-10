@@ -6,7 +6,10 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faLock, faUser } from "@fortawesome/free-solid-svg-icons";
-import { registerUser } from "../../../../services/AuthServices";
+import {
+  registerUser,
+  isEmailRegister,
+} from "../../../../services/AuthServices";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -48,6 +51,12 @@ const Register = () => {
       );
       return;
     }
+
+    try {
+      await isEmailRegister({ email });
+      toast.error("Error, el correo electronico ya esta registrado.");
+      return;
+    } catch (error) {}
 
     try {
       await registerUser({ name, email, password, repassword });

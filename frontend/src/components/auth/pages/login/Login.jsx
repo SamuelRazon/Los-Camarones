@@ -34,7 +34,7 @@ const Login = () => {
     try {
       const data = await loginUser(email, password);
       Cookies.set("token", data.token, { expires: 1, secure: false });
-      navigate("/Dashboard");
+      navigate("/dashboard");
     } catch (error) {
       console.error("Error en login:", error);
       toast.error("Credenciales inválidas");

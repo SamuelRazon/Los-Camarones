@@ -37,8 +37,26 @@ export const registerUser = async ({ name, email, password, repassword }) => {
     if (!response.ok) {
       return;
     }
+  } catch (error) {
+    console.error("Error:", error);
+  }
+};
 
-    navigate("/login");
+export const isEmailRegister = async ({ email }) => {
+  try {
+    const url = "https://localhost:5000//api/auth/check-email";
+
+    const payload = { email };
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      return;
+    }
   } catch (error) {
     console.error("Error:", error);
   }

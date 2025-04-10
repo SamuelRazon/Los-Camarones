@@ -1,18 +1,14 @@
 import React, { useState } from 'react';
 import './Dashboard.css';
 import Docencia from '../../components/category/Docencia';
+import Modal from '../../components/configuration/Modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {faCircleUser} from '@fortawesome/free-solid-svg-icons'
-import {faGear} from '@fortawesome/free-solid-svg-icons'
-import {faFilePdf} from '@fortawesome/free-solid-svg-icons'
-import {faTrashCan} from '@fortawesome/free-solid-svg-icons'
-import {faBars} from '@fortawesome/free-solid-svg-icons'
-import {faStar} from '@fortawesome/free-solid-svg-icons'
-import {faShapes} from '@fortawesome/free-solid-svg-icons'
-import {faPlus} from '@fortawesome/free-solid-svg-icons'
+import {faCircleUser, faGear, faFilePdf, faTrashCan, faBars, faStar, faShapes, faPlus} from '@fortawesome/free-solid-svg-icons'
 
 const Dashboard = () => {
+  const [isConfigOpen, setIsConfigOpen] = useState(false);
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('');
+  
 
   const renderCategoria = () => {
     switch (categoriaSeleccionada) {
@@ -22,8 +18,11 @@ const Dashboard = () => {
         return <Investigacion />;
       case 'Tutoría':
         return <Tutoría />;
+      default:
+          return null;
     }
   };
+
 
 {/*Creado para invocar la página principal, con los contenedores de cada espacio*/}
   return (
@@ -42,11 +41,16 @@ const Dashboard = () => {
               <img src="#" alt="" /> {/* Imagen pendiente */}
           </div>
           <div className='picture'>
-            <FontAwesomeIcon icon={faGear} className='picture-gear'/>
+            <FontAwesomeIcon icon={faGear} className='picture-gear'
+              onClick={() => setIsConfigOpen(true)} // Al hacer clic en el icono de configuración, abre el modal
+            />
           </div>
+          {/* Si isConfigOpen es true, mostrar la mini página de configuración */}
+          {isConfigOpen && (<Modal onClose={() => setIsConfigOpen(false)} />)}
         </div> {/* Fin de la clase Top */}
         <div className='sidebar'>
           <div className='button'>
+              <FontAwesomeIcon icon={faPlus} className='button-plus'/>
               <p>Nuevo Documento</p>
           </div>
           <div className='category'>
