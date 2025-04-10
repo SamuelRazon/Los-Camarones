@@ -36,6 +36,7 @@
 ## Uso básico de la API
 ### Endpoints de registro, ingreso y autenticación
 La API de autenticación permite registrar nuevos usuarios, iniciar sesión y autenticar tokens. A continuación se describen los endpoints disponibles:
+
 `GET /api/auth/register`
 
 Descripción: Registra un nuevo usuaro en la base de datos
@@ -63,6 +64,40 @@ Posibles errores:
 - 400: Bad Request - Datos inválidos
 - 409: Conflict - El usuario ya existe
 - 500: Internal Server Error - Error en el servidor
+---
+
+`GET /api/auth/check-email`
+
+Descripción: Verifica si el correo electrónico ya está registrado
+
+Parametros:
+- email: Correo electrónico (body)
+
+ejemplo de body:
+```
+{
+  "email": "correo@example.com"
+}
+```
+
+Respuestas:
+200
+```
+{
+  "message": "El correo ya está registrado"
+}
+```
+409
+```
+{
+  "message": "El correo electrónico está disponible"
+}
+```
+
+errores:
+- 400: Bad Request - Datos inválidos
+- 500: Internal Server Error - Error en el servidor
+
 ---
 `POST /api/auth/login`
 
@@ -254,7 +289,7 @@ Posibles errores:
 - 500: Internal Server Error - Error en el servidor
 ---
 
-|`GET /api/rubros/:id`
+`GET /api/rubros/:id`
 
 Descripción: Devuelve un rubro específico del usuario autenticado
 
