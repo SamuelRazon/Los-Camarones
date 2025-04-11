@@ -3,8 +3,8 @@ import Login from "./components/auth/pages/login/Login";
 import Dashboard from "./pages/main/Dashboard";
 import PrivateRoute from "./components/auth/PrivateRoute";
 import NotFound from "./pages/notfound/NotFound";
-import Docencia from "./components/category/Docencia";
-import Modal from "./components/configuration/Modal";
+/*import Docencia from "./components/category/Docencia";
+import Modal from "./components/configuration/Modal";*/
 {
   /*Extensión para usar el uso entre páginas*/
 }
@@ -16,9 +16,9 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: (
-      <PrivateRoute>
-        <Dashboard />
+    element: ( //Aquí genera la primera página de incio, AQUÍ ESTA EL PROBLEMA que hablaban
+      <PrivateRoute> 
+        <Dashboard /> 
       </PrivateRoute>
     ),
   },
@@ -49,14 +49,6 @@ const router = createBrowserRouter([
   {
     path: "*", //Ruta para páginas no encontradas
     element: <NotFound />,
-  },
-  {
-    path: "*", //Ruta del componente de la página de inicio
-    element: <Docencia />,
-  },
-  {
-    path: "*", //Ruta del componente de la página de inicio
-    element: <Modal />,
   }
 ]);
 

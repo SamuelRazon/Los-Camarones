@@ -1,6 +1,9 @@
 import React from 'react'
 import './Modal.css';
 
+/* Dedicado a ser el modal de configuración, en este, se muestran las opciones de cambio de tema y de idioma, 
+* por el momento, solo es decorativo. A su vez, le falta el icono de ayuda con explicación de que hace cada cosa
+*/
 const Modal = ({ onClose }) => {
   return (
     <div className='configuration-modal'>
@@ -17,7 +20,7 @@ const Modal = ({ onClose }) => {
           </div>
           <div className='lenguaje'>
               <p>Lenguaje</p>
-              <select>
+              <select>  {/*Cambio de idioma (luego buscar como se hace bien esto)*/}
                   <option value="es">Español</option>
                   <option value="en">Inglés</option>
               </select>

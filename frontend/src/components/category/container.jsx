@@ -1,5 +1,7 @@
 import './container.css';
-{/*Usado un componente para la estructura básica que tendra las propiedades */}
+/*Usa un componente para la estructura básica que tendra las propiedades, sobre 
+* los elementos de los documentos que seran presentados en el div de clase main-container 
+*/
 const Container = ({ nombre, categoria, fecha }) => {
     return (
       <div className="document">

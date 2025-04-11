@@ -1,85 +1,40 @@
 import React, { useState } from 'react';
 import './Dashboard.css';
 import Docencia from '../../components/category/Docencia';
-import Modal from '../../components/configuration/Modal';
+import Top from "../../components/layout/Top";
+import Sidebar from "../../components/layout/Sidebar";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {faCircleUser, faGear, faFilePdf, faTrashCan, faBars, faStar, faShapes, faPlus} from '@fortawesome/free-solid-svg-icons'
+import { faTrashCan, faBars} from '@fortawesome/free-solid-svg-icons'
 
+/* Dedicado a dar el diseño de la página principal, con los respectivos modales que se iran
+* integrando sobre el proceso de cada botón o estilo que tenga cada componente */
+
+/** Inovación para la creación de los modales*/
 const Dashboard = () => {
   const [isConfigOpen, setIsConfigOpen] = useState(false);
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('');
   
-
+  /** Ejemplo de como sería la construcción de la información de las categorías con sus repectivos documentos*/
   const renderCategoria = () => {
     switch (categoriaSeleccionada) {
       case 'Docencia':
-        return <Docencia />;
+        return <Docencia />; {/* Solo existe esta, porque es solo un ejemplo*/}
       case 'Investigación':
-        return <Investigacion />;
+        return <Investigacion />; 
       case 'Tutoría':
         return <Tutoría />;
       default:
-          return null;
+        return null;
     }
   };
 
 
-{/*Creado para invocar la página principal, con los contenedores de cada espacio*/}
+{/*Retorna los componentes que integran la página principal*/}
   return (
     <div className='contai'>
       <div className='hea'>
-        <div className='top'>
-          <div className='picture'>
-            <FontAwesomeIcon icon={faCircleUser} className='picture-a'/>
-          </div>
-          <div className='search'>
-              <p>Buscar</p>
-              <img src="#" alt="" /> {/* Cambiar al Icono correspondiente o componenete, idk*/}
-          </div>
-          <div className='search-deployment'>
-              <p>Ciclo</p>
-              <img src="#" alt="" /> {/* Imagen pendiente */}
-          </div>
-          <div className='picture'>
-            <FontAwesomeIcon icon={faGear} className='picture-gear'
-              onClick={() => setIsConfigOpen(true)} // Al hacer clic en el icono de configuración, abre el modal
-            />
-          </div>
-          {/* Si isConfigOpen es true, mostrar la mini página de configuración */}
-          {isConfigOpen && (<Modal onClose={() => setIsConfigOpen(false)} />)}
-        </div> {/* Fin de la clase Top */}
-        <div className='sidebar'>
-          <div className='button'>
-              <FontAwesomeIcon icon={faPlus} className='button-plus'/>
-              <p>Nuevo Documento</p>
-          </div>
-          <div className='category'>
-              <FontAwesomeIcon icon={faShapes}  className='shapes'/>
-             <p>Categoría</p>
-             <div className='underline'></div>
-          </div> {/* Fin de la clase Category */}
-          <div className='subcategory'> {/* Debe cambiar por los componenetes de acuerdo, a lo que seleccione */}
-              <FontAwesomeIcon icon={faStar} className='star'/>
-              <p onClick={() => setCategoriaSeleccionada('Docencia')}>Docencia</p>
-              <FontAwesomeIcon icon={faStar} className='star'/>
-              <p>Investigación</p>
-              <FontAwesomeIcon icon={faStar} className='star'/>
-              <p>Tutoría</p>
-              <FontAwesomeIcon icon={faStar} className='star'/>
-              <p>Clases</p>
-              <FontAwesomeIcon icon={faStar} className='star'/>
-              <p>Gestión</p>
-            <div className='newcategory'>
-                <div className='underline'></div>
-                <FontAwesomeIcon icon={faPlus} className='plus'/>
-                <p>Añadir Categoría</p>
-            </div>
-          </div>  {/* Fin de la clase subcategory */}
-          <div className='buttonCV'>
-              <FontAwesomeIcon icon={faFilePdf} className='move'/>
-              <p>Generar CV</p>
-          </div>
-        </div> {/* Fin de la clase sidebar */}
+        <Top isConfigOpen={isConfigOpen} setIsConfigOpen={setIsConfigOpen} /> {/* Invoco el componente */}
+        <Sidebar setCategoriaSeleccionada={setCategoriaSeleccionada} /> {/* Invoco el componente */}
         <div className='main-container'>
           <div className='narbar-mainc'>
             <dir className='icon-right'>
@@ -92,7 +47,7 @@ const Dashboard = () => {
             <b>Categoría</b>
             <b>Fecha</b>
           </div>
-          {renderCategoria()}
+          {renderCategoria()} {/* Invoco el componente de los documentos con su respectiva categoría */}
         </div> {/* Fin de la clase main-containe*/}
       </div> {/* Fin de la clase header que es solo hea */}
     </div>

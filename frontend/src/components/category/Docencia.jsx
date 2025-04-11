@@ -1,6 +1,7 @@
 // Componente para Docencia (Docencia.jsx)
 import Container from './container';
 
+/**Solo es un ejemplo, no se si es funcional a la largo del proyecto */
 const Docencia = () => {
   return (
     <div>
