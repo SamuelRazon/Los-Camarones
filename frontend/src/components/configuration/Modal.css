@@ -71,7 +71,7 @@
     transition: all .4s ease-in-out;
 }
 
-.modal button{
+.modal .button{
     display: flex;
     justify-content: center;
     width: 65px;
