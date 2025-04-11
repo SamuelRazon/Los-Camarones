@@ -44,20 +44,24 @@ export const registerUser = async ({ name, email, password, repassword }) => {
 
 export const isEmailRegister = async ({ email }) => {
   try {
-    const url = "https://localhost:5000//api/auth/check-email";
-
-    const payload = { email };
+    const url = "http://localhost:5000/api/auth/check-email"; // doble slash corregido
 
     const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({ email }),
     });
 
     if (!response.ok) {
-      return;
+      return false;
     }
+
+    const data = await response.json();
+
+    // Suponiendo que tu backend responde con { exists: true } o { exists: false }
+    return data.exists === true;
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Error al verificar el email:", error);
+    return false; // en caso de error, asumimos que no está registrado
   }
 };

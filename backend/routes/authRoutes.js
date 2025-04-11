@@ -81,20 +81,20 @@ router.post('/register', async (req, res) => {
 })
 
 // Verificar si el correo ya está registrado
-router.get('/check-email', async (req, res) => {
-  const { email } = req.body
+router.post('/check-email', async (req, res) => {
+  const { email } = req.body;
 
   try {
-    const usuario = await Usuario.findOne({ correo: email })
+    const usuario = await Usuario.findOne({ correo: email });
     if (usuario) {
-      return res.status(409).json({ error: 'El correo ya está registrado' })
+      return res.status(200).json({ exists: true });
     }
-    res.status(200).json({ message: 'El correo está disponible' })
+    res.status(200).json({ exists: false });
   } catch (error) {
-    console.error(error)
-    res.status(500).json({ error: 'Error verificando el correo' })
+    console.error(error);
+    res.status(500).json({ error: 'Error verificando el correo' });
   }
-})
+});
 
 // Inicio de sesión
 router.post('/login', async (req, res) => {

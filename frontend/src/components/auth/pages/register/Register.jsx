@@ -52,11 +52,11 @@ const Register = () => {
       return;
     }
 
-    try {
-      await isEmailRegister({ email });
-      toast.error("Error, el correo electronico ya esta registrado.");
+    const emailExists = await isEmailRegister({ email });
+    if (emailExists) {
+      toast.error("El correo electrónico ya está registrado.");
       return;
-    } catch (error) {}
+    }
 
     try {
       await registerUser({ name, email, password, repassword });
@@ -67,6 +67,9 @@ const Register = () => {
       setEmail("");
       setPassword("");
       setRepassword("");
+
+      // Redirigir si quieres
+      // navigate("/dashboard");
     } catch (error) {
       console.error("Error al registrar:", error);
       toast.error(error.message || "Error al registrar. Intenta nuevamente.");
