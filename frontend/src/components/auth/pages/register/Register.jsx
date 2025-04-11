@@ -6,10 +6,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faLock, faUser } from "@fortawesome/free-solid-svg-icons";
-import {
-  registerUser,
-  isEmailRegister,
-} from "../../../../services/AuthServices";
+import authService from "../../../../services/authServices";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -52,14 +49,14 @@ const Register = () => {
       return;
     }
 
-    const emailExists = await isEmailRegister({ email });
+    const emailExists = await authService.isEmailRegister({ email });
     if (emailExists) {
       toast.error("El correo electrónico ya está registrado.");
       return;
     }
 
     try {
-      await registerUser({ name, email, password, repassword });
+      await authService.registerUser({ name, email, password, repassword });
       toast.success("Registro exitoso");
 
       // Limpiar campos

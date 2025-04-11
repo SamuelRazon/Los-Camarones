@@ -1,4 +1,4 @@
-export const loginUser = async (email, password) => {
+const loginUser = async (email, password) => {
   try {
     const url = "http://localhost:5000/api/auth/login";
 
@@ -22,7 +22,7 @@ export const loginUser = async (email, password) => {
   }
 };
 
-export const registerUser = async ({ name, email, password, repassword }) => {
+const registerUser = async ({ name, email, password, repassword }) => {
   try {
     const url = "http://localhost:5000/api/auth/register";
 
@@ -42,9 +42,9 @@ export const registerUser = async ({ name, email, password, repassword }) => {
   }
 };
 
-export const isEmailRegister = async ({ email }) => {
+const isEmailRegister = async ({ email }) => {
   try {
-    const url = "http://localhost:5000/api/auth/check-email"; // doble slash corregido
+    const url = "http://localhost:5000/api/auth/check-email";
 
     const response = await fetch(url, {
       method: "POST",
@@ -58,10 +58,17 @@ export const isEmailRegister = async ({ email }) => {
 
     const data = await response.json();
 
-    // Suponiendo que tu backend responde con { exists: true } o { exists: false }
     return data.exists === true;
   } catch (error) {
     console.error("Error al verificar el email:", error);
-    return false; // en caso de error, asumimos que no está registrado
+    return false; 
   }
 };
+
+const authService = {
+  loginUser,
+  registerUser,
+  isEmailRegister
+};
+
+export default authService;

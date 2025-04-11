@@ -6,7 +6,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
-import { loginUser } from "../../../../services/AuthServices";
+import authService from "../../../../services/authServices";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -32,7 +32,7 @@ const Login = () => {
     }
 
     try {
-      const data = await loginUser(email, password);
+      const data = await authService.loginUser(email, password);
       Cookies.set("token", data.token, { expires: 1, secure: false });
       navigate("/dashboard");
     } catch (error) {
