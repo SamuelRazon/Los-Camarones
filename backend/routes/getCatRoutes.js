@@ -1,5 +1,8 @@
 const express = require('express');
 const Usuario = require('../models/User');
+const RubroPersonalizado = require('../models/personalized_category')
+const RubroDefault = require('../models/default_category')
+
 const { authMiddleware } = require('../middleware/auth');
 
 const router = express.Router();
@@ -8,8 +11,8 @@ router.get('/mycategories', authMiddleware, async (req, res) => {
   try {
     // Encontramos al usuario y poblamos los arrays de rubros
     const usuario = await Usuario.findById(req.user.id)
-      .populate('rubroPersonalizado')  
-      .populate('rubroDefault');
+      .populate('rubrosPersonalizados')  
+      .populate('rubrosDefault');
       
       /* El metodo populate intercambia los object id que tenemos guardados dentro de los arrays 
          rubrosdefault y personalizados por los documentos completos que corresponden a ese object id */
@@ -42,7 +45,7 @@ router.get('/mycategories', authMiddleware, async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Error obteniendo los rubros del usuario' });
+    res.status(500).json({ message: error.message });
   }
 });
 

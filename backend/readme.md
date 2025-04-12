@@ -66,7 +66,7 @@ Posibles errores:
 - 500: Internal Server Error - Error en el servidor
 ---
 
-`GET /api/auth/check-email`
+`POST /api/auth/check-email`
 
 Descripción: Verifica si el correo electrónico ya está registrado
 
