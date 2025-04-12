@@ -427,3 +427,83 @@ Posibles errores:
 - 404: Not Found - Rubro no encontrado
 - 500: Internal Server Error - Error en el servidor
 ---
+  ### Endpoints para los rubros del usuario
+
+  Para editar la lista de rubros del usuario, se pueden usar los siguientes endpoints:
+
+  `get /api/cat/mycategories`
+  Descripción: Devuelve todos los rubros del usuario autenticado
+
+  Parametros: Requiere token de autenticación en el encabezado
+
+  Ejemplo de body: Ninguno
+
+  Respuesta:
+  ```
+{
+  "rubrosPersonalizados": [
+      {
+          "id": "67f84dec79df3749da437173",
+          "nombre": "tesis",
+          "propiedades": [
+              "urldoc",
+              "nombre",
+              "fecha",
+              "titulo",
+              "año",
+              "doi"
+          ],
+          "propiedadtipo": [
+              "string",
+              "string",
+              "date",
+              "string",
+              "string",
+              "string"
+          ]
+      }
+  ],
+  "rubrosDefault": [
+      {
+          "id": "67eb8ab9101822e4446b1416",
+          "nombre": "datosPersonales",
+          "propiedades": [
+              "correo1",
+              "telPropio",
+              "domicilio",
+              "RFC"
+          ],
+          "propiedadtipo": []
+      }
+  ]
+}
+```
+
+Posibles errores:
+
+- 401: Unauthorized - Acceso denegado
+- 500: Internal Server Error - Error en el servidor
+---
+
+`PUT /api/cat/default-cats/:type`
+
+Descripción: Actualiza los rubros por defecto del usuario autenticado
+
+Parametros:
+- type: Tipo de rubro (`"investigador"`, `"maestro"` o `"personalizable"`)
+
+body: vacio
+
+Ejemplo de body: Ninguno
+
+Respuesta:
+```
+{
+  "message": "Rubros default añadidos con éxito"
+}
+
+posibles errores:
+- 400: Bad Request - Algunos rubros no existen
+- 401: Unauthorized - Acceso denegado
+- 500: Internal Server Error - Error en el servidor
+```

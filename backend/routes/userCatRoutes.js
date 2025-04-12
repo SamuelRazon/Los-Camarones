@@ -49,4 +49,47 @@ router.get('/mycategories', authMiddleware, async (req, res) => {
   }
 });
 
+// Asignar rubros default
+router.put('/default-cats/:type', authMiddleware, async (req,res) => {
+  const { type } = req.params
+  const usuario = await Usuario.findById(req.user.id)
+  
+  let rubrosID = []
+  switch (type) {
+    case 'investigador':
+      rubrosID = [ "67eb8ab9101822e4446b1416", "67eb8ab9101822e4446b141f", "67eb8ab9101822e4446b141e", "67eb8ab9101822e4446b1417", "67eb8ab9101822e4446b141d", "67eb8ab9101822e4446b1419", "67eb8ab9101822e4446b141c", "67eb8ab9101822e4446b141a", "67eb8ab9101822e4446b1418", "67eb8ab9101822e4446b141b", "67eb8ab9101822e4446b1420" ]    
+      break;
+    case 'maestro':
+      rubrosID = [ "67eb8ab9101822e4446b1416", "67eb8ab9101822e4446b1418", "67eb8ab9101822e4446b1419", "67eb8ab9101822e4446b1417", "67eb8ab9101822e4446b141c", "67eb8ab9101822e4446b141a" ]    
+      break;
+    case 'Personalizable':
+      rubrosID = [ "67eb8ab9101822e4446b1416" ]    
+
+      break;
+    default:
+      return res.status(400).json({ error: 'El tipo de usuario no es valido' })
+      
+    
+  }
+
+  try {
+    const rubros = await RubroDefault.find({ _id: { $in: rubrosID } });
+    if (rubros.length !== rubrosID.length) {
+      return res.status(400).json({ error: 'Algunos rubros no existen' });
+    }
+    
+    rubrosID.forEach(rubroID => {
+      if (!usuario.rubrosDefault.includes(rubroID)) {
+        usuario.rubrosDefault.push(rubroID);
+      }
+    })
+
+    await usuario.save()
+    res.status(200).json({ message: 'Rubros default añadidos correctamente', usuario });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error del servidor' });
+  }
+})
+
 module.exports = router;

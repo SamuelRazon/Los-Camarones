@@ -17,7 +17,7 @@ app.use(cors())
 app.use('/api/auth', authRoutes)
 app.use('/api/perCat', perCatRoutes)
 app.use('/api/documents', documentRoutes); // Registra las rutas
-app.use('/api/getCat', getCatRoutes); // Registra las rutas
+app.use('/api/cats', getCatRoutes); // Registra las rutas
 
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => console.log(`Server online in ${PORT}`))
