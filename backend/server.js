@@ -5,7 +5,7 @@ const connectDB = require('./config/db')
 const authRoutes = require('./routes/authRoutes')
 const perCatRoutes = require('./routes/perCatRoutes')
 const documentRoutes = require('./routes/docRoutes'); // Importa las rutas de documentos
-const getCatRoutes = require('./routes/getCatRoutes');
+const getCatRoutes = require('./routes/userCatRoutes');
 
 dotenv.config()
 connectDB()
