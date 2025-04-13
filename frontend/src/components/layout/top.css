@@ -1,0 +1,6 @@
+.picture-a:hover,
+.picture-gear:hover {
+  cursor: pointer;
+  color: #254975; 
+  transition: all 0.2s ease-in-out;
+}

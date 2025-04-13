@@ -1,12 +1,18 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFilePdf, faPlus, faShapes, faStar } from "@fortawesome/free-solid-svg-icons";
+import {
+  faFilePdf,
+  faPlus,
+  faShapes,
+  faStar,
+} from "@fortawesome/free-solid-svg-icons";
+import "./Sidebar.css";
 
 /* Encargado de hacer el diseño de la sección de la izquierda, en donde, por medio del back
-* debería mostrar un contenido especial para cada categoría que se tenga almacenada con sus 
-* respetivos documentos, a su vez, se tendrán los botónes que permitan guardar un nuevo documento y
-* crear un CV con formato PDF.
-*/
+ * debería mostrar un contenido especial para cada categoría que se tenga almacenada con sus
+ * respetivos documentos, a su vez, se tendrán los botónes que permitan guardar un nuevo documento y
+ * crear un CV con formato PDF.
+ */
 const Sidebar = ({ setCategoriaSeleccionada }) => {
   return (
     <div className="sidebar">
@@ -23,7 +29,9 @@ const Sidebar = ({ setCategoriaSeleccionada }) => {
         <FontAwesomeIcon icon={faStar} className="star" />
         <p onClick={() => setCategoriaSeleccionada("Docencia")}>Docencia</p>
         <FontAwesomeIcon icon={faStar} className="star" />
-        <p onClick={() => setCategoriaSeleccionada("Investigación")}>Investigación</p>
+        <p onClick={() => setCategoriaSeleccionada("Investigación")}>
+          Investigación
+        </p>
         <FontAwesomeIcon icon={faStar} className="star" />
         <p onClick={() => setCategoriaSeleccionada("Tutoría")}>Tutoría</p>
         <FontAwesomeIcon icon={faStar} className="star" />
