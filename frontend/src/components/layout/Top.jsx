@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleUser, faGear } from "@fortawesome/free-solid-svg-icons";
 import Modal from "../configuration/Modal";
 import "./Top.css";
+import authService from "../../services/authServices";
 
 /*Se encarga de mostrar el contenido de arriba de las opciones, en este caso,
  * la imagen (con su modal), la búsqueda (de los documentos con el back),
@@ -12,10 +13,23 @@ import "./Top.css";
 
 /*Activa los componentes de acuerdo si el usuario presiona el botón o el icono o el elemento*/
 const Top = ({ isConfigOpen, setIsConfigOpen }) => {
+  const handleProfile = async () => {
+    try {
+      const profileData = await authService.getProfile();
+      console.log("Perfil:", profileData);
+    } catch (error) {
+      console.error("Error al obtener el perfil:", error);
+    }
+  };
+
   return (
     <div className="top">
       <div className="picture">
-        <FontAwesomeIcon icon={faCircleUser} className="picture-a" />
+        <FontAwesomeIcon
+          icon={faCircleUser}
+          className="picture-a"
+          onClick={handleProfile}
+        />
       </div>
       <div className="search">
         <p>Buscar</p>
