@@ -7,7 +7,7 @@ const RubroDefaultSchema = new Schema({
   propiedadtipo: { 
     type: [String],
     required: true,
-    enum: ['string', 'number', 'date', 'boolean'] // Tipos de datos permitidos para cada propiedad
+    enum: ['string', 'number', 'date', 'boolean', 'enum'] // Tipos de datos permitidos para cada propiedad
   }
 }, { collection: 'rubrosDefault' });
 
