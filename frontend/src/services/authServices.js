@@ -90,13 +90,38 @@ import Cookies from "js-cookie";
       throw error;
     }
   };
+
+  const verifytoken = async () => {
+    try {
+      const token = Cookies.get("token"); // tomamos el token de la cookie
+  
+      const response = await fetch("http://localhost:5000/api/auth/", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token, // lo enviamos en el header Authorization
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error("No se pudo obtener el token o el token es inválido");
+      }
+  
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error al obtener el token:", error);
+      throw error;
+    }
+  };
   
 
   const authService = {
     loginUser,
     registerUser,
     isEmailRegister,
-    getProfile
+    getProfile,
+    verifytoken
   };
 
   export default authService;
