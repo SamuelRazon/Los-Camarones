@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleUser, faGear } from "@fortawesome/free-solid-svg-icons";
 import Modal from "../configuration/Modal";
@@ -15,13 +15,26 @@ import ProfileModal from "../configuration/profile/ProfileModal";
 const Top = ({ isConfigOpen, setIsConfigOpen }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
-  const handleProfile = async () => {
-    try {
-      const profileData = await authService.getProfile();
-      console.log("Perfil:", profileData);
+  const [profileData, setProfileData] = useState(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const data = await authService.getProfile();
+        setProfileData(data);
+      } catch (error) {
+        console.error("Error al obtener el perfil:", error);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  const handleProfile = () => {
+    if (profileData) {
       setIsProfileOpen(true);
-    } catch (error) {
-      console.error("Error al obtener el perfil:", error);
+    } else {
+      console.warn("Perfil aún no cargado");
     }
   };
 
@@ -36,8 +49,11 @@ const Top = ({ isConfigOpen, setIsConfigOpen }) => {
       </div>
 
       {/* Modal de perfil */}
-      {isProfileOpen && (
-        <ProfileModal onClose={() => setIsProfileOpen(false)} />
+      {isProfileOpen && profileData && (
+        <ProfileModal
+          onClose={() => setIsProfileOpen(false)}
+          profile={profileData}
+        />
       )}
 
       <div className="search">
