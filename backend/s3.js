@@ -19,4 +19,4 @@ const uploadFile = (file) => {
   return s3.upload(params).promise(); 
 };
 
-module.exports = { uploadFile };
+module.exports = { uploadFile, s3};
