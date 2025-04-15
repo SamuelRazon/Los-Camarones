@@ -209,3 +209,12 @@
       align-items: center;
   }
 }
+
+.toggle-password {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  color: #335C94;
+  cursor: pointer;
+}

@@ -209,3 +209,13 @@
       align-items: center;
   }
 }
+/* Estilo para el icono de ojo para mostrar/ocultar la contraseña */
+.input .toggle-password {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  color: #335C94;
+  font-size: 16px;
+  cursor: pointer;
+}

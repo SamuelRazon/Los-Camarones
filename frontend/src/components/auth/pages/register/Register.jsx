@@ -5,7 +5,13 @@ import Cookies from "js-cookie";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEnvelope, faLock, faUser } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEnvelope,
+  faLock,
+  faUser,
+  faEye,
+  faEyeSlash,
+} from "@fortawesome/free-solid-svg-icons";
 import authService from "../../../../services/authServices";
 
 const Register = () => {
@@ -13,6 +19,8 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [repassword, setRepassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
   const navigate = useNavigate();
 
   const samePassword = password === repassword;
@@ -65,8 +73,8 @@ const Register = () => {
       setPassword("");
       setRepassword("");
 
-      // Redirigir si quieres
-      // navigate("/dashboard");
+      // Redirigir en caso de requerirlo
+      // navigate("/login");
     } catch (error) {
       console.error("Error al registrar:", error);
       toast.error(error.message || "Error al registrar. Intenta nuevamente.");
@@ -103,20 +111,30 @@ const Register = () => {
             <div className="input">
               <FontAwesomeIcon icon={faLock} className="icon" />
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="Contraseña"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+              />
+              <FontAwesomeIcon
+                icon={showPassword ? faEyeSlash : faEye}
+                className="toggle-password"
+                onClick={() => setShowPassword(!showPassword)}
               />
             </div>
 
             <div className="input">
               <FontAwesomeIcon icon={faLock} className="icon" />
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="Confirmar contraseña"
                 value={repassword}
                 onChange={(e) => setRepassword(e.target.value)}
+              />
+              <FontAwesomeIcon
+                icon={showPassword ? faEyeSlash : faEye}
+                className="toggle-password"
+                onClick={() => setShowPassword(!showPassword)}
               />
             </div>
 
