@@ -194,7 +194,31 @@ router.get('/download/:id', authMiddleware, async (req, res) => {
 });
 
 
-// Endpoint para borrar un archivo
+/* aun sin funcionar
+router.put('/trash/:id', authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Se marca como eliminado
+    const document = await Document.findByIdAndUpdate(
+      id,
+      { isDeleted: true },
+      { new: true }
+    );
+
+    if (!document) {
+      return res.status(404).json({ error: 'Documento no encontrado' });
+    }
+
+    res.json({ message: 'Documento movido a la papelera', document });
+  } catch (error) {
+    console.error('Error al mover el documento a la papelera:', error);
+    res.status(500).json({ error: 'Error al mover el documento a la papelera' });
+  }
+});
+*/
+
+// Endpoint para borrar archivos
 router.delete('/delete/:id', authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
@@ -205,13 +229,13 @@ router.delete('/delete/:id', authMiddleware, async (req, res) => {
       return res.status(404).json({ error: 'Documento no encontrado' });
     }
 
-    // Configurar los parámetros para eliminar el archivo de S3
+    // Configurar los parametros para eliminar el archivo de S3
     const params = {
       Bucket: process.env.AWS_BUCKET_NAME,
-      Key: document.urldocumento.split('/').pop(), // Extrae el nombre del archivo desde la URL
+      Key: document.urldocumento.split('/').pop(), // Extraer el nombre url
     };
 
-    // Eliminar el archivo de S3
+    // Eliminar el documento de S3
     await s3.deleteObject(params).promise();
 
     // Eliminar el documento de la base de datos
