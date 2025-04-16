@@ -507,3 +507,94 @@ posibles errores:
 - 401: Unauthorized - Acceso denegado
 - 500: Internal Server Error - Error en el servidor
 ```
+---
+
+### Endpoints para documentos del usuario
+Para editar la lista de documentos del usuario, se pueden usar los siguientes endpoints:
+
+---
+
+`POST /api/documents/upload`
+PLACE HOLDER
+
+---
+
+`GET /api/documents/`
+
+Devuelve todos los documentos pertenecientes al usuario autenticado. También permite filtrar por rubro si se proporciona como query parameter.
+Parámetros:
+
+- Encabezado: Requiere token de autenticación (JWT) en Authorization
+
+- Query string opcional:
+
+  - rubro: ID del rubro para filtrar los documentos
+
+Ejemplo de body: Ninguno
+
+Respuesta:
+```
+[
+    {
+        "_id": "67ff23355a290818ebae0cf1",
+        "usuario": "67f43ad5234a3b94720af08c",
+        "rubro": "67ff230b5a290818ebae0cee",
+        "rubroModel": "rubrosDefault",
+        "propiedadesnombre": [
+            "dioma",
+            "gradodominio"
+        ],
+        "propiedades": [
+            "Español",
+            "Medio"
+        ],
+        "urldocumento": "https://gestor-archivos.s3.amazonaws.com/02f6426f-0c8b-4ebe-860b-215b93f05db4-V%20de%20gowin.pdf",
+        "adjunto": true,
+        "fechadealta": "2025-04-16T03:25:41.516Z",
+        "__v": 0
+    }
+]
+```
+Posibles errores:
+- 401: Unauthorized - Acceso denegado
+- 500: Internal Server Error - Error en el servidor
+
+---
+`GET /api/documents/:id`
+
+Descripción: Devuelve un documento específico del usuario autenticado
+
+Parametros:
+
+- id: ID del documento
+- Encabezado: Requiere token de autenticación (JWT) en Authorization
+
+Ejemplo de body: Ninguno
+
+Respuesta:
+```
+{
+    "_id": "67ff23355a290818ebae0cf1",
+    "usuario": "67f43ad5234a3b94720af08c",
+    "rubro": "67ff230b5a290818ebae0cee",
+    "rubroModel": "rubrosDefault",
+    "propiedadesnombre": [
+        "dioma",
+        "gradodominio"
+    ],
+    "propiedades": [
+        "Español",
+        "Medio"
+    ],
+    "urldocumento": "https://gestor-archivos.s3.amazonaws.com/02f6426f-0c8b-4ebe-860b-215b93f05db4-V%20de%20gowin.pdf",
+    "adjunto": true,
+    "fechadealta": "2025-04-16T03:25:41.516Z",
+    "__v": 0
+}
+```
+
+Posibles errores:
+- 401: Unauthorized - Acceso denegado
+- 404: Not Found - Documento no encontrado
+- 500: Internal Server Error - Error en el servidor
+---
