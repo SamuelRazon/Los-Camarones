@@ -3,6 +3,7 @@ import Login from "./components/auth/pages/login/Login";
 import Dashboard from "./pages/main/Dashboard";
 import PrivateRoute from "./components/auth/PrivateRoute";
 import NotFound from "./pages/notfound/NotFound";
+import RedirectIfAuthenticated from "./components/auth/RedirectIfAuthenticated";
 /*import Docencia from "./components/category/Docencia";
 import Modal from "./components/configuration/Modal";*/
 
@@ -24,7 +25,9 @@ const router = createBrowserRouter([
     path: "/register",
     element: (
       <div>
-        <Register />
+        <RedirectIfAuthenticated>
+          <Register />
+        </RedirectIfAuthenticated>
       </div>
     ),
   },
@@ -32,7 +35,9 @@ const router = createBrowserRouter([
     path: "/login",
     element: (
       <div>
-        <Login />
+        <RedirectIfAuthenticated>
+          <Login />
+        </RedirectIfAuthenticated>
       </div>
     ),
   },
