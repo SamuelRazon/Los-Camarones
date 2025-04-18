@@ -18,7 +18,10 @@ router.get('/download/:docId', authMiddleware, async (req, res) => {
     if (document.usuario.toString() !== req.user.id) {
       return res.status(403).json({ error: 'No autorizado para descargar este documento' });
     }
-
+    if (document.adjunto === false) {
+      return res.status(400).json({ error: 'Este documento no tiene ningún archivo adjunto' });
+    }
+        
     /* Obtener la key del archivo
     * La key en pocas palabras es el nombre interno que tiene el archivo dentro del bucket de s3
     * Tipo

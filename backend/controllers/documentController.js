@@ -1,4 +1,3 @@
-// Lógica para recibir el archivo, guardarlo en S3 y almacenar toda la info en Mongo
 const { uploadFile } = require('../s3');
 const Document = require('../models/Document');
 
@@ -14,24 +13,30 @@ const uploadDocument = async (req, res) => {
     const usuarioId = req.user.id;
 
     // Validaciones básicas
-    if (!rubro || !rubroModel || !propiedadesnombre || !propiedades || !file) {
-      return res.status(400).json({ error: 'Faltan campos obligatorios o archivo' });
+    if (!rubro || !rubroModel || !propiedadesnombre || !propiedades) {
+      return res.status(400).json({ error: 'Faltan campos obligatorios' });
     }
 
-    // Subir el archivo a S3
-    const result = await uploadFile(file);
-
-    // Crear nuevo documento
-    const newDoc = new Document({
+    // Crear el objeto del nuevo documento
+    const docData = {
       usuario: usuarioId,
       rubro,
       rubroModel,
-      propiedadesnombre: JSON.parse(propiedadesnombre), 
-      propiedades: JSON.parse(propiedades), /* Las propiedades deben ser en string */
-      urldocumento: result.Location,
-      adjunto: true // Se demuestra que si existe un archivo subido
-    });
+      propiedadesnombre: JSON.parse(propiedadesnombre),
+      propiedades: JSON.parse(propiedades)
+    };
 
+    // Si existe un archivo, se sube al s3, si no, simplemente se pone que no se adjunto nada
+    if (file) {
+      const result = await uploadFile(file);
+      docData.urldocumento = result.Location;
+      docData.adjunto = true;
+    } else {
+      docData.adjunto = false;
+    }
+
+    // Crear y guardar el documento
+    const newDoc = new Document(docData);
     await newDoc.save();
 
     res.status(201).json({ message: 'Documento subido correctamente', document: newDoc });
