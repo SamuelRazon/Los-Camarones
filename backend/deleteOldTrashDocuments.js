@@ -5,13 +5,6 @@ require('dotenv').config();
 
 const deleteOldTrashDocuments = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-
-    console.log('Conectado a la base de datos');
-
     // Calcular la fecha límite (30 dias)
     const fechaLimite = new Date();
     fechaLimite.setDate(fechaLimite.getDate() - 30);
@@ -43,7 +36,7 @@ const deleteOldTrashDocuments = async () => {
     }
 
     console.log('Eliminación de documentos antiguos completada');
-    mongoose.connection.close();
+
   } catch (error) {
     console.error('Error al eliminar documentos antiguos:', error);
     mongoose.connection.close();
