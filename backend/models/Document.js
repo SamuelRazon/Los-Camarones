@@ -12,7 +12,8 @@ const DocumentSchema = new mongoose.Schema({
   propiedadesnombre: { type: [String], required: true }, //Todos los array de propiedades deben de tener la misma cantidad de indices
   propiedades: { type: [Schema.Types.Mixed], required: true },
   adjunto: { type: Boolean, default: false },
-  urldocumento: { type: String }
+  urldocumento: { type: String },
+  fechadepapelera: {type: Date, default: null}
 });
 
 module.exports = mongoose.model('Documentos', DocumentSchema);

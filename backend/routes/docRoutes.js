@@ -30,10 +30,10 @@ router.get('/', authMiddleware, async (req, res) => {
 
   
   try {
-    const filtro = { usuario: userId}
-    if (rubro){
-      filtro.rubro = rubro
-    }
+    const filtro = {
+      usuario: userId,
+      fechadepapelera: null
+    };
 
     const documentos = await Document.find(filtro)
 
