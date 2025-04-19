@@ -6,7 +6,8 @@ const RubroPersonalizado = require('../models/personalized_category')
 const { authMiddleware } = require('../middleware/auth')
 const router = express.Router()
 
-
+const AWS = require('aws-sdk');
+const Document = require('../models/Document');
 
 
 
