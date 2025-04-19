@@ -81,4 +81,27 @@ router.delete('/delete/:id', authMiddleware, async (req, res) => {
 });
 
 
+// endpoint para mover documentos a la papelera
+router.put('/trash/:id', authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Marca el documento como eliminado y registra la fecha de la papelera
+    const document = await Document.findByIdAndUpdate(
+      id,
+      { fechadepapelera: new Date() },
+      { new: true }
+    );
+
+    if (!document) {
+      return res.status(404).json({ error: 'Documento no encontrado' });
+    }
+
+    res.json({ message: 'Documento movido a la papelera', document });
+  } catch (error) {
+    console.error('Error al mover el documento a la papelera:', error);
+    res.status(500).json({ error: 'Error al mover el documento a la papelera' });
+  }
+});
+
 module.exports = router;
