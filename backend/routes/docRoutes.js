@@ -119,5 +119,28 @@ router.get('/trash', authMiddleware, async (req, res) => {
   }
 });
 
+// endpoint para restaurar documentos de la papelera
+router.put('/restore/:id', authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Restaurar el documento Se elimina la fecha de la papelera
+    const document = await Document.findByIdAndUpdate(
+      id,
+      { fechadepapelera: null },
+      { new: true }
+    );
+
+    if (!document) {
+      return res.status(404).json({ error: 'Documento no encontrado' });
+    }
+
+    res.json({ message: 'Documento restaurado', document });
+  } catch (error) {
+    console.error('Error al restaurar el documento:', error);
+    res.status(500).json({ error: 'Error al restaurar el documento' });
+  }
+});
+
 
 module.exports = router;
