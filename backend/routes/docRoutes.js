@@ -104,4 +104,20 @@ router.put('/trash/:id', authMiddleware, async (req, res) => {
   }
 });
 
+// endpoint para listar documentos en la papelera
+router.get('/trash', authMiddleware, async (req, res) => {
+  try {
+    const documents = await Document.find({
+      usuario: req.user.id,
+      fechadepapelera: { $ne: null }, 
+    });
+
+    res.json({ documents });
+  } catch (error) {
+    console.error('Error al obtener documentos en la papelera:', error);
+    res.status(500).json({ error: 'Error al obtener documentos en la papelera' });
+  }
+});
+
+
 module.exports = router;
