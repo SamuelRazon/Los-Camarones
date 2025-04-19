@@ -7,8 +7,6 @@ const { authMiddleware } = require('../middleware/auth')
 const router = express.Router()
 
 
-const AWS = require('aws-sdk');
-const Document = require('../models/Document');
 
 
 
@@ -190,61 +188,6 @@ router.get('/download/:id', authMiddleware, async (req, res) => {
   } catch (error) {
     console.error('Error al generar la URL de descarga:', error);
     res.status(500).json({ error: 'Error al generar la URL de descarga' });
-  }
-});
-
-
-/* aun sin funcionar
-router.put('/trash/:id', authMiddleware, async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    // Se marca como eliminado
-    const document = await Document.findByIdAndUpdate(
-      id,
-      { isDeleted: true },
-      { new: true }
-    );
-
-    if (!document) {
-      return res.status(404).json({ error: 'Documento no encontrado' });
-    }
-
-    res.json({ message: 'Documento movido a la papelera', document });
-  } catch (error) {
-    console.error('Error al mover el documento a la papelera:', error);
-    res.status(500).json({ error: 'Error al mover el documento a la papelera' });
-  }
-});
-*/
-
-// Endpoint para borrar archivos
-router.delete('/delete/:id', authMiddleware, async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    // Busca el documento en la base de datos
-    const document = await Document.findById(id);
-    if (!document) {
-      return res.status(404).json({ error: 'Documento no encontrado' });
-    }
-
-    // Configurar los parametros para eliminar el archivo de S3
-    const params = {
-      Bucket: process.env.AWS_BUCKET_NAME,
-      Key: document.urldocumento.split('/').pop(), // Extraer el nombre url
-    };
-
-    // Eliminar el documento de S3
-    await s3.deleteObject(params).promise();
-
-    // Eliminar el documento de la base de datos
-    await Document.findByIdAndDelete(id);
-
-    res.json({ message: 'Archivo eliminado correctamente' });
-  } catch (error) {
-    console.error('Error al eliminar el archivo:', error);
-    res.status(500).json({ error: 'Error al eliminar el archivo' });
   }
 });
 
