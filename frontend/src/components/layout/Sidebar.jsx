@@ -8,35 +8,31 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import "./Sidebar.css";
 import DocumentModal from "../configuration/documents/DocumentModal";
+import NewCategoryModal from "../../components/configuration/modales/NewCategoryModal";
 
-/* Encargado de hacer el diseño de la sección de la izquierda, en donde, por medio del back
- * debería mostrar un contenido especial para cada categoría que se tenga almacenada con sus
- * respetivos documentos, a su vez, se tendrán los botónes que permitan guardar un nuevo documento y
- * crear un CV con formato PDF.
- */
 const Sidebar = ({ setCategoriaSeleccionada }) => {
-
   const [isConfigOpen, setIsConfigOpen] = useState(false);
+  const [isNewCategoryOpen, setIsNewCategoryOpen] = useState(false); // Nuevo estado
 
   return (
-    <div className="sidebar"> {/* Encabezado */}
+    <div className="sidebar">
       {/* Botón de nuevo documento */}
       <div className="button" onClick={() => setIsConfigOpen(true)}>
-        <FontAwesomeIcon icon={faPlus} className="button-plus" 
-        />
+        <FontAwesomeIcon icon={faPlus} className="button-plus" />
         <p>Nuevo Documento</p>
       </div>
 
-      {/* Activa el modal de nuevo documento */}
       {isConfigOpen && <DocumentModal onClose={() => setIsConfigOpen(false)} />}
+      {isNewCategoryOpen && (
+        <NewCategoryModal onClose={() => setIsNewCategoryOpen(false)} />
+      )}
 
-      {/* Mostrar los documentos con base a sus respectivas categorías, por el momento, ta raro */}
       <div className="category">
         <FontAwesomeIcon icon={faShapes} className="shapes" />
         <p>Categoría</p>
         <div className="underline"></div>
       </div>
-      {/* Cambia la categoría de acuerdo a lo que toques, por el momento, solo es un ejemplo raro */}
+
       <div className="subcategory">
         <FontAwesomeIcon icon={faStar} className="star" />
         <p onClick={() => setCategoriaSeleccionada("Docencia")}>Docencia</p>
@@ -52,14 +48,13 @@ const Sidebar = ({ setCategoriaSeleccionada }) => {
         <p>Gestión</p>
 
         {/* Botón de nueva categoría */}
-        <div className="newcategory">
+        <div className="newcategory" onClick={() => setIsNewCategoryOpen(true)}>
           <div className="underline"></div>
           <FontAwesomeIcon icon={faPlus} className="plus" />
           <p>Añadir Categoría</p>
         </div>
       </div>
 
-      {/* Botón de crear un CV */}
       <div className="buttonCV">
         <FontAwesomeIcon icon={faFilePdf} className="move" />
         <p>Generar CV</p>
