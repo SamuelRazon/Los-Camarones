@@ -6,8 +6,8 @@
     width: 100vw;
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.5);
-    justify-content: flex-start;
-    align-items: flex-start;
+    justify-content: center;
+    align-items: center;
     z-index: 1000;
 }
 
@@ -15,8 +15,7 @@
     background: #fff;
     padding: 30px;
     border-radius: 10px;
-    margin: 80px 340px;  
-    width: 100%;
+    width: 635px;
     height: auto;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
     position: relative;
@@ -33,21 +32,47 @@
     font-size: 20px;
 }
 
+.dropbox-category{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.dropbox-category p{
+    font-weight: bold;
+    margin-right: 12px;
+}
+
+.dropbox-category select{
+    padding: 5px;
+    border: 1px solid #335C94;
+    color: #000;
+    background-color: #fff;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.top-icons .helpicon,
+.top-icons .closemodal {
+    margin-left: 10px;
+    cursor: pointer;
+}
+
 /* Iconos */
-.help-icon,
-.close-icon {
+.helpicon,
+.closemodal {
   color: #464646;
   font-size: 20px;
   cursor: pointer;
   transition: color 0.3s ease, transform 0.2s ease;
 }
 
-.help-icon:hover {
+.helpicon:hover {
   color: #335C94;
   transform: scale(1.1);
 }
 
-.close-icon:hover {
+.closemodal:hover {
   color: red;
   transform: scale(1.1);
 }
@@ -73,9 +98,11 @@
 .newdocuments-button{
     display: flex;
     line-height: 45px;
-    width: 120px;
+    width: 100px;
     height: 45px;
+    border: none;
     text-align: center;
+
     background: #335C94;
     color: #FFFFFF;
     cursor: pointer;
@@ -116,6 +143,29 @@
     font-size: 16px;
 }
 
+.input-name {
+    width: 100%;
+    padding: 8px;
+    margin-top: 10px;
+    margin-bottom: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    transition: border-color 0.3s ease;
+    flex: 2;
+}
+  
+.input-name:hover {
+    border-color: #335c94;
+}
+
+.documents-input {
+    width: 100%;
+    border: 1px solid #999;
+    border-radius: 6px;
+    padding: 8px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
 
 .documents-date{
     display: flex;
@@ -138,23 +188,30 @@
     font-size: 16px;
 }
 
+.save-moving{
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    text-align: center;
+    font-size: 16px;
+}
+
 .save-documents{
     display: flex;
     line-height: 45px;
-    width: 150px;
+    width: 120px;
     height: 45px;
-    text-align: center;
+
+    border: none;
     background: #335C94;
     color: #FFFFFF;
     cursor: pointer;
     transition: all .4s ease-in-out;
-    margin: 30px 320px; /*Este mueve el lugar del botón, pero no le muevan más*/
     border-radius: 5px;
 }
 
-.save-documents p{
-    font-size: 16px;
-    text-align: center;
+.save-documents:hover{
+    background-color: #254975;
 }
 
 .moving{

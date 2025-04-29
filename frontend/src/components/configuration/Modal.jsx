@@ -42,7 +42,7 @@ const Modal = ({ onClose }) => {
           {" "}
           {/*Cambio del modo oscuro (luego buscar como se hace bien esto)*/}
           <p>Modo</p>
-          <div className="radio-group">
+          <div className="radioo-group">
             <label>
               <input type="radio" name="modo" value="claro" defaultChecked />
               Claro

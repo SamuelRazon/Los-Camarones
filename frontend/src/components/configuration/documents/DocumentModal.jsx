@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from "react";
 import "./docu.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -13,23 +13,34 @@ import {
  */
 
 const DocumentModal = ({ onClose}) => {
+    const [nombre, setNombre] = useState("");
+
     return (
         <div className='documents-modal-overlay'>
             <div className='documents-modal'>
                 {/* Encabezado */}
                 <div className='documents-top'>
                     <h3>Nuevo documento</h3>
-                    {/*Por el momento no estara, pero debe estar aquí el Dropwon, de las categorías
-                    * se necesita una extensión para hacerlo, de acuerdo a lo que búsque
-                    */}
-                    <FontAwesomeIcon icon={faQuestionCircle} className="help-icon" />
-                    {/* Botón de cerrar */}
-                    <FontAwesomeIcon
-                        icon={faXmark}
-                        className="cerrar-modal"
-                        title="Cerrar"
-                        onClick={onClose}
-                    />
+                    <div className="dropbox-category">
+                        <p>Categoría:</p>
+                        <select name="" id="">
+                            <option value="do" defaultChecked> Docencia</option>
+                            <option value="in"> Investigación</option>
+                            <option value="tu"> Tutorías</option>
+                            <option value="cl"> Clases</option>
+                            <option value="ge"> Gestión</option>
+                        </select>
+                    </div>
+                    <div className='top-icons'>
+                        <FontAwesomeIcon icon={faQuestionCircle} className="helpicon" />
+                        {/* Botón de cerrar */}
+                        <FontAwesomeIcon
+                            icon={faXmark}
+                            className="closemodal"
+                            title="Cerrar"
+                            onClick={onClose}
+                        />
+                    </div>
                 </div>
                 {/* Línea horizontal*/}
                 <div className="documents-underline"></div>
@@ -38,32 +49,35 @@ const DocumentModal = ({ onClose}) => {
                 {/* Botón de subir archivo */}
                 <div className='newdocument-button'>
                     <p>Archivo: </p>
-                    <div className='newdocuments-button'>
-                        <FontAwesomeIcon icon={faFileArrowUp} className='upload-button'/>
-                        <a>Subir</a>
-                    </div>
+                    <button className='newdocuments-button'>
+                        <FontAwesomeIcon icon={faFileArrowUp} className='upload-button'/> Subir
+                    </button>
                 </div>
-                <br />
                 {/* Escritura del nombre */}
                 <div className='documents-name'>
-                    <p>Nombre: </p>
-                    <span>
-                        {"Agregar texto"}
-                    </span>
+                    <p>Nombre:*</p>
+                    <input
+                        type="text"
+                        className="input-name documents-input"
+                        placeholder="Nombre del documento"
+                        value={nombre}
+                        onChange={(e) => setNombre(e.target.value)}
+                    />
                 </div>
-                <br />
                 {/* Escritura de la fecha */}
                 <div className='documents-date'>
-                    <p>Fecha: </p>
-                    <span>
-                        {"Agregar texto"}
-                    </span>
+                    <p>--Fecha:*</p>
+                    <input
+                        type="text"
+                        className="input-name documents-input"
+                        placeholder="Fecha"
+                    />
                 </div>
-                <br />
                 {/* Botón de guardar */}
-                <div className='save-documents'>
-                    <FontAwesomeIcon icon={faFloppyDisk} className='moving' />
-                    <p>Guardar</p>
+                <div className="save-moving"> 
+                    <button className='save-documents'>
+                        <FontAwesomeIcon icon={faFloppyDisk} className='moving' />Guardar
+                    </button>
                 </div>
             </div>  {/* Termina el div documents-modal */}
         </div>
