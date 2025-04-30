@@ -37,7 +37,7 @@
   }
   
   .sidebar .subcategory {
-    max-height: 200px; /* Ajusta según necesidad */
+    max-height: 200px; 
     overflow-y: auto;
     padding-right: 4px;
     margin-top: 10px;
