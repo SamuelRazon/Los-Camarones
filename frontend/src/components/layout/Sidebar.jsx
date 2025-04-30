@@ -1,4 +1,3 @@
-// Sidebar.js
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilePdf, faPlus, faShapes } from "@fortawesome/free-solid-svg-icons";
@@ -32,14 +31,16 @@ const Sidebar = ({ setCategoriaSeleccionada }) => {
       <div className="category">
         <FontAwesomeIcon icon={faShapes} className="shapes" />
         <p>Categoría</p>
-        <div className="underline"></div>
       </div>
+      <div className="underline"></div>
 
-      {/* Categorías desde el backend */}
-      <CategoryList
-        setCategoriaSeleccionada={setCategoriaSeleccionada}
-        refresh={refreshCategorias}
-      />
+      {/* Contenedor scrollable para categorías */}
+      <div className="subcategory">
+        <CategoryList
+          setCategoriaSeleccionada={setCategoriaSeleccionada}
+          refresh={refreshCategorias}
+        />
+      </div>
 
       <div className="newcategory" onClick={() => setIsNewCategoryOpen(true)}>
         <div className="underline"></div>

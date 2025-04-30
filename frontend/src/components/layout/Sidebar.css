@@ -36,3 +36,31 @@
     background-color: #e0e7ef;
   }
   
+  .sidebar .subcategory {
+    max-height: 200px; /* Ajusta según necesidad */
+    overflow-y: auto;
+    padding-right: 4px;
+    margin-top: 10px;
+    scrollbar-color: #ccc #f1f1f1; /* Firefox */
+    scrollbar-width: thin;
+  }
+  
+  /* Scrollbar para WebKit (Chrome, Edge, Safari) */
+  .sidebar .subcategory::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .sidebar .subcategory::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+  
+  .sidebar .subcategory::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+  }
+  
+  .sidebar .subcategory::-webkit-scrollbar-thumb:hover {
+    background: #bbb;
+  }
+  
