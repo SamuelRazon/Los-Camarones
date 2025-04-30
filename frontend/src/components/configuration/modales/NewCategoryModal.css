@@ -141,7 +141,7 @@
   }
   
   .btn-save {
-    background-color: #007bff;
+    background-color: #335C94;
     color: white;
     padding: 10px 20px;
     border: none;
@@ -151,7 +151,8 @@
   }
   
   .btn-save:hover {
-    background-color: #0056b3;
+    background-color: #254975;
+    cursor: pointer;
   }
   
   /* Etiqueta */
@@ -177,3 +178,11 @@
     border-color: #335c94;
   }
   
+  .icon-close {
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  
+  .icon-close:hover {
+    color: #c0392b; 
+  }

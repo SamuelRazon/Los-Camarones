@@ -1,17 +1,22 @@
 import Cookies from "js-cookie";
 
-const createCategory = async ({ nombre, descripcion }) => {
+const createCategory = async ({ nombre, propiedades, propiedadesTipo, propiedadesObligatorias }) => {
   try {
-    const url = "http://localhost:5000/api/rubros";
-    const token = Cookies.get("token"); // tomamos el token de la cookie
+    const url = "http://localhost:5000/api/perCat";
+    const token = Cookies.get("token");
 
-    const payload = { nombre, descripcion };
+    const payload = {
+      nombre,
+      propiedades,
+      propiedadtipo: propiedadesTipo,
+      propiedadesobligatorio: propiedadesObligatorias,
+    };
 
     const response = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token, // enviamos el token en el header
+        Authorization: token,
       },
       body: JSON.stringify(payload),
     });
