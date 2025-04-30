@@ -1,22 +1,24 @@
+// Sidebar.js
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faFilePdf,
-  faPlus,
-  faShapes,
-  faStar,
-} from "@fortawesome/free-solid-svg-icons";
-import "./Sidebar.css";
+import { faFilePdf, faPlus, faShapes } from "@fortawesome/free-solid-svg-icons";
 import DocumentModal from "../configuration/documents/DocumentModal";
 import NewCategoryModal from "../../components/configuration/modales/NewCategoryModal";
+import CategoryList from "../configuration/modales/updatelist/CategoryList";
+import "./Sidebar.css";
 
 const Sidebar = ({ setCategoriaSeleccionada }) => {
   const [isConfigOpen, setIsConfigOpen] = useState(false);
-  const [isNewCategoryOpen, setIsNewCategoryOpen] = useState(false); // Nuevo estado
+  const [isNewCategoryOpen, setIsNewCategoryOpen] = useState(false);
+  const [refreshCategorias, setRefreshCategorias] = useState(false);
+
+  const handleNewCategoryClose = () => {
+    setIsNewCategoryOpen(false);
+    setRefreshCategorias((prev) => !prev);
+  };
 
   return (
     <div className="sidebar">
-      {/* Botón de nuevo documento */}
       <div className="button" onClick={() => setIsConfigOpen(true)}>
         <FontAwesomeIcon icon={faPlus} className="button-plus" />
         <p>Nuevo Documento</p>
@@ -24,7 +26,7 @@ const Sidebar = ({ setCategoriaSeleccionada }) => {
 
       {isConfigOpen && <DocumentModal onClose={() => setIsConfigOpen(false)} />}
       {isNewCategoryOpen && (
-        <NewCategoryModal onClose={() => setIsNewCategoryOpen(false)} />
+        <NewCategoryModal onClose={handleNewCategoryClose} />
       )}
 
       <div className="category">
@@ -33,26 +35,16 @@ const Sidebar = ({ setCategoriaSeleccionada }) => {
         <div className="underline"></div>
       </div>
 
-      <div className="subcategory">
-        <FontAwesomeIcon icon={faStar} className="star" />
-        <p onClick={() => setCategoriaSeleccionada("Docencia")}>Docencia</p>
-        <FontAwesomeIcon icon={faStar} className="star" />
-        <p onClick={() => setCategoriaSeleccionada("Investigación")}>
-          Investigación
-        </p>
-        <FontAwesomeIcon icon={faStar} className="star" />
-        <p onClick={() => setCategoriaSeleccionada("Tutoría")}>Tutoría</p>
-        <FontAwesomeIcon icon={faStar} className="star" />
-        <p>Clases</p>
-        <FontAwesomeIcon icon={faStar} className="star" />
-        <p>Gestión</p>
+      {/* Categorías desde el backend */}
+      <CategoryList
+        setCategoriaSeleccionada={setCategoriaSeleccionada}
+        refresh={refreshCategorias}
+      />
 
-        {/* Botón de nueva categoría */}
-        <div className="newcategory" onClick={() => setIsNewCategoryOpen(true)}>
-          <div className="underline"></div>
-          <FontAwesomeIcon icon={faPlus} className="plus" />
-          <p>Añadir Categoría</p>
-        </div>
+      <div className="newcategory" onClick={() => setIsNewCategoryOpen(true)}>
+        <div className="underline"></div>
+        <FontAwesomeIcon icon={faPlus} className="plus" />
+        <p>Añadir Categoría</p>
       </div>
 
       <div className="buttonCV">
