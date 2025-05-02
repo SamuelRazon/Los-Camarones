@@ -8,17 +8,17 @@ const router = express.Router()
 
 // Crear un nuevo rubro personalizado
 router.post('/', authMiddleware, async (req, res) => {
-  const { nombre, propiedades, propiedadtipo, propiedadesobligatorio } = req.body
+  const { nombre, propiedades, propiedadtipo, propiedadobligatorio } = req.body
 
   /* Este if se asegura que los espacios de dichas propiedades si tengan algun contenido */
   if (!nombre || !Array.isArray(propiedades) || propiedades.length === 0 ||
-      !Array.isArray(propiedadtipo) || !Array.isArray(propiedadesobligatorio)) {
+      !Array.isArray(propiedadtipo) || !Array.isArray(propiedadobligatorio)) {
     return res.status(400).json({ error: 'Nombre y propiedades son requeridos' })
   }
 
   /* Este if se asegura que los arrays propiedades tengan la misma cantidad de indices */
-  if (propiedades.length !== propiedadtipo.length || propiedades.length !== propiedadesobligatorio.length) {
-    return res.status(400).json({ error: 'Los arrays propiedades, propiedadtipo y propiedadesobligatorio deben tener la misma longitud' });
+  if (propiedades.length !== propiedadtipo.length || propiedades.length !== propiedadobligatorio.length) {
+    return res.status(400).json({ error: 'Los arrays propiedades, propiedadtipo y propiedadobligatorio deben tener la misma longitud' });
   }
 
   try {
@@ -27,7 +27,7 @@ router.post('/', authMiddleware, async (req, res) => {
       nombre,
       propiedades,
       propiedadtipo,
-      propiedadesobligatorio
+      propiedadobligatorio
     })
     const rubroGuardado = await nuevoRubro.save()
 
@@ -76,7 +76,7 @@ router.get('/:id', authMiddleware, async (req, res) => {
 
 // Actualizar un rubro personalizado (Ta disponible, pero cuidadito, siento que faltan cosas)
 router.put('/:id', authMiddleware, async (req, res) => {
-  const { nombre, propiedades, propiedadtipo, propiedadesobligatorio } = req.body
+  const { nombre, propiedades, propiedadtipo, propiedadobligatorio } = req.body
 
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     return res.status(400).json({ error: 'ID inválido' });
@@ -89,7 +89,7 @@ router.put('/:id', authMiddleware, async (req, res) => {
     rubro.nombre = nombre || rubro.nombre
     rubro.propiedades = propiedades || rubro.propiedades
     rubro.propiedadtipo = propiedadtipo || rubro.propiedadtipo
-    rubro.propiedadesobligatorio = propiedadesobligatorio || rubro.propiedadesobligatorio
+    rubro.propiedadobligatorio = propiedadobligatorio || rubro.propiedadobligatorio
     const rubroActualizado = await rubro.save()
     res.json(rubroActualizado)
   } catch (error) {
