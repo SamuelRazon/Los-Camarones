@@ -26,14 +26,14 @@ const createCategory = async ({ nombre, propiedades, propiedadesTipo, propiedade
       nombre,
       propiedades,
       propiedadtipo: propiedadesTipo,
-      propiedadesobligatorio: propiedadesObligatorias,
+      propiedadobligatorio: propiedadesObligatorias,
     };
 
     const response = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token,
+        Authorization: token, 
       },
       body: JSON.stringify(payload),
     });
@@ -41,7 +41,7 @@ const createCategory = async ({ nombre, propiedades, propiedadesTipo, propiedade
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.message || "No se pudo crear la categoría");
+      throw new Error(data.error || "No se pudo crear la categoría");
     }
 
     return data;
