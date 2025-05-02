@@ -12,63 +12,34 @@ import categoryService from "../../../services/categoryServices";
 const DocumentModal = ({ onClose }) => {
   const [nombre, setNombre] = useState("");
   const [fecha, setFecha] = useState("");
-  const [categorias, setCategorias] = useState([]);
-  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("");
   const [archivo, setArchivo] = useState(null);
   const [archivoURL, setArchivoURL] = useState("");
+  const [categorias, setCategorias] = useState([]);
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("");
+  const [camposDinamicos, setCamposDinamicos] = useState({});
 
-  const [errorArchivo, setErrorArchivo] = useState(false);
-  const [errorNombre, setErrorNombre] = useState(false);
-  const [errorFecha, setErrorFecha] = useState(false);
+  const [errores, setErrores] = useState({
+    archivo: false,
+    nombre: false,
+    fecha: false,
+    dinamicos: {},
+  });
 
-  const handleArchivoChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setArchivo(file);
-      setArchivoURL(URL.createObjectURL(file));
-      setErrorArchivo(false);
-    }
-  };
-
-  const handleSubirClick = () => {
-    document.getElementById("inputArchivo").click();
-  };
-
-  const handleGuardar = () => {
-    let valid = true;
-
-    if (!archivo) {
-      setErrorArchivo(true);
-      valid = false;
-    } else {
-      setErrorArchivo(false);
-    }
-
-    if (!nombre.trim()) {
-      setErrorNombre(true);
-      valid = false;
-    } else {
-      setErrorNombre(false);
-    }
-
-    if (!fecha) {
-      setErrorFecha(true);
-      valid = false;
-    } else {
-      setErrorFecha(false);
-    }
-
-    if (!valid) return;
-
-    // Aquí iría la lógica para enviar al backend
-    console.log("Guardado exitosamente.");
-  };
+  const categoriaInfo = categorias.find(
+    (cat) => cat.nombre === categoriaSeleccionada
+  );
 
   useEffect(() => {
     const fetchCategorias = async () => {
       try {
         const data = await categoryService.getCategories();
-        setCategorias(data);
+        const normalizadas = data.map((cat) => ({
+          ...cat,
+          propiedades: cat.propiedades || [],
+          propiedadesTipo: cat.propiedadesTipo || [],
+          propiedadesObligatorias: cat.propiedadesObligatorias || [],
+        }));
+        setCategorias(normalizadas);
       } catch (error) {
         console.error("No se pudieron cargar las categorías:", error);
       }
@@ -77,16 +48,100 @@ const DocumentModal = ({ onClose }) => {
     fetchCategorias();
   }, []);
 
+  const handleArchivoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setArchivo(file);
+      setArchivoURL(URL.createObjectURL(file));
+      setErrores((prev) => ({ ...prev, archivo: false }));
+    }
+  };
+
+  const handleSubirClick = () => {
+    document.getElementById("inputArchivo").click();
+  };
+
+  const handleGuardar = () => {
+    let erroresTemp = {
+      archivo: !archivo,
+      nombre: !nombre.trim(),
+      fecha: !fecha,
+      dinamicos: {},
+    };
+
+    if (categoriaInfo) {
+      categoriaInfo.propiedades.forEach((prop, index) => {
+        const obligatorio =
+          categoriaInfo.propiedadesObligatorias?.[index] || false;
+        if (obligatorio && !camposDinamicos[prop]?.trim()) {
+          erroresTemp.dinamicos[prop] = true;
+        }
+      });
+    }
+
+    setErrores(erroresTemp);
+
+    const hayErrores =
+      erroresTemp.archivo ||
+      erroresTemp.nombre ||
+      erroresTemp.fecha ||
+      Object.values(erroresTemp.dinamicos).some((val) => val);
+
+    if (hayErrores) return;
+
+    // Aquí va la lógica para enviar al backend
+    console.log("Documento válido, listo para enviar.");
+  };
+
+  const renderCamposDinamicos = () => {
+    if (!categoriaInfo) return null;
+
+    return categoriaInfo.propiedades.map((prop, index) => {
+      if (["nombre", "fecha", "urldoc"].includes(prop)) return null;
+
+      const tipo = categoriaInfo.propiedadesTipo?.[index] || "text";
+      const obligatorio =
+        categoriaInfo.propiedadesObligatorias?.[index] || false;
+      const valor = camposDinamicos[prop] || "";
+      const error = errores.dinamicos[prop];
+
+      return (
+        <div className="documents-name" key={prop}>
+          <p className={error ? "input-error-text" : ""}>
+            {prop.charAt(0).toUpperCase() + prop.slice(1)}
+            {obligatorio && "*"}:
+          </p>
+          <input
+            type={tipo}
+            className={`input-name documents-input ${
+              error ? "input-error" : ""
+            }`}
+            value={valor}
+            onChange={(e) =>
+              setCamposDinamicos((prev) => ({
+                ...prev,
+                [prop]: e.target.value,
+              }))
+            }
+          />
+        </div>
+      );
+    });
+  };
+
   return (
     <div className="documents-modal-overlay">
       <div className="documents-modal">
         <div className="documents-top">
           <h3>Nuevo documento</h3>
           <div className="dropbox-category">
-            <p className={errorArchivo ? "input-error-text" : ""}>Categoría:</p>
+            <p>Categoría:</p>
             <select
               value={categoriaSeleccionada}
-              onChange={(e) => setCategoriaSeleccionada(e.target.value)}
+              onChange={(e) => {
+                setCategoriaSeleccionada(e.target.value);
+                setCamposDinamicos({});
+              }}
             >
               <option value="" disabled>
                 Selecciona una categoría
@@ -112,7 +167,7 @@ const DocumentModal = ({ onClose }) => {
         <div className="documents-underline"></div>
 
         <div className="newdocument-button">
-          <p className={errorArchivo ? "input-error-text" : ""}>Archivo:*</p>
+          <p className={errores.archivo ? "input-error-text" : ""}>Archivo:*</p>
           <button
             type="button"
             className="newdocuments-button"
@@ -130,7 +185,7 @@ const DocumentModal = ({ onClose }) => {
           />
           <input
             type="text"
-            className={`input-name ${errorArchivo ? "input-error" : ""}`}
+            className={`input-name ${errores.archivo ? "input-error" : ""}`}
             placeholder="Archivo seleccionado"
             value={archivo?.name || ""}
             readOnly
@@ -139,11 +194,11 @@ const DocumentModal = ({ onClose }) => {
         </div>
 
         <div className="documents-name">
-          <p className={errorNombre ? "input-error-text" : ""}>Nombre:*</p>
+          <p className={errores.nombre ? "input-error-text" : ""}>Nombre:*</p>
           <input
             type="text"
             className={`input-name documents-input ${
-              errorNombre ? "input-error" : ""
+              errores.nombre ? "input-error" : ""
             }`}
             placeholder="Nombre del documento"
             value={nombre}
@@ -152,16 +207,18 @@ const DocumentModal = ({ onClose }) => {
         </div>
 
         <div className="documents-date">
-          <p className={errorFecha ? "input-error-text" : ""}>Fecha:*</p>
+          <p className={errores.fecha ? "input-error-text" : ""}>Fecha:*</p>
           <input
             type="date"
             className={`input-name documents-input ${
-              errorFecha ? "input-error" : ""
+              errores.fecha ? "input-error" : ""
             }`}
             value={fecha}
             onChange={(e) => setFecha(e.target.value)}
           />
         </div>
+
+        {renderCamposDinamicos()}
 
         <div className="save-moving">
           <button className="save-documents" onClick={handleGuardar}>
