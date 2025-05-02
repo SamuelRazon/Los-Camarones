@@ -229,3 +229,17 @@
     font-size: 12px;
     margin-top: 5px;
   }
+  .newdocument-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .input-error {
+    border: 1px solid red !important;
+  }
+  
+  .input-error-text {
+    color: red !important;
+  }
+  
