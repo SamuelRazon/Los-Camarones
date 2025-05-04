@@ -65,13 +65,14 @@ const NewCategoryModal = ({ onClose }) => {
 
       const propiedadesObligatorias = fields.map((field) => field.required);
 
-      await categoryService.createCategory({
+      const data = await categoryService.createCategory({
         nombre,
         propiedades,
         propiedadesTipo,
         propiedadesObligatorias,
       });
 
+      console.log("Categoría creada:", data);
       toast.success("Categoría creada correctamente.");
       onClose();
     } catch (error) {

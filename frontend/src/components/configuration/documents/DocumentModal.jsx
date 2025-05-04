@@ -17,7 +17,6 @@ const DocumentModal = ({ onClose }) => {
   const [categorias, setCategorias] = useState([]);
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("");
   const [camposDinamicos, setCamposDinamicos] = useState({});
-
   const [errores, setErrores] = useState({
     archivo: false,
     nombre: false,
@@ -36,8 +35,8 @@ const DocumentModal = ({ onClose }) => {
         const normalizadas = data.map((cat) => ({
           ...cat,
           propiedades: cat.propiedades || [],
-          propiedadesTipo: cat.propiedadesTipo || [],
-          propiedadesObligatorias: cat.propiedadesObligatorias || [],
+          propiedadesTipo: cat.propiedadtipo || [],
+          propiedadesObligatorias: cat.propiedadobligatorio || [],
         }));
         setCategorias(normalizadas);
       } catch (error) {
@@ -47,6 +46,22 @@ const DocumentModal = ({ onClose }) => {
 
     fetchCategorias();
   }, []);
+
+  useEffect(() => {
+    if (categoriaInfo) {
+      // Inicializar campos dinámicos con valores predeterminados vacíos
+      const camposInicializados = categoriaInfo.propiedades.reduce(
+        (acc, prop) => {
+          if (prop !== "nombre" && prop !== "fecha") {
+            acc[prop] = ""; // Inicializar solo campos dinámicos
+          }
+          return acc;
+        },
+        {}
+      );
+      setCamposDinamicos(camposInicializados);
+    }
+  }, [categoriaInfo]);
 
   const handleArchivoChange = (e) => {
     const file = e.target.files[0];
@@ -62,6 +77,13 @@ const DocumentModal = ({ onClose }) => {
   };
 
   const handleGuardar = () => {
+    // Verificar valores de los inputs antes de proceder
+    console.log("Valor de nombre:", nombre);
+    console.log("Valor de fecha:", fecha);
+    console.log("Archivo seleccionado:", archivo?.name);
+    console.log("Campos dinámicos:", camposDinamicos);
+
+    // Validar errores antes de actualizar el estado
     let erroresTemp = {
       archivo: !archivo,
       nombre: !nombre.trim(),
@@ -71,38 +93,71 @@ const DocumentModal = ({ onClose }) => {
 
     if (categoriaInfo) {
       categoriaInfo.propiedades.forEach((prop, index) => {
+        if (prop === "nombre" || prop === "fecha") return; // Saltar los campos estáticos
+
         const obligatorio =
           categoriaInfo.propiedadesObligatorias?.[index] || false;
-        if (obligatorio && !camposDinamicos[prop]?.trim()) {
-          erroresTemp.dinamicos[prop] = true;
+        const tipo = categoriaInfo.propiedadesTipo?.[index] || "string";
+        const valor = camposDinamicos[prop] || ""; // Asegurarse de que el valor no sea undefined
+
+        // Verificar si el campo es obligatorio
+        if (obligatorio) {
+          if (tipo === "boolean" && typeof valor !== "boolean") {
+            erroresTemp.dinamicos[prop] =
+              "Este campo es obligatorio y debe ser un valor booleano.";
+          } else if (tipo !== "boolean" && !String(valor).trim()) {
+            erroresTemp.dinamicos[prop] =
+              "Este campo es obligatorio y no puede estar vacío.";
+          } else {
+            erroresTemp.dinamicos[prop] = false; // Si pasa la validación
+          }
         }
       });
     }
 
+    // Ahora actualizamos los errores en el estado
     setErrores(erroresTemp);
 
+    // Evaluar si hay errores antes de proceder
     const hayErrores =
       erroresTemp.archivo ||
       erroresTemp.nombre ||
       erroresTemp.fecha ||
       Object.values(erroresTemp.dinamicos).some((val) => val);
 
-    if (hayErrores) return;
-
-    // Aquí va la lógica para enviar al backend
-    console.log("Documento válido, listo para enviar.");
+    if (hayErrores) {
+      console.log("Hay errores en el formulario");
+      return;
+    }
   };
 
   const renderCamposDinamicos = () => {
     if (!categoriaInfo) return null;
 
+    const mapTipoHTML = (tipo) => {
+      switch (tipo) {
+        case "string":
+          return "text";
+        case "number":
+          return "number";
+        case "date":
+          return "date";
+        case "boolean":
+          return "checkbox";
+        default:
+          return "text";
+      }
+    };
+
     return categoriaInfo.propiedades.map((prop, index) => {
       if (["nombre", "fecha", "urldoc"].includes(prop)) return null;
 
-      const tipo = categoriaInfo.propiedadesTipo?.[index] || "text";
+      const tipoOriginal = categoriaInfo.propiedadesTipo?.[index] || "string";
+      const tipoInput = mapTipoHTML(tipoOriginal);
       const obligatorio =
         categoriaInfo.propiedadesObligatorias?.[index] || false;
-      const valor = camposDinamicos[prop] || "";
+      const valor =
+        camposDinamicos[prop] || (tipoInput === "checkbox" ? false : "");
       const error = errores.dinamicos[prop];
 
       return (
@@ -111,19 +166,35 @@ const DocumentModal = ({ onClose }) => {
             {prop.charAt(0).toUpperCase() + prop.slice(1)}
             {obligatorio && "*"}:
           </p>
-          <input
-            type={tipo}
-            className={`input-name documents-input ${
-              error ? "input-error" : ""
-            }`}
-            value={valor}
-            onChange={(e) =>
-              setCamposDinamicos((prev) => ({
-                ...prev,
-                [prop]: e.target.value,
-              }))
-            }
-          />
+          {tipoInput === "checkbox" ? (
+            <input
+              type="checkbox"
+              className={`documents-input-checkbox ${
+                error ? "input-error" : ""
+              }`}
+              checked={!!valor}
+              onChange={(e) =>
+                setCamposDinamicos((prev) => ({
+                  ...prev,
+                  [prop]: e.target.checked,
+                }))
+              }
+            />
+          ) : (
+            <input
+              type={tipoInput}
+              className={`input-name documents-input ${
+                error ? "input-error" : ""
+              }`}
+              value={valor}
+              onChange={(e) =>
+                setCamposDinamicos((prev) => ({
+                  ...prev,
+                  [prop]: e.target.value,
+                }))
+              }
+            />
+          )}
         </div>
       );
     });
@@ -141,6 +212,7 @@ const DocumentModal = ({ onClose }) => {
               onChange={(e) => {
                 setCategoriaSeleccionada(e.target.value);
                 setCamposDinamicos({});
+                setErrores((prev) => ({ ...prev, dinamicos: {} }));
               }}
             >
               <option value="" disabled>
