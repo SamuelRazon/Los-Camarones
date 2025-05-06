@@ -1,0 +1,28 @@
+.categoria-item {
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    margin: 0px;            /* Asegura que no haya margen */
+    padding: 12px 6px;     /* Opcional: reduce el padding */
+  }
+  
+  .categoria-item p {
+    margin: 0;            /* Elimina el margen por defecto del <p> */
+    font-size: 14px;      /* Tamaño más compacto (ajustable) */
+  }
+  
+  .categoria-item svg {
+    margin-right: 6px;    /* Espacio controlado entre ícono y texto */
+    font-size: 14px;      /* Ajusta el tamaño del ícono si es muy grande */
+  }
+  
+  .categoria-item:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .categoria-item.selected {
+    background-color: #335C94;
+    color: white;
+    pointer-events: none;
+  }
