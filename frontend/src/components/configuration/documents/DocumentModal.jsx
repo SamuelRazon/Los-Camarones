@@ -8,6 +8,7 @@ import {
   faFloppyDisk,
 } from "@fortawesome/free-solid-svg-icons";
 import categoryService from "../../../services/categoryServices";
+import documentService from "../../../services/documentServices";
 
 const DocumentModal = ({ onClose }) => {
   const [nombre, setNombre] = useState("");
@@ -34,6 +35,7 @@ const DocumentModal = ({ onClose }) => {
         const data = await categoryService.getCategories();
         const normalizadas = data.map((cat) => ({
           ...cat,
+          model: cat.model || "rubrosDefault",
           propiedades: cat.propiedades || [],
           propiedadesTipo: cat.propiedadtipo || [],
           propiedadesObligatorias: cat.propiedadobligatorio || [],
@@ -49,11 +51,10 @@ const DocumentModal = ({ onClose }) => {
 
   useEffect(() => {
     if (categoriaInfo) {
-      // Inicializar campos dinámicos con valores predeterminados vacíos
       const camposInicializados = categoriaInfo.propiedades.reduce(
         (acc, prop) => {
           if (prop !== "nombre" && prop !== "fecha") {
-            acc[prop] = ""; // Inicializar solo campos dinámicos
+            acc[prop] = "";
           }
           return acc;
         },
@@ -76,14 +77,7 @@ const DocumentModal = ({ onClose }) => {
     document.getElementById("inputArchivo").click();
   };
 
-  const handleGuardar = () => {
-    // Verificar valores de los inputs antes de proceder
-    console.log("Valor de nombre:", nombre);
-    console.log("Valor de fecha:", fecha);
-    console.log("Archivo seleccionado:", archivo?.name);
-    console.log("Campos dinámicos:", camposDinamicos);
-
-    // Validar errores antes de actualizar el estado
+  const handleGuardar = async () => {
     let erroresTemp = {
       archivo: !archivo,
       nombre: !nombre.trim(),
@@ -93,32 +87,29 @@ const DocumentModal = ({ onClose }) => {
 
     if (categoriaInfo) {
       categoriaInfo.propiedades.forEach((prop, index) => {
-        if (prop === "nombre" || prop === "fecha") return; // Saltar los campos estáticos
+        if (["nombre", "fecha"].includes(prop)) return;
 
         const obligatorio =
           categoriaInfo.propiedadesObligatorias?.[index] || false;
         const tipo = categoriaInfo.propiedadesTipo?.[index] || "string";
-        const valor = camposDinamicos[prop] || ""; // Asegurarse de que el valor no sea undefined
+        const valor = camposDinamicos[prop];
 
-        // Verificar si el campo es obligatorio
         if (obligatorio) {
           if (tipo === "boolean" && typeof valor !== "boolean") {
             erroresTemp.dinamicos[prop] =
-              "Este campo es obligatorio y debe ser un valor booleano.";
+              "Este campo es obligatorio y debe ser booleano.";
           } else if (tipo !== "boolean" && !String(valor).trim()) {
             erroresTemp.dinamicos[prop] =
               "Este campo es obligatorio y no puede estar vacío.";
           } else {
-            erroresTemp.dinamicos[prop] = false; // Si pasa la validación
+            erroresTemp.dinamicos[prop] = false;
           }
         }
       });
     }
 
-    // Ahora actualizamos los errores en el estado
     setErrores(erroresTemp);
 
-    // Evaluar si hay errores antes de proceder
     const hayErrores =
       erroresTemp.archivo ||
       erroresTemp.nombre ||
@@ -128,6 +119,39 @@ const DocumentModal = ({ onClose }) => {
     if (hayErrores) {
       console.log("Hay errores en el formulario");
       return;
+    }
+
+    try {
+      const propiedadesNombre = [];
+      const propiedades = [];
+
+      categoriaInfo.propiedades.forEach((prop) => {
+        if (prop === "nombre") {
+          propiedadesNombre.push("nombre");
+          propiedades.push(nombre);
+        } else if (prop === "fecha") {
+          propiedadesNombre.push("fecha");
+          propiedades.push(fecha);
+        } else {
+          propiedadesNombre.push(prop);
+          propiedades.push(camposDinamicos[prop]);
+        }
+      });
+
+      const payload = {
+        file: archivo,
+        rubro: categoriaInfo._id,
+        rubroModel: categoriaInfo.model || "rubrosDefault",
+        propiedadesNombre,
+        propiedades,
+      };
+
+      const result = await documentService.uploadDocument(payload);
+
+      console.log("Documento subido con éxito:", result);
+      onClose(); // cerrar modal tras éxito
+    } catch (error) {
+      console.error("Error al subir documento:", error.message);
     }
   };
 
