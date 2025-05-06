@@ -6,6 +6,7 @@ import {
   faQuestionCircle,
   faFileArrowUp,
   faFloppyDisk,
+  faEye,
 } from "@fortawesome/free-solid-svg-icons";
 import categoryService from "../../../services/categoryServices";
 import documentService from "../../../services/documentServices";
@@ -272,6 +273,19 @@ const DocumentModal = ({ onClose }) => {
             <FontAwesomeIcon icon={faFileArrowUp} className="upload-button" />
             Subir
           </button>
+
+          {/* Botón para previsualizar en nueva pestaña */}
+          {archivo && archivoURL && (
+            <button
+              type="button"
+              className="newdocuments-button"
+              onClick={() => window.open(archivoURL, "_blank")}
+              style={{ marginLeft: "10px" }}
+            >
+              <FontAwesomeIcon icon={faEye} className="upload-button" />
+            </button>
+          )}
+
           <input
             id="inputArchivo"
             type="file"

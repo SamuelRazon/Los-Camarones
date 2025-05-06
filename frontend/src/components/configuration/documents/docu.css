@@ -21,7 +21,7 @@
     position: relative;
 }
 
-.documents-top{
+.documents-top {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -32,18 +32,18 @@
     font-size: 20px;
 }
 
-.dropbox-category{
+.dropbox-category {
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-.dropbox-category p{
+.dropbox-category p {
     font-weight: bold;
     margin-right: 12px;
 }
 
-.dropbox-category select{
+.dropbox-category select {
     padding: 5px;
     border: 1px solid #335C94;
     color: #000;
@@ -61,20 +61,20 @@
 /* Iconos */
 .helpicon,
 .closemodal {
-  color: #464646;
-  font-size: 20px;
-  cursor: pointer;
-  transition: color 0.3s ease, transform 0.2s ease;
+    color: #464646;
+    font-size: 20px;
+    cursor: pointer;
+    transition: color 0.3s ease, transform 0.2s ease;
 }
 
 .helpicon:hover {
-  color: #335C94;
-  transform: scale(1.1);
+    color: #335C94;
+    transform: scale(1.1);
 }
 
 .closemodal:hover {
-  color: red;
-  transform: scale(1.1);
+    color: red;
+    transform: scale(1.1);
 }
 
 .documents-underline {
@@ -84,33 +84,29 @@
     margin: 10px 0 20px;
 }
 
-.newdocument-button{
+.newdocument-button {
     display: flex;
-    margin: 10px ;
-    text-align: center;
+    align-items: center;
+    gap: 10px;
+    margin: 10px;
     font-size: 16px;
 }
 
-.newdocument-button p{
-    margin: 12px;
-}
-
-.newdocuments-button{
+.newdocuments-button {
     display: flex;
-    line-height: 45px;
+    align-items: center;
+    justify-content: center;
     width: 100px;
     height: 45px;
     border: none;
-    text-align: center;
-
     background: #335C94;
     color: #FFFFFF;
     cursor: pointer;
-    transition: all .4s ease-in-out;
+    transition: background-color .4s ease-in-out;
     border-radius: 5px;
 }
 
-.upload-button{
+.upload-button {
     text-align: left;
     margin: 10px;
     width: 25px;
@@ -122,28 +118,32 @@
     background-color: #254975;
 }
 
-.documents-name{
+.documents-name,
+.documents-date {
     display: flex;
     margin: 10px;
     text-align: center;
     font-size: 16px;
 }
 
-.documents-name p{
+.documents-name p,
+.documents-date p {
     margin: 12px;
 }
 
-.documents-name span{
+.documents-name span,
+.documents-date span {
     position: relative;
     width: 580px;
     height: 35px;
     background: #FFFFFF;
     border: 1px solid #335C94;
-    transition: all .4s ease-in-out;
     font-size: 16px;
+    transition: all .4s ease-in-out;
 }
 
-.input-name {
+.input-name,
+.documents-input {
     width: 100%;
     padding: 8px;
     margin-top: 10px;
@@ -151,57 +151,32 @@
     border: 1px solid #ccc;
     border-radius: 6px;
     transition: border-color 0.3s ease;
-    flex: 2;
 }
-  
-.input-name:hover {
+
+.input-name:hover,
+.documents-input:hover {
     border-color: #335c94;
 }
 
 .documents-input {
-    width: 100%;
-    border: 1px solid #999;
-    border-radius: 6px;
-    padding: 8px;
     font-size: 14px;
-    transition: border-color 0.3s ease;
 }
 
-.documents-date{
+.save-moving {
     display: flex;
-    margin: 10px;
-    text-align: center;
-    font-size: 16px;
-}
-
-.documents-date p{
-    margin: 12px;
-}
-
-.documents-date span{
-    position: relative;
-    width: 600px;
-    height: 35px;
-    background: #FFFFFF;
-    border: 1px solid #335C94;
-    transition: all .4s ease-in-out;
-    font-size: 16px;
-}
-
-.save-moving{
     justify-content: center;
     align-items: center;
-    display: flex;
     text-align: center;
     font-size: 16px;
 }
 
-.save-documents{
+.save-documents {
     display: flex;
+    align-items: center;
+    justify-content: center;
     line-height: 45px;
     width: 120px;
     height: 45px;
-
     border: none;
     background: #335C94;
     color: #FFFFFF;
@@ -210,35 +185,24 @@
     border-radius: 5px;
 }
 
-.save-documents:hover{
+.save-documents:hover {
     background-color: #254975;
 }
 
-.moving{
-    text-align: left;
-    margin: 10px;
-    width: 25px;
-    height: 25px;
-}
 .error {
     color: red;
-  }
-  
-  .error-text {
+}
+
+.error-text {
     color: red;
     font-size: 12px;
     margin-top: 5px;
-  }
-  .newdocument-button {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
+}
 
-  .input-error {
+.input-error {
     border: 1px solid red !important;
-  }
-  
-  .input-error-text {
+}
+
+.input-error-text {
     color: red !important;
-  }
+}
