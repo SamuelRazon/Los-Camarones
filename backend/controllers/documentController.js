@@ -31,6 +31,7 @@ const uploadDocument = async (req, res) => {
       const result = await uploadFile(file);
       docData.urldocumento = result.Location;
       docData.adjunto = true;
+      docData.fechadepapelera = new Date();
     } else {
       docData.adjunto = false;
     }
@@ -41,9 +42,8 @@ const uploadDocument = async (req, res) => {
 
     res.status(201).json({ message: 'Documento subido correctamente', document: newDoc });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: 'Error al subir el documento' });
-  }
+  }  
 };
 
 module.exports = { uploadDocument };
