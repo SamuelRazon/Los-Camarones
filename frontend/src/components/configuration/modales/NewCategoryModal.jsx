@@ -11,6 +11,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import categoryService from "../../../services/categoryServices";
 import "./NewCategoryModal.css";
+import Loader from "../../../components/Loader";
 
 const NewCategoryModal = ({ onClose }) => {
   const [nombre, setNombre] = useState("");
@@ -18,6 +19,7 @@ const NewCategoryModal = ({ onClose }) => {
     { name: "Nombre del archivo", type: "text", required: true },
     { name: "Fecha", type: "date", required: true },
   ]);
+  const [loading, setLoading] = useState(false); // Estado para el loader
 
   const handleFieldChange = (index, key, value) => {
     const updatedFields = [...fields];
@@ -52,6 +54,7 @@ const NewCategoryModal = ({ onClose }) => {
       return;
     }
 
+    setLoading(true); // Activar loader
     try {
       const propiedades = fields.map((field) => {
         if (field.name === "Nombre del archivo") return "nombre";
@@ -80,12 +83,15 @@ const NewCategoryModal = ({ onClose }) => {
       toast.error(
         error.message || "Error al guardar la categoría. Intente más tarde."
       );
+    } finally {
+      setLoading(false); // Desactivar loader
     }
   };
 
   return (
     <>
       <ToastContainer />
+      {loading && <Loader />}
       <div className="modal-background">
         <div className="modal-container">
           <div className="modal-header">

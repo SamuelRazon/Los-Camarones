@@ -3,18 +3,23 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import categoryService from "../../../../services/categoryServices";
 import "./CategoryList.css";
+import Loader from "../../../Loader";
 
 const CategoryList = ({ setCategoriaSeleccionada, refresh }) => {
   const [categorias, setCategorias] = useState([]);
   const [selectedCategoria, setSelectedCategoria] = useState(null);
+  const [loading, setLoading] = useState(true); // Estado de carga
 
   useEffect(() => {
     const fetchCategorias = async () => {
+      setLoading(true);
       try {
         const data = await categoryService.getCategories();
         setCategorias(data);
       } catch (error) {
         console.error("Error al cargar categorías:", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchCategorias();
@@ -25,6 +30,8 @@ const CategoryList = ({ setCategoriaSeleccionada, refresh }) => {
     setSelectedCategoria(cat.nombre);
     setCategoriaSeleccionada(cat.nombre);
   };
+
+  if (loading) return <Loader />;
 
   return (
     <div className="subcategory">
