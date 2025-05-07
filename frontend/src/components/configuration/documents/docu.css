@@ -96,7 +96,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100px;
+    width: 85px;
     height: 45px;
     border: none;
     background: #335C94;
@@ -108,7 +108,7 @@
 
 .upload-button {
     text-align: left;
-    margin: 10px;
+    margin: 5px;
     width: 25px;
     height: 25px;
 }
@@ -205,4 +205,24 @@
 
 .input-error-text {
     color: red !important;
+}
+
+
+.show-document{
+    position: relative;
+    top: 5%;
+    right: 12px;
+    transform: translateY(-50%);
+    width: 35px;
+    height: 20px;
+   
+    cursor: pointer;
+    color: #335C94;
+    background: #FFFFFF;
+    border-radius: 50%;
+    border: none;
+}
+
+.show-document:hover{
+    color: #254975;
 }
