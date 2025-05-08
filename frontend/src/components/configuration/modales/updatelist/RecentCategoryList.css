@@ -1,0 +1,29 @@
+.categoria-item {
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    margin: 0px;
+    padding: 12px 6px;
+  }
+  
+  .categoria-item p {
+    margin: 0;
+    font-size: 14px;
+  }
+  
+  .categoria-item svg {
+    margin-right: 6px;
+    font-size: 14px;
+  }
+  
+  .categoria-item:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .categoria-item.selected {
+    background-color: #2e5aaa;
+    color: white;
+    pointer-events: none;
+  }
+  

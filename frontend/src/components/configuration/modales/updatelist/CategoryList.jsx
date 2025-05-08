@@ -5,10 +5,9 @@ import categoryService from "../../../../services/categoryServices";
 import "./CategoryList.css";
 import Loader from "../../../Loader";
 
-const CategoryList = ({ setCategoriaSeleccionada, refresh }) => {
+const CategoryList = ({ setCategoriaSeleccionada, refresh, selectedItem }) => {
   const [categorias, setCategorias] = useState([]);
-  const [selectedCategoria, setSelectedCategoria] = useState(null);
-  const [loading, setLoading] = useState(true); // Estado de carga
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchCategorias = async () => {
@@ -26,9 +25,8 @@ const CategoryList = ({ setCategoriaSeleccionada, refresh }) => {
   }, [refresh]);
 
   const handleSelect = (cat) => {
-    if (selectedCategoria === cat.nombre) return;
-    setSelectedCategoria(cat.nombre);
-    setCategoriaSeleccionada(cat.nombre);
+    if (selectedItem === cat._id) return; // Evitar seleccionar la misma categoría
+    setCategoriaSeleccionada(cat._id);
   };
 
   if (loading) return <Loader />;
@@ -39,11 +37,11 @@ const CategoryList = ({ setCategoriaSeleccionada, refresh }) => {
         <div
           key={cat._id}
           className={`categoria-item ${
-            selectedCategoria === cat.nombre ? "selected" : ""
+            selectedItem === cat._id ? "selected" : ""
           }`}
           onClick={() => handleSelect(cat)}
           style={{
-            cursor: selectedCategoria === cat.nombre ? "default" : "pointer",
+            cursor: selectedItem === cat._id ? "default" : "pointer",
           }}
         >
           <FontAwesomeIcon icon={faStar} className="star" />

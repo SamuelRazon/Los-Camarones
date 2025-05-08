@@ -1,19 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilePdf, faPlus, faShapes } from "@fortawesome/free-solid-svg-icons";
 import DocumentModal from "../configuration/documents/DocumentModal";
 import NewCategoryModal from "../../components/configuration/modales/NewCategoryModal";
 import CategoryList from "../configuration/modales/updatelist/CategoryList";
+import RecentCategoryList from "../configuration/modales/updatelist/RecentCategoryList";
 import "./Sidebar.css";
 
-const Sidebar = ({ setCategoriaSeleccionada }) => {
+const Sidebar = ({ setCategoriaSeleccionada, setDocuments }) => {
   const [isConfigOpen, setIsConfigOpen] = useState(false);
   const [isNewCategoryOpen, setIsNewCategoryOpen] = useState(false);
   const [refreshCategorias, setRefreshCategorias] = useState(false);
+  const [selectedItem, setSelectedItem] = useState("recientes"); // Inicializar con "recientes"
+
+  useEffect(() => {
+    // Llamar a handleSelectRecientes para asegurar que "Recientes" esté seleccionado al cargar la página
+    setSelectedItem("recientes");
+    setCategoriaSeleccionada(null); // Deselecciona cualquier categoría previamente seleccionada
+  }, []);
 
   const handleNewCategoryClose = () => {
     setIsNewCategoryOpen(false);
     setRefreshCategorias((prev) => !prev);
+  };
+
+  const handleSelectRecientes = () => {
+    setSelectedItem("recientes");
+    setCategoriaSeleccionada(null); // Deselecciona cualquier categoría previamente seleccionada
+  };
+
+  const handleSelectCategoria = (id) => {
+    setSelectedItem(id); // Al seleccionar una categoría, actualizamos el ID seleccionado
+    setCategoriaSeleccionada(id);
   };
 
   return (
@@ -29,6 +47,7 @@ const Sidebar = ({ setCategoriaSeleccionada }) => {
         {isConfigOpen && (
           <DocumentModal onClose={() => setIsConfigOpen(false)} />
         )}
+
         {isNewCategoryOpen && (
           <NewCategoryModal onClose={handleNewCategoryClose} />
         )}
@@ -37,24 +56,36 @@ const Sidebar = ({ setCategoriaSeleccionada }) => {
           <FontAwesomeIcon icon={faShapes} className="shapes" />
           <p>Rubros</p>
         </div>
+
         <div className="underline"></div>
 
-        {/* Contenedor scrollable para categorías */}
         <div className="subcategory">
-          <CategoryList
-            setCategoriaSeleccionada={setCategoriaSeleccionada}
-            refresh={refreshCategorias}
+          <RecentCategoryList
+            setDocuments={setDocuments}
+            onSelect={handleSelectRecientes}
+            isSelected={selectedItem === "recientes"}
           />
         </div>
+
         <div className="underline"></div>
+
+        <div className="subcategory">
+          <CategoryList
+            setCategoriaSeleccionada={handleSelectCategoria}
+            refresh={refreshCategorias}
+            selectedItem={selectedItem}
+          />
+        </div>
+
         <div className="newcategory" onClick={() => setIsNewCategoryOpen(true)}>
           <button>
-            {" "}
             <FontAwesomeIcon icon={faPlus} className="plus" />
             Añadir Categoría
           </button>
         </div>
+
         <br />
+
         <div className="buttonCV">
           <FontAwesomeIcon icon={faFilePdf} className="move" />
           <button>Generar CV</button>
