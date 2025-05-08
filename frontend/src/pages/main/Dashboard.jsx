@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Dashboard.css";
 import Top from "../../components/layout/Top";
 import Sidebar from "../../components/layout/Sidebar";
@@ -6,24 +6,47 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan, faBars } from "@fortawesome/free-solid-svg-icons";
 import useTokenAutoVerifier from "../../hooks/useTokenAutoVerifier";
 import TokenExpiryToast from "../../components/auth/TokenExpiryToast";
+import Loader from "../../components/Loader";
+import documentService from "../../services/documentServices";
 
-/* Dedicado a dar el diseño de la página principal, con los respectivos modales que se iran
- * integrando sobre el proceso de cada botón o estilo que tenga cada componente */
-
-/** Inovación para la creación de los modales*/
 const Dashboard = () => {
-  useTokenAutoVerifier(); // Hook para verificar el token automáticamente`
+  useTokenAutoVerifier();
 
-  const [isConfigOpen, setIsConfigOpen] = useState(false);
+  const [documents, setDocuments] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState(null);
+  const [isConfigOpen, setIsConfigOpen] = useState(false); // 👈 Se agrega el estado
+
+  const fetchDocuments = async () => {
+    setLoading(true);
+    try {
+      const data = await documentService.getAllDocuments();
+      setDocuments(data);
+    } catch (error) {
+      console.error("Error al obtener los documentos:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDocuments();
+  }, []);
 
   return (
     <div className="dashboard">
       <header>
-        <Top isConfigOpen={isConfigOpen} setIsConfigOpen={setIsConfigOpen} />
+        <Top isConfigOpen={isConfigOpen} setIsConfigOpen={setIsConfigOpen} />{" "}
+        {/* 👈 Se pasan las props */}
       </header>
+
       <aside>
-        <Sidebar />
+        <Sidebar
+          setCategoriaSeleccionada={setCategoriaSeleccionada}
+          setDocuments={setDocuments}
+        />
       </aside>
+
       <div className="dashboard-main">
         <table>
           <thead>
@@ -33,11 +56,33 @@ const Dashboard = () => {
               <th>Rubro</th>
             </tr>
           </thead>
-          <tbody>{/* Aquí irán las filas dinámicas */}</tbody>
+          <tbody>
+            {loading ? (
+              <tr>
+                <td colSpan="3">
+                  <Loader />
+                </td>
+              </tr>
+            ) : documents.length === 0 ? (
+              <tr>
+                <td colSpan="3">No hay documentos disponibles.</td>
+              </tr>
+            ) : (
+              documents.map((doc) => (
+                <tr key={doc._id}>
+                  <td>{doc.nombre}</td>
+                  <td>{doc.fecha}</td>
+                  <td>{doc.rubro}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
         </table>
       </div>
+
       <TokenExpiryToast />
     </div>
   );
 };
+
 export default Dashboard;
