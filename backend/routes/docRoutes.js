@@ -4,6 +4,8 @@ const multer = require('multer');
 const { uploadDocument } = require('../controllers/documentController');
 const { authMiddleware } = require('../middleware/auth');
 const Document = require('../models/Document');
+const default_category = require('../models/default_category');
+const personalized_category = require('../models/personalized_category');
 
 const AWS = require('aws-sdk');
 
@@ -48,6 +50,42 @@ router.get('/', authMiddleware, async (req, res) => {
   }
 
 }) 
+
+router.get('/byrubro/:id', authMiddleware, async (req, res) => {
+  try {
+    const userId    = req.user.id;
+    const rubroType = req.query.rubro;      
+    const rubroId   = req.params.id;        
+
+    //Verificamos que sea un rubro valido
+    if (![ 'rubrosDefault', 'rubrosPersonalizados' ].includes(rubroType)) {
+      return res.status(400).json({ error: 'Tipo de rubro inválido' });
+    }
+
+    //Verificamos que ese rubro exista
+    const categoria = rubroType === 'rubrosDefault'
+      ? await default_category.findById(rubroId)
+      : await personalized_category.findById(rubroId);
+
+    if (!categoria) {
+      return res.status(404).json({ error: 'Rubro no encontrado' });
+    }
+
+    const filtro = {
+      usuario:    userId,
+      rubro:      rubroId,
+      rubroModel: rubroType
+    };
+
+    //Se busca los documentos de acuerdo a nuestro filtro armado
+    const documentos = await Document.find(filtro);
+    return res.status(200).json(documentos);
+
+  } catch (err) {
+    console.error('Error al encontrar los documentos de acuerdo al rubro', err);
+    return res.status(500).json({ error: 'Error al buscar documentos' });
+  }
+});
 
 
 // Endpoint para borrar archivos
