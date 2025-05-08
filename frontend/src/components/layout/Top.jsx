@@ -56,16 +56,6 @@ const Top = ({ isConfigOpen, setIsConfigOpen }) => {
         />
       )}
 
-      <div className="search">
-        <p>Buscar</p>
-        <img src="#" alt="" />
-      </div>
-
-      <div className="search-deployment">
-        <p>Ciclo</p>
-        <img src="#" alt="" />
-      </div>
-
       <div className="picture">
         <FontAwesomeIcon
           icon={faGear}

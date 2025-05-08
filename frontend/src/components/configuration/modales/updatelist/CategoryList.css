@@ -22,7 +22,7 @@
   }
   
   .categoria-item.selected {
-    background-color: #335C94;
+    background-color: #2e5aaa;
     color: white;
     pointer-events: none;
   }

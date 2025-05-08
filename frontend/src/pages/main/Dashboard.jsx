@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import "./Dashboard.css";
-import Docencia from "../../components/category/Docencia";
 import Top from "../../components/layout/Top";
 import Sidebar from "../../components/layout/Sidebar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -16,53 +15,27 @@ const Dashboard = () => {
   useTokenAutoVerifier(); // Hook para verificar el token automáticamente`
 
   const [isConfigOpen, setIsConfigOpen] = useState(false);
-  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("");
 
-  /** Ejemplo de como sería la construcción de la información de las categorías con sus repectivos documentos*/
-  const renderCategoria = () => {
-    switch (categoriaSeleccionada) {
-      case "Docencia":
-        return <Docencia />;
-        {
-          /* Solo existe esta, porque es solo un ejemplo*/
-        }
-      case "Investigación":
-        return <Investigacion />;
-      case "Tutoría":
-        return <Tutoría />;
-      default:
-        return null;
-    }
-  };
-
-  {
-    /*Retorna los componentes que integran la página principal*/
-  }
   return (
-    <div className="contai">
-      <div className="hea">
-        <Top isConfigOpen={isConfigOpen} setIsConfigOpen={setIsConfigOpen} />{" "}
-        {/* Invoco el componente */}
-        <Sidebar setCategoriaSeleccionada={setCategoriaSeleccionada} />{" "}
-        {/* Invoco el componente */}
-        <div className="main-container">
-          <div className="narbar-mainc">
-            <dir className="icon-right">
-              <FontAwesomeIcon icon={faBars} className="trash" />
-              <FontAwesomeIcon icon={faTrashCan} className="trash" />
-            </dir>
-          </div>
-          <div className="speci">
-            <b>Nombre</b>
-            <b>Categoría</b>
-            <b>Fecha</b>
-          </div>
-          {renderCategoria()}{" "}
-          {/* Invoco el componente de los documentos con su respectiva categoría */}
-        </div>{" "}
-        {/* Fin de la clase main-containe*/}
-      </div>{" "}
-      {/* Fin de la clase header que es solo hea */}
+    <div className="dashboard">
+      <header>
+        <Top isConfigOpen={isConfigOpen} setIsConfigOpen={setIsConfigOpen} />
+      </header>
+      <aside>
+        <Sidebar />
+      </aside>
+      <div className="dashboard-main">
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Fecha</th>
+              <th>Rubro</th>
+            </tr>
+          </thead>
+          <tbody>{/* Aquí irán las filas dinámicas */}</tbody>
+        </table>
+      </div>
       <TokenExpiryToast />
     </div>
   );

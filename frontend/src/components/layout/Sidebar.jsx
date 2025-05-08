@@ -18,39 +18,47 @@ const Sidebar = ({ setCategoriaSeleccionada }) => {
 
   return (
     <div className="sidebar">
-      <div className="button" onClick={() => setIsConfigOpen(true)}>
-        <FontAwesomeIcon icon={faPlus} className="button-plus" />
-        <p>Nuevo Documento</p>
-      </div>
+      <div className="sidebar-content">
+        <div className="button" onClick={() => setIsConfigOpen(true)}>
+          <button>
+            <FontAwesomeIcon icon={faPlus} className="button-plus" />
+            Nuevo Documento
+          </button>
+        </div>
 
-      {isConfigOpen && <DocumentModal onClose={() => setIsConfigOpen(false)} />}
-      {isNewCategoryOpen && (
-        <NewCategoryModal onClose={handleNewCategoryClose} />
-      )}
+        {isConfigOpen && (
+          <DocumentModal onClose={() => setIsConfigOpen(false)} />
+        )}
+        {isNewCategoryOpen && (
+          <NewCategoryModal onClose={handleNewCategoryClose} />
+        )}
 
-      <div className="category">
-        <FontAwesomeIcon icon={faShapes} className="shapes" />
-        <p>Categoría</p>
-      </div>
-      <div className="underline"></div>
-
-      {/* Contenedor scrollable para categorías */}
-      <div className="subcategory">
-        <CategoryList
-          setCategoriaSeleccionada={setCategoriaSeleccionada}
-          refresh={refreshCategorias}
-        />
-      </div>
-
-      <div className="newcategory" onClick={() => setIsNewCategoryOpen(true)}>
+        <div className="category">
+          <FontAwesomeIcon icon={faShapes} className="shapes" />
+          <p>Rubros</p>
+        </div>
         <div className="underline"></div>
-        <FontAwesomeIcon icon={faPlus} className="plus" />
-        <p>Añadir Categoría</p>
-      </div>
 
-      <div className="buttonCV">
-        <FontAwesomeIcon icon={faFilePdf} className="move" />
-        <p>Generar CV</p>
+        {/* Contenedor scrollable para categorías */}
+        <div className="subcategory">
+          <CategoryList
+            setCategoriaSeleccionada={setCategoriaSeleccionada}
+            refresh={refreshCategorias}
+          />
+        </div>
+        <div className="underline"></div>
+        <div className="newcategory" onClick={() => setIsNewCategoryOpen(true)}>
+          <button>
+            {" "}
+            <FontAwesomeIcon icon={faPlus} className="plus" />
+            Añadir Categoría
+          </button>
+        </div>
+        <br />
+        <div className="buttonCV">
+          <FontAwesomeIcon icon={faFilePdf} className="move" />
+          <button>Generar CV</button>
+        </div>
       </div>
     </div>
   );
