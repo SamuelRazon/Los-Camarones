@@ -426,6 +426,36 @@ Posibles errores:
 - 401: Unauthorized - Acceso denegado
 - 404: Not Found - Rubro no encontrado
 - 500: Internal Server Error - Error en el servidor
+
+
+
+  - nombre: Nombre del rubro a verificar (como parte de la URL).
+
+  - Encabezado: Requiere token de autenticación (JWT) en Authorization.
+
+Ejemplo de body: Ninguno
+
+Respuesta (JSON):
+```
+{
+    "existe": true
+}
+```
+ó
+```
+{
+    "existe": false
+}
+```
+
+Posibles errores:
+
+- 401 Unauthorized – Acceso denegado.
+
+- 404 Not Found – Usuario no encontrado.
+
+- 500 Internal Server Error – Error en el servidor.
+
 ---
   ### Endpoints para los rubros del usuario
 
@@ -598,3 +628,36 @@ Posibles errores:
 - 404: Not Found - Documento no encontrado
 - 500: Internal Server Error - Error en el servidor
 ---
+
+`GET /api/rubros/exists/:nombre`
+
+Descripción: Verifica si ya existe un rubro (personalizado o default) con el mismo nombre para el usuario autenticado.
+
+Parámetros:
+
+  - nombre: Nombre del rubro a verificar (como parte de la URL).
+
+  - Encabezado: Requiere token de autenticación (JWT) en Authorization.
+
+Ejemplo de body: Ninguno
+
+Respuesta (JSON):
+```
+{
+    "existe": true
+}
+```
+ó
+```
+{
+    "existe": false
+}
+```
+
+Posibles errores:
+
+- 401 Unauthorized – Acceso denegado.
+
+- 404 Not Found – Usuario no encontrado.
+
+- 500 Internal Server Error – Error en el servidor

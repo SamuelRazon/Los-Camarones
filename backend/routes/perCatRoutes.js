@@ -112,4 +112,35 @@ router.delete('/:id', authMiddleware, async (req, res) => {
   }
 })
 
+
+// Verificar si existe un rubro con el mismo nombre (personalizado o default) para el usuario autenticado
+router.get('/exists/:nombre', authMiddleware, async (req, res) => {
+  const nombreBuscado = req.params.nombre.trim().toLowerCase();
+
+  try {
+    const usuario = await Usuario.findById(req.user.id)
+      .populate('rubrosPersonalizados')
+      .populate('rubrosDefault');
+
+    if (!usuario) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    const existeEnPersonalizados = usuario.rubrosPersonalizados.some(
+      rubro => rubro.nombre.trim().toLowerCase() === nombreBuscado
+    );
+
+    const existeEnDefault = usuario.rubrosDefault.some(
+      rubro => rubro.nombre.trim().toLowerCase() === nombreBuscado
+    );
+
+    const existe = existeEnPersonalizados || existeEnDefault;
+
+    res.json({ existe });
+  } catch (error) {
+    res.status(500).json({ error: 'Error verificando existencia del rubro' });
+  }
+});
+
+
 module.exports = router
