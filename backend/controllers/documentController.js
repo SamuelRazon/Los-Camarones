@@ -31,7 +31,6 @@ const uploadDocument = async (req, res) => {
       const result = await uploadFile(file);
       docData.urldocumento = result.Location;
       docData.adjunto = true;
-      docData.fechadepapelera = new Date();
     } else {
       docData.adjunto = false;
     }

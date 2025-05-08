@@ -36,7 +36,7 @@ router.get('/', authMiddleware, async (req, res) => {
   try {
     const filtro = {
       usuario: userId,
-      fechadepapelera: null
+      //fechadepapelera: null
     };
 
     const documentos = await Document.find(filtro)
@@ -80,6 +80,7 @@ router.delete('/delete/:id', authMiddleware, async (req, res) => {
   }
 });
 
+/*
 
 // endpoint para mover documentos a la papelera
 router.put('/trash/:id', authMiddleware, async (req, res) => {
@@ -142,5 +143,6 @@ router.put('/restore/:id', authMiddleware, async (req, res) => {
   }
 });
 
+*/
 
 module.exports = router;

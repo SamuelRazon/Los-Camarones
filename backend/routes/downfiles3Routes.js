@@ -21,9 +21,9 @@ router.get('/download/:docId', authMiddleware, async (req, res) => {
     if (document.adjunto === false) {
       return res.status(400).json({ error: 'Este documento no tiene ningún archivo adjunto' });
     } //Esta validacion se supone que nunca deberia de pasar
-    if (document.fechadepapelera !== null){
+    /*if (document.fechadepapelera !== null){
       return res.status(409).json({ error: 'Existe un conflicto interno de acuerdo a tu peticion' });
-    }
+    }*/
         
     /* Obtener la key del archivo
     * La key en pocas palabras es el nombre interno que tiene el archivo dentro del bucket de s3
