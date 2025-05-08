@@ -5,7 +5,7 @@ import categoryService from "../../../../services/categoryServices";
 import "./CategoryList.css";
 import Loader from "../../../Loader";
 
-const CategoryList = ({ setCategoriaSeleccionada, refresh, selectedItem }) => {
+const CategoryList = ({ onSelect, refresh, selectedItem }) => {
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -25,8 +25,8 @@ const CategoryList = ({ setCategoriaSeleccionada, refresh, selectedItem }) => {
   }, [refresh]);
 
   const handleSelect = (cat) => {
-    if (selectedItem === cat._id) return; // Evitar seleccionar la misma categoría
-    setCategoriaSeleccionada(cat._id);
+    if (selectedItem === cat._id) return;
+    onSelect(cat._id);
   };
 
   if (loading) return <Loader />;

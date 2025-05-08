@@ -11,12 +11,11 @@ const Sidebar = ({ setCategoriaSeleccionada, setDocuments }) => {
   const [isConfigOpen, setIsConfigOpen] = useState(false);
   const [isNewCategoryOpen, setIsNewCategoryOpen] = useState(false);
   const [refreshCategorias, setRefreshCategorias] = useState(false);
-  const [selectedItem, setSelectedItem] = useState("recientes"); // Inicializar con "recientes"
+  const [selectedItem, setSelectedItem] = useState("recientes");
 
   useEffect(() => {
-    // Llamar a handleSelectRecientes para asegurar que "Recientes" esté seleccionado al cargar la página
     setSelectedItem("recientes");
-    setCategoriaSeleccionada(null); // Deselecciona cualquier categoría previamente seleccionada
+    setCategoriaSeleccionada(null);
   }, []);
 
   const handleNewCategoryClose = () => {
@@ -26,11 +25,11 @@ const Sidebar = ({ setCategoriaSeleccionada, setDocuments }) => {
 
   const handleSelectRecientes = () => {
     setSelectedItem("recientes");
-    setCategoriaSeleccionada(null); // Deselecciona cualquier categoría previamente seleccionada
+    setCategoriaSeleccionada(null);
   };
 
   const handleSelectCategoria = (id) => {
-    setSelectedItem(id); // Al seleccionar una categoría, actualizamos el ID seleccionado
+    setSelectedItem(id);
     setCategoriaSeleccionada(id);
   };
 
@@ -71,7 +70,7 @@ const Sidebar = ({ setCategoriaSeleccionada, setDocuments }) => {
 
         <div className="subcategory">
           <CategoryList
-            setCategoriaSeleccionada={handleSelectCategoria}
+            onSelect={handleSelectCategoria}
             refresh={refreshCategorias}
             selectedItem={selectedItem}
           />

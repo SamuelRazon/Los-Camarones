@@ -26,10 +26,14 @@ const Dashboard = () => {
     try {
       const data = await documentService.getAllDocuments();
       if (categoryId) {
-        // Filtra los documentos por categoría si se selecciona una
-        setDocuments(data.filter((doc) => doc.categoria === categoryId));
+        // Filtra los documentos por rubro si se selecciona un rubro
+        setDocuments(
+          data.filter((doc) => {
+            return doc.rubro === categoryId;
+          })
+        );
       } else {
-        setDocuments(data); // Muestra todos los documentos si no hay categoría seleccionada
+        setDocuments(data); // Muestra todos los documentos si no hay rubro seleccionado
       }
     } catch (error) {
       console.error("Error al obtener los documentos:", error);
