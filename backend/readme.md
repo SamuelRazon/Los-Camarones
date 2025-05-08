@@ -661,3 +661,50 @@ Posibles errores:
 - 404 Not Found – Usuario no encontrado.
 
 - 500 Internal Server Error – Error en el servidor
+
+---
+
+### Endpoints para generar un CV
+
+`POST /api/rubros/generate`
+
+Descripción: Genera un documento PDF que resume los valores de los documentos seleccionados pertenecientes al usuario autenticado.
+
+Parámetros:
+
+- Body (JSON):
+```
+{
+  "ids": ["<id1>", "<id2>", "<id3>"]
+}
+```
+
+- ids: Array de IDs de documentos que se quieren incluir en el PDF.
+
+- Encabezado: Requiere token de autenticación (JWT) en Authorization.
+
+Ejemplo de body:
+```
+{
+  "ids": ["67ff23355a290818ebae0cf1", "67ff23355a290818ebae0cf2"]
+}
+```
+
+Respuesta: Archivo PDF con el resumen de los documentos, enviado directamente como contenido en la respuesta.
+
+- Content-Type: application/pdf
+
+- Content-Disposition: inline; filename=documentos.pdf
+
+Posibles errores:
+
+- 400 Bad Request – No se proporcionó una lista válida de IDs.
+
+- 401 Unauthorized – Acceso denegado.
+
+- 404 Not Found – No se encontraron documentos con los IDs proporcionados.
+
+-  500 Internal Server Error – Error al generar el PDF.
+
+
+
