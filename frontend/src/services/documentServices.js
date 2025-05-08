@@ -38,8 +38,33 @@ const uploadDocument = async ({
   }
 };
 
+const getAllDocuments = async () => {
+  try {
+    const token = Cookies.get("token");
+
+    const response = await fetch("http://localhost:5000/api/documents", {
+      method: "GET",
+      headers: {
+        Authorization: token,
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Error al obtener los documentos importados");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error al obtener documentos importados:", error);
+    throw error;
+  }
+};
+
 const documentService = {
   uploadDocument,
+  getAllDocuments
 };
 
 export default documentService;
