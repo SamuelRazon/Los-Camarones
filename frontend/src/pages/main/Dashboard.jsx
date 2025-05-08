@@ -21,11 +21,16 @@ const Dashboard = () => {
 
   const documentsPerPage = 11;
 
-  const fetchDocuments = async () => {
+  const fetchDocuments = async (categoryId = null) => {
     setLoading(true);
     try {
       const data = await documentService.getAllDocuments();
-      setDocuments(data);
+      if (categoryId) {
+        // Filtra los documentos por categoría si se selecciona una
+        setDocuments(data.filter((doc) => doc.categoria === categoryId));
+      } else {
+        setDocuments(data); // Muestra todos los documentos si no hay categoría seleccionada
+      }
     } catch (error) {
       console.error("Error al obtener los documentos:", error);
     } finally {
@@ -47,7 +52,7 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    fetchDocuments();
+    fetchDocuments(); // Llamar a la función sin parámetros por defecto para cargar todos los documentos
     fetchCategorias();
   }, []);
 
@@ -121,6 +126,12 @@ const Dashboard = () => {
     return sortConfig.direction === "asc" ? "▲" : "▼";
   };
 
+  // Esto se ejecuta cuando se selecciona una categoría desde el Sidebar
+  const handleCategoriaSeleccionada = (categoriaId) => {
+    setCategoriaSeleccionada(categoriaId);
+    fetchDocuments(categoriaId); // Recargar los documentos según la categoría seleccionada
+  };
+
   return (
     <div className="dashboard">
       <header>
@@ -129,7 +140,7 @@ const Dashboard = () => {
 
       <aside>
         <Sidebar
-          setCategoriaSeleccionada={setCategoriaSeleccionada}
+          setCategoriaSeleccionada={handleCategoriaSeleccionada}
           setDocuments={setDocuments}
         />
       </aside>
@@ -158,7 +169,9 @@ const Dashboard = () => {
               </tr>
             ) : currentDocs.length === 0 ? (
               <tr>
-                <td colSpan={3}>No hay documentos disponibles.</td>
+                <td colSpan={3}>
+                  No hay documentos disponibles para esta categoría.
+                </td>
               </tr>
             ) : (
               currentDocs.map((doc) => {
@@ -182,7 +195,7 @@ const Dashboard = () => {
           </tbody>
         </table>
 
-        {documents.length > documentsPerPage && (
+        {documents.length > documentsPerPage && currentDocs.length > 0 && (
           <div className="pagination">
             <span>
               {startIndex + 1}–{Math.min(endIndex, documents.length)} de{" "}
