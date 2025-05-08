@@ -17,6 +17,23 @@ const getCategories = async () => {
   }
 };
 
+const getCategoryById = async (id) => {
+  try {
+    const token = Cookies.get("token");
+    const response = await fetch(`http://localhost:5000/api/perCat/${id}`, {
+      headers: {
+        Authorization: token,
+      },
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Error al obtener la categoría");
+    return data;
+  } catch (error) {
+    console.error("Error al obtener la categoría por ID:", error);
+    throw error;
+  }
+};
+
 const createCategory = async ({ nombre, propiedades, propiedadesTipo, propiedadesObligatorias }) => {
   try {
     const url = "http://localhost:5000/api/perCat";
@@ -53,7 +70,8 @@ const createCategory = async ({ nombre, propiedades, propiedadesTipo, propiedade
 
 const categoryService = {
   createCategory,
-  getCategories
+  getCategories,
+  getCategoryById
 };
 
 export default categoryService;

@@ -6,12 +6,13 @@ import {
   faQuestionCircle,
   faFileArrowUp,
   faFloppyDisk,
-  faEye
+  faEye,
 } from "@fortawesome/free-solid-svg-icons";
 import categoryService from "../../../services/categoryServices";
 import documentService from "../../../services/documentServices";
+import Loader from "../../Loader";
 
-const DocumentModal = ({ onClose }) => {
+const DocumentModal = ({ onClose, onDocumentUploaded }) => {
   const [nombre, setNombre] = useState("");
   const [fecha, setFecha] = useState("");
   const [archivo, setArchivo] = useState(null);
@@ -25,6 +26,7 @@ const DocumentModal = ({ onClose }) => {
     fecha: false,
     dinamicos: {},
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const categoriaInfo = categorias.find(
     (cat) => cat.nombre === categoriaSeleccionada
@@ -122,6 +124,8 @@ const DocumentModal = ({ onClose }) => {
       return;
     }
 
+    setIsLoading(true);
+
     try {
       const propiedadesNombre = [];
       const propiedades = [];
@@ -148,11 +152,17 @@ const DocumentModal = ({ onClose }) => {
       };
 
       const result = await documentService.uploadDocument(payload);
-
       console.log("Documento subido con éxito:", result);
-      onClose(); // cerrar modal tras éxito
+
+      if (onDocumentUploaded && typeof onDocumentUploaded === "function") {
+        onDocumentUploaded(result);
+      }
+
+      onClose();
     } catch (error) {
       console.error("Error al subir documento:", error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -225,6 +235,8 @@ const DocumentModal = ({ onClose }) => {
     });
   };
 
+  if (isLoading) return <Loader />;
+
   return (
     <div className="documents-modal-overlay">
       <div className="documents-modal">
@@ -290,7 +302,6 @@ const DocumentModal = ({ onClose }) => {
             style={{ marginLeft: "10px", flex: 2 }}
           />
 
-          {/* Botón para previsualizar en nueva pestaña */}
           {archivo && archivoURL && (
             <button
               type="button"
@@ -301,7 +312,6 @@ const DocumentModal = ({ onClose }) => {
               <FontAwesomeIcon icon={faEye} className="upload-button" />
             </button>
           )}
-          
         </div>
 
         <div className="documents-name">

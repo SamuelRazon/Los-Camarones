@@ -44,6 +44,7 @@ aside {
   border-collapse: collapse;
   background-color: white;
   border: 1px solid #e2e8f0;
+  table-layout: auto; /* Para permitir que las columnas se ajusten automáticamente */
 }
 
 .dashboard-main th,
@@ -51,4 +52,57 @@ aside {
   padding: 12px;
   text-align: left;
   border-bottom: 1px solid #e2e8f0;
+  position: relative;
+}
+
+/* Estilos de paginacion */
+.pagination {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 12px;
+  gap: 12px;
+  font-size: 14px;
+}
+
+.pagination button {
+  background-color: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Aplica proporciones fijas a columnas */
+.dashboard-main table th:nth-child(1),
+.dashboard-main table td:nth-child(1) {
+  width: 45%; /* Nombre */
+}
+
+.dashboard-main table th:nth-child(2),
+.dashboard-main table td:nth-child(2) {
+  width: 40%; /* Rubro */
+}
+
+.dashboard-main table th:nth-child(3),
+.dashboard-main table td:nth-child(3) {
+  width: 15%; /* Fecha */
+}
+
+/* Añadir cursor pointer y efecto hover a los encabezados */
+.dashboard-main th {
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition: background-color 0.3s ease;
+}
+
+/* Hover con fondo muy suave */
+.dashboard-main th:hover {
+  background-color: #f0f4f8;
 }
