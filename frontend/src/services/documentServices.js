@@ -66,7 +66,7 @@ const downloadDocument = async (id) => {
   try {
     const token = Cookies.get("token");
 
-    const response = await fetch(`http://localhost:5000/api/auth/download/${id}`, {
+    const response = await fetch(`http://localhost:5000/api/cats/download/${id}`, {
       method: "GET",
       headers: {
         Authorization: token,
@@ -74,24 +74,19 @@ const downloadDocument = async (id) => {
     });
 
     if (!response.ok) {
-      throw new Error("Error al descargar el documento");
+      throw new Error("Error al obtener la URL de descarga");
     }
 
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
+    const data = await response.json();
+    const downloadUrl = data.downloadUrl;
 
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `documento-${id}.pdf`; 
-    a.click();
-    window.URL.revokeObjectURL(url);
+    window.open(downloadUrl, "_self"); 
+
   } catch (error) {
     console.error("Error al descargar documento:", error);
     throw error;
   }
 };
-
-
 
 const documentService = {
   uploadDocument,
