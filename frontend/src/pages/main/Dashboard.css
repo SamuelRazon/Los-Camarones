@@ -44,7 +44,7 @@ aside {
   border-collapse: collapse;
   background-color: white;
   border: 1px solid #e2e8f0;
-  table-layout: auto; /* Para permitir que las columnas se ajusten automáticamente */
+  table-layout: auto; 
 }
 
 .dashboard-main th,
@@ -94,6 +94,11 @@ aside {
   width: 15%; /* Fecha */
 }
 
+.dashboard-main table th:nth-child(4),
+.dashboard-main table td:nth-child(4) {
+  width: 5%;
+}
+
 /* Añadir cursor pointer y efecto hover a los encabezados */
 .dashboard-main th {
   cursor: pointer;
@@ -105,4 +110,40 @@ aside {
 /* Hover con fondo muy suave */
 .dashboard-main th:hover {
   background-color: #f0f4f8;
+}
+/* Hover para toda la fila */
+.dashboard-main tbody tr:hover {
+  background-color: #1e4a9a;
+  color: white; 
+  cursor: pointer;
+  outline: none; 
+}
+
+.dashboard-main tbody tr:hover td:last-child {
+  background-color: white;
+}
+
+.dashboard-main tbody td:last-child:hover {
+  background-color: #f0f4f8; 
+  cursor: pointer;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.boton-descargar {
+  background-color: white; 
+  border: none;
+  padding: 6px 10px; 
+  transition: background-color 0.3s ease, transform 0.3s ease; 
+}
+.icono-descargar {
+  color: black;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-align: center;
+  padding: 10px;
+}
+
+.icono-descargar:hover {
+  color: #1e4a9a; 
+  transform: scale(1.5); 
 }

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import "./Dashboard.css";
 import Top from "../../components/layout/Top";
 import Sidebar from "../../components/layout/Sidebar";
@@ -19,7 +21,7 @@ const Dashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
-  const documentsPerPage = 11;
+  const documentsPerPage = 15;
 
   const fetchDocuments = async (categoryId = null) => {
     setLoading(true);
@@ -162,6 +164,7 @@ const Dashboard = () => {
               <th onClick={() => handleSort("fecha")}>
                 Fecha {getArrow("fecha")}
               </th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -173,7 +176,7 @@ const Dashboard = () => {
               </tr>
             ) : currentDocs.length === 0 ? (
               <tr>
-                <td colSpan={3}>
+                <td colSpan={4}>
                   No hay documentos disponibles para esta categoría.
                 </td>
               </tr>
@@ -192,6 +195,20 @@ const Dashboard = () => {
                     <td>{nombre}</td>
                     <td>{rubroNombre}</td>
                     <td>{fecha}</td>
+                    <td className="acciones">
+                      <button
+                        onClick={() =>
+                          documentService.downloadDocument(doc._id)
+                        }
+                        className="boton-descargar"
+                        title="Descargar"
+                      >
+                        <FontAwesomeIcon
+                          icon={faDownload}
+                          className="icono-descargar"
+                        />
+                      </button>
+                    </td>
                   </tr>
                 );
               })

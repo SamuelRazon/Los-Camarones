@@ -171,14 +171,3 @@
   flex-grow: 1;
   text-align: left;
 }
-
-/* hover en filas */
-.dashboard-main tbody tr:hover {
-  background-color: #1e4a9a;
-  color: white; 
-  cursor: pointer;
-}
-
-.dashboard-main tbody tr {
-  transition: background-color 0.3s ease, color 0.3s ease;
-}

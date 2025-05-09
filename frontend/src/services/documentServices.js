@@ -62,9 +62,41 @@ const getAllDocuments = async () => {
   }
 };
 
+const downloadDocument = async (id) => {
+  try {
+    const token = Cookies.get("token");
+
+    const response = await fetch(`http://localhost:5000/api/auth/download/${id}`, {
+      method: "GET",
+      headers: {
+        Authorization: token,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Error al descargar el documento");
+    }
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `documento-${id}.pdf`; 
+    a.click();
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Error al descargar documento:", error);
+    throw error;
+  }
+};
+
+
+
 const documentService = {
   uploadDocument,
-  getAllDocuments
+  getAllDocuments,
+  downloadDocument
 };
 
 export default documentService;
