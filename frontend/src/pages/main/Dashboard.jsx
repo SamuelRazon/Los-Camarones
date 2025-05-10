@@ -28,12 +28,7 @@ const Dashboard = () => {
     try {
       const data = await documentService.getAllDocuments();
       if (categoryId) {
-        // Filtra los documentos por rubro si se selecciona un rubro
-        setDocuments(
-          data.filter((doc) => {
-            return doc.rubro === categoryId;
-          })
-        );
+        setDocuments(data.filter((doc) => doc.rubro === categoryId));
       } else {
         setDocuments(data); // Muestra todos los documentos si no hay rubro seleccionado
       }
@@ -58,7 +53,7 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    fetchDocuments(); // Llamar a la función sin parámetros por defecto para cargar todos los documentos
+    fetchDocuments();
     fetchCategorias();
   }, []);
 
@@ -190,24 +185,41 @@ const Dashboard = () => {
                   idxFecha !== -1 ? doc.propiedades?.[idxFecha] : "";
                 const rubroNombre = mapCategorias[doc.rubro] || "Desconocido";
 
+                // Verifica si el documento tiene el campo urldocumento
+                const hasUrlDocumento = doc.hasOwnProperty("urldocumento");
+
                 return (
                   <tr key={doc._id}>
                     <td>{nombre}</td>
                     <td>{rubroNombre}</td>
                     <td>{fecha}</td>
                     <td className="acciones">
-                      <button
-                        onClick={() =>
-                          documentService.downloadDocument(doc._id)
-                        }
-                        className="boton-descargar"
-                        title="Descargar"
-                      >
-                        <FontAwesomeIcon
-                          icon={faDownload}
-                          className="icono-descargar"
-                        />
-                      </button>
+                      {/* Solo muestra el botón de descarga si existe el campo urldocumento */}
+                      {hasUrlDocumento ? (
+                        <button
+                          onClick={() =>
+                            documentService.downloadDocument(doc._id)
+                          }
+                          className="boton-descargar"
+                          title="Descargar"
+                        >
+                          <FontAwesomeIcon
+                            icon={faDownload}
+                            className="icono-descargar"
+                          />
+                        </button>
+                      ) : (
+                        <button
+                          className="boton-descargar"
+                          disabled
+                          title="No disponible"
+                        >
+                          <FontAwesomeIcon
+                            icon={faDownload}
+                            className="icono-descargar"
+                          />
+                        </button>
+                      )}
                     </td>
                   </tr>
                 );

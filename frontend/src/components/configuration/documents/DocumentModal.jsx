@@ -82,7 +82,6 @@ const DocumentModal = ({ onClose, onDocumentUploaded }) => {
 
   const handleGuardar = async () => {
     let erroresTemp = {
-      archivo: !archivo,
       nombre: !nombre.trim(),
       fecha: !fecha,
       dinamicos: {},
@@ -114,7 +113,6 @@ const DocumentModal = ({ onClose, onDocumentUploaded }) => {
     setErrores(erroresTemp);
 
     const hayErrores =
-      erroresTemp.archivo ||
       erroresTemp.nombre ||
       erroresTemp.fecha ||
       Object.values(erroresTemp.dinamicos).some((val) => val);
@@ -144,7 +142,8 @@ const DocumentModal = ({ onClose, onDocumentUploaded }) => {
       });
 
       const payload = {
-        file: archivo,
+        file: archivo || "",
+        urldocumento: archivoURL || "",
         rubro: categoriaInfo._id,
         rubroModel: categoriaInfo.model || "rubrosDefault",
         propiedadesNombre,
@@ -276,7 +275,7 @@ const DocumentModal = ({ onClose, onDocumentUploaded }) => {
         <div className="documents-underline"></div>
 
         <div className="newdocument-button">
-          <p className={errores.archivo ? "input-error-text" : ""}>Archivo:*</p>
+          <p className={errores.archivo ? "input-error-text" : ""}>Archivo:</p>
           <button
             type="button"
             className="newdocuments-button"
