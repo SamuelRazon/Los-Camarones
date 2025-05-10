@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDownload } from "@fortawesome/free-solid-svg-icons";
+import { faDownload, faSyncAlt } from "@fortawesome/free-solid-svg-icons";
 import "./Dashboard.css";
 import Top from "../../components/layout/Top";
 import Sidebar from "../../components/layout/Sidebar";
@@ -67,7 +67,7 @@ const Dashboard = () => {
   };
 
   const getSortedDocuments = () => {
-    if (!sortConfig.key) return documents;
+    if (!sortConfig.key) return [...documents].reverse();
 
     return [...documents].sort((a, b) => {
       const idxNombreA = a.propiedadesnombre?.indexOf("nombre");
@@ -130,7 +130,11 @@ const Dashboard = () => {
   // Esto se ejecuta cuando se selecciona una categoría desde el Sidebar
   const handleCategoriaSeleccionada = (categoriaId) => {
     setCategoriaSeleccionada(categoriaId);
-    fetchDocuments(categoriaId); // Recargar los documentos según la categoría seleccionada
+    fetchDocuments(categoriaId);
+  };
+
+  const refreshDocuments = async () => {
+    await fetchDocuments(categoriaSeleccionada);
   };
 
   return (
@@ -159,9 +163,21 @@ const Dashboard = () => {
               <th onClick={() => handleSort("fecha")}>
                 Fecha {getArrow("fecha")}
               </th>
-              <th></th>
+              <th>
+                <button
+                  onClick={refreshDocuments}
+                  title="Refrescar documentos"
+                  className="boton-refrescar"
+                >
+                  <FontAwesomeIcon
+                    icon={faSyncAlt}
+                    className="icono-refrescar"
+                  />
+                </button>
+              </th>
             </tr>
           </thead>
+
           <tbody>
             {loading ? (
               <tr>

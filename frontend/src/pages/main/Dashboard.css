@@ -166,3 +166,24 @@ aside {
   color: #1e4a9a;
   transform: scale(1.5);
 }
+
+.boton-refrescar {
+  background-color: transparent;
+  border: none;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.icono-refrescar {
+  color: #1e4a9a;
+  font-size: 16px;
+  transition: transform 0.3s ease;
+}
+
+.boton-refrescar:hover {
+  background-color: #F0F4F8;
+}
+.boton-refrescar:hover .icono-refrescar {
+  transform: rotate(180deg) scale(1.3);
+}
