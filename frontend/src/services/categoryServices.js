@@ -68,10 +68,28 @@ const createCategory = async ({ nombre, propiedades, propiedadesTipo, propiedade
   }
 };
 
+const existsCategoryName = async (nombre) => {
+  try {
+    const token = Cookies.get("token");
+    const response = await fetch(`http://localhost:5000/api/perCat/exists/${encodeURIComponent(nombre)}`, {
+      headers: {
+        Authorization: token,
+      },
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Error al verificar existencia del rubro");
+    return data.existe;
+  } catch (error) {
+    console.error("Error al verificar existencia del rubro:", error);
+    throw error;
+  }
+};
+
 const categoryService = {
   createCategory,
   getCategories,
-  getCategoryById
+  getCategoryById,
+  existsCategoryName
 };
 
 export default categoryService;

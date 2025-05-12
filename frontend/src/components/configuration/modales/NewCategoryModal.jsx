@@ -19,7 +19,7 @@ const NewCategoryModal = ({ onClose }) => {
     { name: "Nombre del archivo", type: "text", required: true },
     { name: "Fecha", type: "date", required: true },
   ]);
-  const [loading, setLoading] = useState(false); // Estado para el loader
+  const [loading, setLoading] = useState(false);
 
   const handleFieldChange = (index, key, value) => {
     const updatedFields = [...fields];
@@ -54,8 +54,16 @@ const NewCategoryModal = ({ onClose }) => {
       return;
     }
 
-    setLoading(true); // Activar loader
+    setLoading(true);
     try {
+      const yaExiste = await categoryService.existsCategoryName(nombre.trim());
+      console.log("Ya existe:", yaExiste);
+      if (yaExiste) {
+        toast.warning("Ya existe un rubro con ese nombre.");
+        setLoading(false);
+        return;
+      }
+
       const propiedades = fields.map((field) => {
         if (field.name === "Nombre del archivo") return "nombre";
         if (field.name === "Fecha") return "fecha";
@@ -84,7 +92,7 @@ const NewCategoryModal = ({ onClose }) => {
         error.message || "Error al guardar la categoría. Intente más tarde."
       );
     } finally {
-      setLoading(false); // Desactivar loader
+      setLoading(false);
     }
   };
 
@@ -193,7 +201,11 @@ const NewCategoryModal = ({ onClose }) => {
             <button className="btn-add btn-icono" onClick={handleAddField}>
               <FontAwesomeIcon icon={faPlus} />
             </button>
-            <button className="btn-save" onClick={handleSave}>
+            <button
+              className="btn-save"
+              onClick={handleSave}
+              disabled={loading}
+            >
               <FontAwesomeIcon icon={faSave} /> Guardar
             </button>
           </div>
