@@ -127,6 +127,12 @@ const Dashboard = () => {
     return sortConfig.direction === "asc" ? "▲" : "▼";
   };
 
+  const clearSelectedDocuments = () => {
+    setDocuments((prevDocs) =>
+      prevDocs.map((doc) => ({ ...doc, selected: false }))
+    );
+  };
+
   // Esto se ejecuta cuando se selecciona una categoría desde el Sidebar
   const handleCategoriaSeleccionada = (categoriaId) => {
     setCategoriaSeleccionada(categoriaId);
@@ -147,6 +153,8 @@ const Dashboard = () => {
         <Sidebar
           setCategoriaSeleccionada={handleCategoriaSeleccionada}
           setDocuments={setDocuments}
+          selectedDocs={documents.filter((d) => d.selected)}
+          clearSelectedDocuments={clearSelectedDocuments}
         />
       </aside>
 
@@ -154,6 +162,7 @@ const Dashboard = () => {
         <table>
           <thead>
             <tr>
+              <th></th>
               <th onClick={() => handleSort("nombre")}>
                 Nombre {getArrow("nombre")}
               </th>
@@ -206,11 +215,27 @@ const Dashboard = () => {
 
                 return (
                   <tr key={doc._id}>
+                    <td className="checkbox-cell">
+                      <input
+                        type="checkbox"
+                        checked={doc.selected || false}
+                        onChange={() =>
+                          setDocuments((prevDocs) =>
+                            prevDocs.map((d) =>
+                              d._id === doc._id
+                                ? { ...d, selected: !d.selected }
+                                : d
+                            )
+                          )
+                        }
+                        className="custom-checkbox"
+                      />
+                    </td>
+
                     <td>{nombre}</td>
                     <td>{rubroNombre}</td>
                     <td>{fecha}</td>
                     <td className="acciones">
-                      {/* Solo muestra el botón de descarga si existe el campo urldocumento */}
                       {hasUrlDocumento ? (
                         <button
                           onClick={() =>

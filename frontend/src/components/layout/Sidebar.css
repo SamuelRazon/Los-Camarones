@@ -143,9 +143,10 @@
 .buttonCV {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 20px; 
   border: 1px solid #2e5aaa; 
-  padding: 12px 20px; 
+  padding: 12px 30px; 
   border-radius: 6px;
   margin-top: 30px; 
   font-size: 14px;
@@ -153,21 +154,11 @@
   background-color: #ffffff; 
   cursor: pointer;
   transition: background-color 0.2s ease;
-  width: 100%;
+  width: 100%; 
 }
 
 .buttonCV:hover {
   background-color: #2e5aaa;
   color: #ffffff;
   border: 1px solid #1e4a9a; 
-}
-
-.buttonCV button {
-  background: none;
-  border: none;
-  font-size: 14px;
-  color: inherit;
-  cursor: pointer;
-  flex-grow: 1;
-  text-align: left;
 }

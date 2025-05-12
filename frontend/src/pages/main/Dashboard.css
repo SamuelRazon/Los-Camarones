@@ -81,21 +81,25 @@ aside {
 /* Aplica proporciones fijas a columnas */
 .dashboard-main table th:nth-child(1),
 .dashboard-main table td:nth-child(1) {
-  width: 45%; /* Nombre */
+  width: 5%; /* Nombre */
 }
-
 .dashboard-main table th:nth-child(2),
 .dashboard-main table td:nth-child(2) {
-  width: 40%; /* Rubro */
+  width: 40%; /* Nombre */
 }
 
 .dashboard-main table th:nth-child(3),
 .dashboard-main table td:nth-child(3) {
-  width: 15%; /* Fecha */
+  width: 40%; /* Rubro */
 }
 
 .dashboard-main table th:nth-child(4),
 .dashboard-main table td:nth-child(4) {
+  width: 15%; /* Fecha */
+}
+
+.dashboard-main table th:nth-child(5),
+.dashboard-main table td:nth-child(5) {
   width: 5%;
 }
 
@@ -186,4 +190,12 @@ aside {
 }
 .boton-refrescar:hover .icono-refrescar {
   transform: rotate(180deg) scale(1.3);
+}
+
+/* Checkbox */
+.custom-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
