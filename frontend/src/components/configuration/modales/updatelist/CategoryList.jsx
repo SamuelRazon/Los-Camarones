@@ -10,6 +10,7 @@ const CategoryList = ({ onSelect, refresh, selectedItem }) => {
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [selectedRubro, setSelectedRubro] = useState(null); // Estado para almacenar el rubro seleccionado
 
   useEffect(() => {
     const fetchCategorias = async () => {
@@ -31,10 +32,10 @@ const CategoryList = ({ onSelect, refresh, selectedItem }) => {
     onSelect(cat._id);
   };
 
-  const handleEdit = (e, cat) => {
+  const handleEdit = async (e, cat) => {
     e.stopPropagation();
-    setShowUpdateModal(true);
-    // Si luego deseas pasarle la categoría para editarla, se puede agregar aquí
+    setSelectedRubro(cat); // Establecer el rubro seleccionado para pasarlo al modal
+    setShowUpdateModal(true); // Mostrar el modal para actualizar
   };
 
   if (loading) return <Loader />;
@@ -65,7 +66,14 @@ const CategoryList = ({ onSelect, refresh, selectedItem }) => {
       </div>
 
       {showUpdateModal && (
-        <UpdateRubro onClose={() => setShowUpdateModal(false)} />
+        <UpdateRubro
+          onClose={() => setShowUpdateModal(false)}
+          rubro={selectedRubro}
+          onUpdate={() => {
+            setShowUpdateModal(false); // cerrar modal
+            if (typeof refresh === "function") refresh(); // notificar al padre
+          }}
+        />
       )}
     </>
   );

@@ -14,7 +14,7 @@ const Sidebar = ({
   setCategoriaSeleccionada,
   setDocuments,
   selectedDocs,
-  clearSelectedDocuments, // <-- recibes la función
+  clearSelectedDocuments,
 }) => {
   const [isConfigOpen, setIsConfigOpen] = useState(false);
   const [isNewCategoryOpen, setIsNewCategoryOpen] = useState(false);
@@ -69,8 +69,7 @@ const Sidebar = ({
 
     try {
       await cvService.generateRubroPDF(selectedIds);
-      clearSelectedDocuments(); // Limpia los checkboxes
-      // Puedes agregar un toast de éxito aquí si quieres
+      clearSelectedDocuments();
     } catch (error) {
       showErrorToast("Hubo un error al generar el PDF.");
     } finally {
@@ -118,7 +117,7 @@ const Sidebar = ({
         <div className="subcategory">
           <CategoryList
             onSelect={handleSelectCategoria}
-            refresh={refreshCategorias}
+            refresh={() => setRefreshCategorias((prev) => !prev)}
             selectedItem={selectedItem}
           />
         </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faTrash,
@@ -14,7 +14,7 @@ import categoryService from "../../../../services/categoryServices";
 import "./UpdateRubro.css";
 import Loader from "../../../../components/Loader";
 
-const UpdateRubro = ({ onClose }) => {
+const UpdateRubro = ({ rubro, onClose, onUpdate }) => {
   const [nombre, setNombre] = useState("");
   const [fields, setFields] = useState([
     { name: "Nombre del archivo", type: "text", required: true },
@@ -22,6 +22,30 @@ const UpdateRubro = ({ onClose }) => {
   ]);
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+
+  useEffect(() => {
+    if (rubro) {
+      setNombre(rubro.nombre);
+
+      const newFields = rubro.propiedades.map((prop, index) => {
+        let displayName = prop;
+        if (prop === "nombre") displayName = "Nombre del archivo";
+        if (prop === "fecha") displayName = "Fecha";
+
+        let type = "text";
+        if (rubro.propiedadtipo[index] === "date") type = "date";
+        if (rubro.propiedadtipo[index] === "number") type = "number";
+
+        return {
+          name: displayName,
+          type,
+          required: rubro.propiedadobligatorio[index],
+        };
+      });
+
+      setFields(newFields);
+    }
+  }, [rubro]);
 
   const handleFieldChange = (index, key, value) => {
     const updatedFields = [...fields];
@@ -58,14 +82,6 @@ const UpdateRubro = ({ onClose }) => {
 
     setLoading(true);
     try {
-      const yaExiste = await categoryService.existsCategoryName(nombre.trim());
-      console.log("Ya existe:", yaExiste);
-      if (yaExiste) {
-        toast.warning("Ya existe un rubro con ese nombre.");
-        setLoading(false);
-        return;
-      }
-
       const propiedades = fields.map((field) => {
         if (field.name === "Nombre del archivo") return "nombre";
         if (field.name === "Fecha") return "fecha";
@@ -78,20 +94,62 @@ const UpdateRubro = ({ onClose }) => {
 
       const propiedadesObligatorias = fields.map((field) => field.required);
 
-      const data = await categoryService.createCategory({
-        nombre,
-        propiedades,
-        propiedadesTipo,
-        propiedadesObligatorias,
-      });
+      if (rubro && rubro._id) {
+        await categoryService.updateCategory(rubro._id, {
+          nombre,
+          propiedades,
+          propiedadesTipo,
+          propiedadesObligatorias,
+        });
+        toast.success("Rubro actualizado correctamente.");
+      } else {
+        const yaExiste = await categoryService.existsCategoryName(
+          nombre.trim()
+        );
+        if (yaExiste) {
+          toast.warning("Ya existe un rubro con ese nombre.");
+          setLoading(false);
+          return;
+        }
 
-      console.log("Categoría creada:", data);
-      toast.success("Categoría creada correctamente.");
+        await categoryService.createCategory({
+          nombre,
+          propiedades,
+          propiedadesTipo,
+          propiedadesObligatorias,
+        });
+        toast.success("Rubro creado correctamente.");
+      }
+
+      setIsEditing(false);
+      if (onUpdate) onUpdate();
       onClose();
     } catch (error) {
-      console.error("Error al guardar categoría:", error);
+      console.error("Error al guardar rubro:", error);
       toast.error(
-        error.message || "Error al guardar la categoría. Intente más tarde."
+        error.message || "Error al guardar el rubro. Intente más tarde."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    const confirmDelete = window.confirm(
+      "¿Estás seguro de que deseas eliminar este rubro?"
+    );
+    if (!confirmDelete) return;
+
+    setLoading(true);
+    try {
+      await categoryService.deleteCategory(rubro._id);
+      toast.success("Rubro eliminado correctamente.");
+      if (onUpdate) onUpdate();
+      onClose();
+    } catch (error) {
+      console.error("Error al eliminar rubro:", error);
+      toast.error(
+        error.message || "Error al eliminar el rubro. Intente más tarde."
       );
     } finally {
       setLoading(false);
@@ -105,7 +163,7 @@ const UpdateRubro = ({ onClose }) => {
       <div className="modal-background">
         <div className="modal-container">
           <div className="modal-header">
-            <h2>Nueva Categoría</h2>
+            <h2>Actualizar Rubro</h2>
             <div className="header-icons">
               <FontAwesomeIcon
                 icon={faQuestionCircle}
@@ -140,7 +198,7 @@ const UpdateRubro = ({ onClose }) => {
                 placeholder={
                   index > 1 && field.name === "" ? "Nueva propiedad" : ""
                 }
-                disabled={index === 0 || index === 1}
+                disabled={!isEditing}
                 onChange={(e) =>
                   handleFieldChange(index, "name", e.target.value)
                 }
@@ -149,7 +207,7 @@ const UpdateRubro = ({ onClose }) => {
               <select
                 className="select-tipo perfil-email-input"
                 value={field.type}
-                disabled={index === 0 || index === 1}
+                disabled={!isEditing || index < 2}
                 onChange={(e) =>
                   handleFieldChange(index, "type", e.target.value)
                 }
@@ -167,6 +225,7 @@ const UpdateRubro = ({ onClose }) => {
                       name={`required-${index}`}
                       value="obligatorio"
                       checked={field.required}
+                      disabled={!isEditing}
                       onChange={() =>
                         handleFieldChange(index, "required", true)
                       }
@@ -179,6 +238,7 @@ const UpdateRubro = ({ onClose }) => {
                       name={`required-${index}`}
                       value="opcional"
                       checked={!field.required}
+                      disabled={!isEditing}
                       onChange={() =>
                         handleFieldChange(index, "required", false)
                       }
@@ -193,24 +253,32 @@ const UpdateRubro = ({ onClose }) => {
               {index > 1 && (
                 <FontAwesomeIcon
                   icon={faTrash}
-                  className="icon-trash btn-icono"
-                  onClick={() => handleDeleteField(index)}
+                  className={`icon-trash btn-icono ${
+                    !isEditing ? "disabled" : ""
+                  }`}
+                  onClick={() => isEditing && handleDeleteField(index)}
                 />
               )}
             </div>
           ))}
 
           <div className="modal-footer">
-            <button className="btn-add btn-icono" onClick={handleAddField}>
+            <button
+              className="btn-add btn-icono"
+              onClick={handleAddField}
+              disabled={!isEditing}
+            >
               <FontAwesomeIcon icon={faPlus} />
             </button>
+
             <button
               className="btn-borrar"
-              onClick={handleSave}
-              disabled={loading}
+              onClick={handleDelete}
+              disabled={loading || !rubro?._id}
             >
               <FontAwesomeIcon icon={faTrash} /> Eliminar
             </button>
+
             <button
               className="btn-editar"
               onClick={() => setIsEditing(true)}
