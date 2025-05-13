@@ -6,11 +6,12 @@ import {
   faSave,
   faQuestionCircle,
   faTimes,
+  faPen,
 } from "@fortawesome/free-solid-svg-icons";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import categoryService from "../../../../services/categoryServices";
-import "../NewCategoryModal.css";
+import "./UpdateRubro.css";
 import Loader from "../../../../components/Loader";
 
 const UpdateRubro = ({ onClose }) => {
@@ -20,6 +21,7 @@ const UpdateRubro = ({ onClose }) => {
     { name: "Fecha", type: "date", required: true },
   ]);
   const [loading, setLoading] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   const handleFieldChange = (index, key, value) => {
     const updatedFields = [...fields];
@@ -126,6 +128,7 @@ const UpdateRubro = ({ onClose }) => {
             placeholder="Nombre del rubro"
             value={nombre}
             onChange={(e) => setNombre(e.target.value)}
+            disabled={!isEditing}
           />
 
           {fields.map((field, index) => (
@@ -202,9 +205,24 @@ const UpdateRubro = ({ onClose }) => {
               <FontAwesomeIcon icon={faPlus} />
             </button>
             <button
-              className="btn-save"
+              className="btn-borrar"
               onClick={handleSave}
               disabled={loading}
+            >
+              <FontAwesomeIcon icon={faTrash} /> Eliminar
+            </button>
+            <button
+              className="btn-editar"
+              onClick={() => setIsEditing(true)}
+              disabled={loading || isEditing}
+            >
+              <FontAwesomeIcon icon={faPen} /> Editar
+            </button>
+
+            <button
+              className="btn-save"
+              onClick={handleSave}
+              disabled={loading || !isEditing}
             >
               <FontAwesomeIcon icon={faSave} /> Guardar
             </button>
