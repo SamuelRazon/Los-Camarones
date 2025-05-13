@@ -8,7 +8,8 @@ const RubroDefaultSchema = new Schema({
     type: [String],
     required: true,
     enum: ['string', 'number', 'date', 'boolean', 'enum'] // Tipos de datos permitidos para cada propiedad
-  }
+  },
+  propiedadobligatorio: { type: [Boolean], required: true } // Booleano que indica si la propiedad es obligatoria o no
 }, { collection: 'rubrosDefault' });
 
 module.exports = mongoose.model('RubroDefault', RubroDefaultSchema);
