@@ -26,3 +26,17 @@
     color: white;
     pointer-events: none;
   }
+
+  .pen {
+    margin-left: auto; 
+    transition: transform 0.2s ease, color 0.2s ease;
+    color: #888;
+    padding:4px;
+  }
+  
+  .pen:hover {
+
+    color: #f1c40f;
+    transform: scale(1.3); 
+  }
+  

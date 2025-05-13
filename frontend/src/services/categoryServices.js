@@ -85,11 +85,99 @@ const existsCategoryName = async (nombre) => {
   }
 };
 
+const getRubroById = async (id) => {
+  try {
+    const token = Cookies.get("token");
+    const response = await fetch(`http://localhost:5000/api/perCat/${id}`, {
+      headers: {
+        Authorization: token,
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        throw new Error("Acceso denegado");
+      } else if (response.status === 404) {
+        throw new Error("Rubro no encontrado");
+      } else {
+        throw new Error(data.message || "Error al obtener el rubro");
+      }
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error al obtener el rubro por ID:", error);
+    throw error;
+  }
+};
+
+const updateCategory = async (id, { nombre, propiedades, propiedadesTipo, propiedadesObligatorias }) => {
+  try {
+    const token = Cookies.get("token");
+
+    const payload = {
+      nombre,
+      propiedades,
+      propiedadtipo: propiedadesTipo,
+      propiedadesobligatorio: propiedadesObligatorias,
+    };
+
+    const response = await fetch(`http://localhost:5000/api/perCat/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "No se pudo actualizar el rubro");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error al actualizar el rubro:", error);
+    throw error;
+  }
+};
+
+
+const deleteCategory = async (id) => {
+  try {
+    const token = Cookies.get("token");
+    const response = await fetch(`http://localhost:5000/api/perCat/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: token,
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "No se pudo eliminar el rubro");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error al eliminar el rubro:", error);
+    throw error;
+  }
+};
+
 const categoryService = {
   createCategory,
   getCategories,
   getCategoryById,
-  existsCategoryName
+  existsCategoryName,
+  getRubroById,
+  deleteCategory,
+  updateCategory
 };
 
 export default categoryService;
