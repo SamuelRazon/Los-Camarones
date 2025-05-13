@@ -34,13 +34,14 @@ router.get('/download/:docId', authMiddleware, async (req, res) => {
     *  */
     const urlParts = document.urldocumento.split('/');
     const fileKey = urlParts[urlParts.length - 1];
+    const decodedKey = decodeURIComponent(fileKey);
 
 
     /* Creamos una signed URL para que solamente nuestro usuario pueda descargar el archivo
     * El tiempo que durara esa url sera de 60 segundos, pero si quieren menos o mas cambien el Expires*/
     const params = {
       Bucket: process.env.AWS_BUCKET_NAME,
-      Key: fileKey,
+      Key: decodedKey,
       Expires: 60
     };
 
