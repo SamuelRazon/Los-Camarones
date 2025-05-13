@@ -2,6 +2,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const RubroPersonalizado = require('../models/personalized_category')
 const Usuario = require('../models/User');
+const Document = require('../models/Document');
 const { authMiddleware } = require('../middleware/auth')
 
 const router = express.Router()
@@ -97,20 +98,45 @@ router.put('/:id', authMiddleware, async (req, res) => {
   }
 })
 
-// Eliminar un rubro personalizado
+
+// Eliminar un rubro personalizado (con borrado en cascada manual)
 router.delete('/:id', authMiddleware, async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     return res.status(400).json({ error: 'ID inválido' });
   }
-
+  /* Sesion para en caso de que haya un error, no se realice el eliminado */
+  const session = await mongoose.startSession();
+  session.startTransaction();
   try {
-    const rubro = await RubroPersonalizado.findOneAndDelete({ _id: req.params.id, usuarioId: req.user.id })
-    if (!rubro) return res.status(404).json({ error: 'Rubro no encontrado' })
-    res.json({ message: 'Rubro eliminado con éxito' })
+    // 1) Borrar el rubro
+    const rubro = await RubroPersonalizado.findOneAndDelete(
+      { _id: req.params.id, usuarioId: req.user.id },
+      { session }
+    );
+    if (!rubro) {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(404).json({ error: 'Rubro no encontrado' });
+    }
+
+    // 2) Borrar todos los documentos que apunten a ese rubro
+    await Document.deleteMany(
+      { rubro: req.params.id, usuario: req.user.id },
+      { session }
+    );
+
+    await session.commitTransaction();
+    session.endSession();
+
+    res.json({ message: 'Rubro y documentos relacionados eliminados con éxito' });
   } catch (error) {
-    res.status(500).json({ error: 'Error eliminando el rubro personalizado' })
+    await session.abortTransaction();
+    session.endSession();
+    console.error(error);
+    res.status(500).json({ error: 'Error al eliminar el rubro personalizado' });
   }
-})
+});
+
 
 
 // Verificar si existe un rubro con el mismo nombre (personalizado o default) para el usuario autenticado
