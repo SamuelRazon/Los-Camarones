@@ -117,7 +117,6 @@ const Sidebar = ({
         <div className="subcategory">
           <CategoryList
             onSelect={handleSelectCategoria}
-            refresh={() => setRefreshCategorias((prev) => !prev)}
             selectedItem={selectedItem}
           />
         </div>

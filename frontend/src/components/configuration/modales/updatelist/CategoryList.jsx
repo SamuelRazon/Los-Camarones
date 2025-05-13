@@ -25,7 +25,7 @@ const CategoryList = ({ onSelect, refresh, selectedItem }) => {
       }
     };
     fetchCategorias();
-  }, [refresh]);
+  }, []);
 
   const handleSelect = (cat) => {
     if (selectedItem === cat._id) return;
