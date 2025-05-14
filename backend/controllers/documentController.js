@@ -45,4 +45,51 @@ const uploadDocument = async (req, res) => {
   }  
 };
 
-module.exports = { uploadDocument };
+const updateDocument = async (req, res) => {
+  try {
+    const { id } = req.params; // ID del documento a actualizar
+    const file = req.file;
+    const {
+      rubro,
+      rubroModel,
+      propiedadesnombre,
+      propiedades
+    } = req.body;
+
+   
+
+    // Buscar el documento por ID
+    const existingDoc = await Document.findById(id);
+    if (!existingDoc) {
+      return res.status(404).json({ error: 'Documento no encontrado' });
+    }
+
+    // Verificar que el usuario tenga permisos para modificar el documento
+    if (existingDoc.usuario.toString() !== req.user.id) {
+      return res.status(403).json({ error: 'No tienes permisos para modificar este documento' });
+    }
+    
+    // Actualizar campos si vienen en la solicitud
+    if (rubro) existingDoc.rubro = rubro;
+    if (rubroModel) existingDoc.rubroModel = rubroModel;
+    if (propiedadesnombre) existingDoc.propiedadesnombre = JSON.parse(propiedadesnombre);
+    if (propiedades) existingDoc.propiedades = JSON.parse(propiedades);
+
+    // Si se sube un nuevo archivo, subirlo a S3 y actualizar la URL
+    if (file) {
+      const result = await uploadFile(file);
+      existingDoc.urldocumento = result.Location;
+      existingDoc.adjunto = true;
+    }
+
+    // Guardar los cambios
+    await existingDoc.save();
+
+    res.status(200).json({ message: 'Documento actualizado correctamente', document: existingDoc });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al actualizar el documento' });
+  }
+};
+
+module.exports = { updateDocument, uploadDocument };

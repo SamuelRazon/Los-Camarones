@@ -1,7 +1,7 @@
 // Se define la ruta para subir documentos y se importa el controlador 
 const express = require('express');
 const multer = require('multer');
-const { uploadDocument } = require('../controllers/documentController');
+const { uploadDocument, updateDocument } = require('../controllers/documentController');
 const { authMiddleware } = require('../middleware/auth');
 const Document = require('../models/Document');
 const default_category = require('../models/default_category');
@@ -16,6 +16,8 @@ const router = express.Router();
 const upload = multer(); 
 
 router.post('/upload', authMiddleware, upload.single('file'), uploadDocument);
+
+router.put('/update/:id', authMiddleware, upload.single('file'), updateDocument);
 
 router.get('/:id', authMiddleware, async (req, res) => {
   const { id } = req.params
@@ -117,6 +119,9 @@ router.delete('/delete/:id', authMiddleware, async (req, res) => {
     res.status(500).json({ error: 'Error al eliminar el archivo' });
   }
 });
+
+
+
 
 /*
 
