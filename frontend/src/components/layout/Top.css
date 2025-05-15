@@ -22,11 +22,18 @@
 .picture-gear {
   font-size: 40px;
   margin: 0 10px;
-  transition: color 0.2s ease-in-out;
+
+  transition: 0.5s, color .10s;
+    -webkit-transition: .5s, color .10s;
+    -moz-transition: .5s, color .10s;
 }
 
 .picture-a:hover,
 .picture-gear:hover {
   cursor: pointer;
   color: #1e4a9a;
+
+  transform: scale(2, 0.5);
+    -webkit-transform: scale(1.2, 0.5);
+    -moz-transform: scale(1.2, 0.5);
 }

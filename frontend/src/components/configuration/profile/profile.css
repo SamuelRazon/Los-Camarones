@@ -9,6 +9,15 @@
   justify-content: flex-start;
   align-items: flex-start;
   z-index: 1000;
+
+  transition: opacity 0.3s ease;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.profile-modal-overlay.open {
+  opacity: 1;
+  pointer-events: auto; /* Habilitar interacciones cuando el modal está abierto */
 }
 
 .profile-modal {
@@ -19,7 +28,19 @@
   width: 350px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   position: relative;
+
+  transform: translateY(-50px);
+  transition: transform 0.5s ease-out;
 }
+
+.profile-modal.open {
+  transform: translateY(0); /* Animación de apertura */
+}
+
+.profile-modal.closed {
+  transform: translateY(50px); /* Animación de cierre */
+}
+
 
 /* Botón de cerrar */
 .cerrar-modal {

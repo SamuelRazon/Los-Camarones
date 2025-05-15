@@ -144,10 +144,18 @@
   background-color: #2e5aaa;
   color: white;
   border: 1px solid #2e5aaa;
+
+  transition: .5s, color .10s;
+  -webkit-transition: .5s,color .10s;
+  -moz-transition: .5s, color .10s;
 }
 
 .first-button:hover {
   background-color: #1e4a9a;
+
+  transform: translate(0px,5px);
+  -webkit-transform: translate(0px, 5px);
+  -moz-transform: translate(0px,5px);
 }
 
 /* Estilo para el botón blanco con borde azul: "Registrarse" */
@@ -155,10 +163,18 @@
   background-color: white;
   color: #2e5aaa;
   border: 1px solid #2e5aaa;
+
+  transition: .5s, color .10s;
+  -webkit-transition: .5s,color .10s;
+  -moz-transition: .5s, color .10s;
 }
 
 .second-button:hover {
   background-color: #f0f2f5;
+
+  transform: translate(0px,5px);
+  -webkit-transform: translate(0px, 5px);
+  -moz-transform: translate(0px,5px);
 }
 
 @media (0px <=width <=720px) {

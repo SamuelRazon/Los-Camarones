@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./profile.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -12,11 +12,22 @@ import {
 const ProfileModal = ({ onClose, profile }) => {
   if (!profile) return null;
 
+  //creado para la animación del modal
+  const [isOpen, setIsOpen] = useState(false);
+
   const { username, correo } = profile;
 
+  //creado para la animación del modal
+  useEffect(() => {
+    setIsOpen(true);
+    return () => setIsOpen(false); // Clean-up on unmount
+  }, []);
+
   return (
-    <div className="profile-modal-overlay">
-      <div className="profile-modal">
+    <div className={`profile-modal-overlay ${isOpen ? "open" : "closed"}`} onClick={onClose}>
+      <div className={`profile-modal ${isOpen ? "open" : "closed"}`}
+        onClick={(e) => e.stopPropagation()} // Evita que el clic en el modal cierre el overlay
+      >
         {/* Botón de cerrar */}
         <FontAwesomeIcon
           icon={faXmark}

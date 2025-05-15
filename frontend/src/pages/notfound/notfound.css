@@ -39,8 +39,18 @@
   text-decoration: none;
   font-weight: bold;
   transition: background-color 0.3s ease;
+
+  animation-name: pulse;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
 }
 
 .notfound-button:hover {
   background-color: #083d8a;
+}
+
+@keyframes pulse {
+  0% {transform: scale(1);}
+  50% {transform: scale(1.2);}
+  100% {transform: scale(1);}
 }
