@@ -14,7 +14,7 @@ import categoryService from "../../../../services/categoryServices";
 import documentService from "../../../../services/documentServices";
 import Loader from "../../../Loader";
 
-const UpdateDocument = ({ onClose, onDocumentUploaded }) => {
+const UpdateDocument = ({ onClose, onDocumentUploaded, document, rubro }) => {
   const [nombre, setNombre] = useState("");
   const [fecha, setFecha] = useState("");
   const [archivo, setArchivo] = useState(null);
@@ -56,17 +56,59 @@ const UpdateDocument = ({ onClose, onDocumentUploaded }) => {
   }, []);
 
   useEffect(() => {
-    if (categoriaInfo) {
-      const camposInicializados = categoriaInfo.propiedades.reduce(
-        (acc, prop) => {
-          if (prop !== "nombre" && prop !== "fecha") {
-            acc[prop] = "";
-          }
-          return acc;
-        },
-        {}
+    if (categorias.length > 0 && document?.rubro) {
+      const categoriaDelDocumento = categorias.find(
+        (cat) => cat._id === document.rubro
       );
-      setCamposDinamicos(camposInicializados);
+      if (categoriaDelDocumento) {
+        setCategoriaSeleccionada(categoriaDelDocumento.nombre);
+      }
+    }
+  }, [categorias, document]);
+
+  useEffect(() => {
+    if (document && rubro) {
+      const nombreIndex = document.propiedadesnombre.findIndex(
+        (n) => n === "nombre"
+      );
+      const fechaIndex = document.propiedadesnombre.findIndex(
+        (n) => n === "fecha"
+      );
+
+      if (nombreIndex !== -1) setNombre(document.propiedades[nombreIndex]);
+      if (fechaIndex !== -1) setFecha(document.propiedades[fechaIndex]);
+
+      const camposIniciales = {};
+      rubro.propiedades.forEach((prop, index) => {
+        if (prop === "nombre" || prop === "fecha") return;
+        const propIndex = document.propiedadesnombre.findIndex(
+          (n) => n === prop
+        );
+        const tipo = rubro.propiedadesTipo?.[index] || "string";
+        let valor = propIndex !== -1 ? document.propiedades[propIndex] : "";
+
+        if (tipo === "boolean") {
+          valor = valor === true || valor === "true";
+        }
+
+        camposIniciales[prop] = valor;
+      });
+
+      setCamposDinamicos(camposIniciales);
+    }
+  }, [document, rubro]);
+
+  useEffect(() => {
+    if (categoriaInfo) {
+      const campos = {};
+      categoriaInfo.propiedades.forEach((prop, index) => {
+        if (["nombre", "fecha"].includes(prop)) return;
+        if (!(prop in camposDinamicos)) {
+          const tipo = categoriaInfo.propiedadesTipo?.[index] || "string";
+          campos[prop] = tipo === "boolean" ? false : "";
+        }
+      });
+      setCamposDinamicos((prev) => ({ ...campos, ...prev }));
     }
   }, [categoriaInfo]);
 
@@ -77,10 +119,6 @@ const UpdateDocument = ({ onClose, onDocumentUploaded }) => {
       setArchivoURL(URL.createObjectURL(file));
       setErrores((prev) => ({ ...prev, archivo: false }));
     }
-  };
-
-  const handleSubirClick = () => {
-    document.getElementById("inputArchivo").click();
   };
 
   const handleGuardar = async () => {
@@ -145,24 +183,22 @@ const UpdateDocument = ({ onClose, onDocumentUploaded }) => {
       });
 
       const payload = {
-        file: archivo || "",
-        urldocumento: archivoURL || "",
+        id: document._id, // Asegúrate de enviar el ID para updateDocument
+        file: archivo || null, // Si no cambiaste el archivo, pasa null para no modificarlo
         rubro: categoriaInfo._id,
         rubroModel: categoriaInfo.model || "rubrosDefault",
         propiedadesNombre,
         propiedades,
       };
 
-      const result = await documentService.uploadDocument(payload);
-      console.log("Documento subido con éxito:", result);
+      const result = await documentService.updateDocument(payload);
+      console.log("Documento actualizado con éxito:", result);
 
-      if (onDocumentUploaded && typeof onDocumentUploaded === "function") {
-        onDocumentUploaded(result);
-      }
+      if (onDocumentUploaded) onDocumentUploaded(result);
 
       onClose();
     } catch (error) {
-      console.error("Error al subir documento:", error.message);
+      console.error("Error al actualizar documento:", error.message);
     } finally {
       setIsLoading(false);
     }
@@ -194,7 +230,7 @@ const UpdateDocument = ({ onClose, onDocumentUploaded }) => {
       const obligatorio =
         categoriaInfo.propiedadesObligatorias?.[index] || false;
       const valor =
-        camposDinamicos[prop] || (tipoInput === "checkbox" ? false : "");
+        camposDinamicos[prop] ?? (tipoInput === "checkbox" ? false : "");
       const error = errores.dinamicos[prop];
 
       return (
@@ -244,6 +280,7 @@ const UpdateDocument = ({ onClose, onDocumentUploaded }) => {
   return (
     <div className="documents-modal-overlay">
       <div className="documents-modal">
+        {/* TOP BAR */}
         <div className="documents-top">
           <h3>Editar documento</h3>
           <div className="dropbox-category">
@@ -280,18 +317,18 @@ const UpdateDocument = ({ onClose, onDocumentUploaded }) => {
 
         <div className="documents-underline"></div>
 
+        {/* ARCHIVO */}
         <div className="newdocument-button">
           <p className={errores.archivo ? "input-error-text" : ""}>Archivo:</p>
           <button
             type="button"
             className="newdocuments-button"
-            onClick={handleSubirClick}
+            onClick={() => document.getElementById("inputArchivo").click()}
             disabled={!modoEdicion}
           >
             <FontAwesomeIcon icon={faFileArrowUp} className="upload-button" />
             Subir
           </button>
-
           <input
             id="inputArchivo"
             type="file"
@@ -305,21 +342,19 @@ const UpdateDocument = ({ onClose, onDocumentUploaded }) => {
             placeholder="Archivo seleccionado"
             value={archivo?.name || ""}
             readOnly
-            style={{ marginLeft: "10px", flex: 2 }}
           />
-
           {archivo && archivoURL && (
             <button
               type="button"
               className="show-document"
               onClick={() => window.open(archivoURL, "_blank")}
-              style={{ marginLeft: "10px" }}
             >
-              <FontAwesomeIcon icon={faEye} className="upload-button" />
+              <FontAwesomeIcon icon={faEye} />
             </button>
           )}
         </div>
 
+        {/* CAMPOS FIJOS */}
         <div className="documents-name">
           <p className={errores.nombre ? "input-error-text" : ""}>Nombre:*</p>
           <input
@@ -347,8 +382,10 @@ const UpdateDocument = ({ onClose, onDocumentUploaded }) => {
           />
         </div>
 
+        {/* CAMPOS DINÁMICOS */}
         {renderCamposDinamicos()}
 
+        {/* BOTONES */}
         <div className="save-moving">
           <button className="btn-borrar" disabled={!modoEdicion}>
             <FontAwesomeIcon icon={faTrash} /> Eliminar

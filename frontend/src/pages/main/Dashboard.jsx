@@ -21,6 +21,7 @@ const Dashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   const [selectedDocument, setSelectedDocument] = useState(null);
+  const [loadingDocument, setLoadingDocument] = useState(false);
 
   const documentsPerPage = 15;
 
@@ -85,7 +86,6 @@ const Dashboard = () => {
       const rubroB = mapCategorias[b.rubro] || "Desconocido";
 
       let valA, valB;
-
       switch (sortConfig.key) {
         case "nombre":
           valA = nombreA.toLowerCase();
@@ -139,14 +139,40 @@ const Dashboard = () => {
     await fetchDocuments(categoriaSeleccionada);
   };
 
-  const handleRowClick = (doc, event) => {
+  const handleRowClick = async (doc, event) => {
     const ignoredTags = ["INPUT", "BUTTON", "SVG", "path"];
     if (
       ignoredTags.includes(event.target.tagName) ||
       event.target.closest(".boton-descargar")
     )
       return;
-    setSelectedDocument(doc);
+
+    setLoadingDocument(true);
+    try {
+      const documentDetail = await documentService.getDocumentByID(doc._id);
+      let rubroDetail = null;
+
+      if (documentDetail.rubro) {
+        try {
+          rubroDetail = await categoryService.getRubroById(
+            documentDetail.rubro
+          );
+        } catch (rubroError) {
+          console.error("Error al obtener el detalle del rubro:", rubroError);
+        }
+      } else {
+        console.warn("Este documento no tiene rubro asignado");
+      }
+
+      setSelectedDocument({
+        ...documentDetail,
+        rubroDetail,
+      });
+    } catch (error) {
+      console.error("Error al consultar el documento por ID:", error);
+    } finally {
+      setLoadingDocument(false);
+    }
   };
 
   return (
@@ -165,6 +191,11 @@ const Dashboard = () => {
       </aside>
 
       <div className="dashboard-main">
+        {loadingDocument && (
+          <div style={{ textAlign: "center", margin: "20px 0" }}>
+            <Loader />
+          </div>
+        )}
         <table>
           <thead>
             <tr>
@@ -299,7 +330,8 @@ const Dashboard = () => {
 
       {selectedDocument && (
         <UpdateDocument
-          documento={selectedDocument}
+          document={selectedDocument}
+          rubro={selectedDocument.rubroDetail}
           onClose={() => setSelectedDocument(null)}
           onDocumentUploaded={refreshDocuments}
         />

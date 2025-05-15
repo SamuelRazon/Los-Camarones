@@ -88,10 +88,76 @@ const downloadDocument = async (id) => {
   }
 };
 
+const getDocumentByID = async (id) => {
+  try {
+    const token = Cookies.get("token");
+
+    const response = await fetch(`http://localhost:5000/api/documents/${id}`, {
+      method: "GET",
+      headers: {
+        Authorization: token,
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Error al obtener el documento por ID");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error al obtener documento por ID:", error);
+    throw error;
+  }
+};
+
+const updateDocument = async ({
+  id,
+  file,
+  rubro,
+  rubroModel,
+  propiedadesNombre,
+  propiedades,
+}) => {
+  try {
+    const token = Cookies.get("token");
+
+    const formData = new FormData();
+
+    if (file) formData.append("file", file);
+    if (rubro) formData.append("rubro", rubro);
+    if (rubroModel) formData.append("rubroModel", rubroModel);
+    if (propiedadesNombre) formData.append("propiedadesnombre", JSON.stringify(propiedadesNombre));
+    if (propiedades) formData.append("propiedades", JSON.stringify(propiedades));
+
+    const response = await fetch(`http://localhost:5000/api/documents/update/${id}`, {
+      method: "PUT",
+      headers: {
+        Authorization: token,
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Error al actualizar el documento");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error al actualizar documento:", error);
+    throw error;
+  }
+};
+
 const documentService = {
   uploadDocument,
   getAllDocuments,
-  downloadDocument
+  downloadDocument,
+  getDocumentByID,
+  updateDocument
 };
 
 export default documentService;
