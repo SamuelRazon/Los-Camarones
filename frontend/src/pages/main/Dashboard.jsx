@@ -5,10 +5,10 @@ import "./Dashboard.css";
 import Top from "../../components/layout/Top";
 import Sidebar from "../../components/layout/Sidebar";
 import useTokenAutoVerifier from "../../hooks/useTokenAutoVerifier";
-import TokenExpiryToast from "../../components/auth/TokenExpiryToast";
 import Loader from "../../components/Loader";
 import documentService from "../../services/documentServices";
 import categoryService from "../../services/categoryServices";
+import UpdateDocument from "../../components/configuration/documents/updatedocument/UpdateDocument";
 
 const Dashboard = () => {
   useTokenAutoVerifier();
@@ -20,6 +20,7 @@ const Dashboard = () => {
   const [mapCategorias, setMapCategorias] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
+  const [selectedDocument, setSelectedDocument] = useState(null);
 
   const documentsPerPage = 15;
 
@@ -30,7 +31,7 @@ const Dashboard = () => {
       if (categoryId) {
         setDocuments(data.filter((doc) => doc.rubro === categoryId));
       } else {
-        setDocuments(data); // Muestra todos los documentos si no hay rubro seleccionado
+        setDocuments(data);
       }
     } catch (error) {
       console.error("Error al obtener los documentos:", error);
@@ -114,13 +115,9 @@ const Dashboard = () => {
   const endIndex = startIndex + documentsPerPage;
   const currentDocs = sortedDocuments.slice(startIndex, endIndex);
 
-  const handlePrev = () => {
-    setCurrentPage((prev) => Math.max(prev - 1, 1));
-  };
-
-  const handleNext = () => {
+  const handlePrev = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
+  const handleNext = () =>
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-  };
 
   const getArrow = (key) => {
     if (sortConfig.key !== key) return "";
@@ -133,7 +130,6 @@ const Dashboard = () => {
     );
   };
 
-  // Esto se ejecuta cuando se selecciona una categoría desde el Sidebar
   const handleCategoriaSeleccionada = (categoriaId) => {
     setCategoriaSeleccionada(categoriaId);
     fetchDocuments(categoriaId);
@@ -141,6 +137,16 @@ const Dashboard = () => {
 
   const refreshDocuments = async () => {
     await fetchDocuments(categoriaSeleccionada);
+  };
+
+  const handleRowClick = (doc, event) => {
+    const ignoredTags = ["INPUT", "BUTTON", "SVG", "path"];
+    if (
+      ignoredTags.includes(event.target.tagName) ||
+      event.target.closest(".boton-descargar")
+    )
+      return;
+    setSelectedDocument(doc);
   };
 
   return (
@@ -186,17 +192,16 @@ const Dashboard = () => {
               </th>
             </tr>
           </thead>
-
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={3}>
+                <td colSpan={5}>
                   <Loader />
                 </td>
               </tr>
             ) : currentDocs.length === 0 ? (
               <tr>
-                <td colSpan={4}>
+                <td colSpan={5}>
                   No hay documentos disponibles para esta categoría.
                 </td>
               </tr>
@@ -209,13 +214,18 @@ const Dashboard = () => {
                 const fecha =
                   idxFecha !== -1 ? doc.propiedades?.[idxFecha] : "";
                 const rubroNombre = mapCategorias[doc.rubro] || "Desconocido";
-
-                // Verifica si el documento tiene el campo urldocumento
                 const hasUrlDocumento = doc.hasOwnProperty("urldocumento");
 
                 return (
-                  <tr key={doc._id}>
-                    <td className="checkbox-cell">
+                  <tr
+                    key={doc._id}
+                    onClick={(e) => handleRowClick(doc, e)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <td
+                      className="checkbox-cell"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <input
                         type="checkbox"
                         checked={doc.selected || false}
@@ -231,11 +241,13 @@ const Dashboard = () => {
                         className="custom-checkbox"
                       />
                     </td>
-
                     <td>{nombre}</td>
                     <td>{rubroNombre}</td>
                     <td>{fecha}</td>
-                    <td className="acciones">
+                    <td
+                      className="acciones"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       {hasUrlDocumento ? (
                         <button
                           onClick={() =>
@@ -285,7 +297,13 @@ const Dashboard = () => {
         )}
       </div>
 
-      <TokenExpiryToast />
+      {selectedDocument && (
+        <UpdateDocument
+          documento={selectedDocument}
+          onClose={() => setSelectedDocument(null)}
+          onDocumentUploaded={refreshDocuments}
+        />
+      )}
     </div>
   );
 };

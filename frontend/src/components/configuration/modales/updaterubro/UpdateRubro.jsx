@@ -198,7 +198,7 @@ const UpdateRubro = ({ rubro, onClose, onUpdate }) => {
                 placeholder={
                   index > 1 && field.name === "" ? "Nueva propiedad" : ""
                 }
-                disabled={!isEditing}
+                disabled={!isEditing || index < 2}
                 onChange={(e) =>
                   handleFieldChange(index, "name", e.target.value)
                 }
