@@ -199,3 +199,29 @@ aside {
   cursor: pointer;
   transition: all 0.2s ease;
 }
+
+.fila-seleccionada {
+  background-color: #1e4a9a !important;
+  color: white;
+}
+
+.fila-seleccionada td:last-child {
+  background-color: white;
+}
+
+.fila-seleccionada td:last-child:hover {
+  background-color: #f0f4f8;
+}
+
+.fila-marcada-checkbox {
+  background-color: #d0e3ff !important; /* Azul claro */
+  color: #1e4a9a;
+}
+
+.fila-marcada-checkbox td:last-child {
+  background-color: white;
+}
+
+.fila-marcada-checkbox td:last-child:hover {
+  background-color: #f0f4f8;
+}

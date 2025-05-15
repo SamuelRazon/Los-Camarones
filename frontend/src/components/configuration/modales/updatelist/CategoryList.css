@@ -40,3 +40,13 @@
     transform: scale(1.3); 
   }
   
+  .categoria-item.selected {
+    background-color: #2e5aaa;
+    color: white;
+    cursor: default;
+}
+
+.categoria-item .pen {
+    pointer-events: auto; 
+    cursor: pointer;
+}

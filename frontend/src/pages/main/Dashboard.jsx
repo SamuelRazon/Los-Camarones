@@ -22,6 +22,7 @@ const Dashboard = () => {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   const [selectedDocument, setSelectedDocument] = useState(null);
   const [loadingDocument, setLoadingDocument] = useState(false);
+  const [selectedRowId, setSelectedRowId] = useState(null);
 
   const documentsPerPage = 15;
 
@@ -147,7 +148,9 @@ const Dashboard = () => {
     )
       return;
 
+    setSelectedRowId(doc._id);
     setLoadingDocument(true);
+
     try {
       const documentDetail = await documentService.getDocumentByID(doc._id);
       let rubroDetail = null;
@@ -252,6 +255,13 @@ const Dashboard = () => {
                     key={doc._id}
                     onClick={(e) => handleRowClick(doc, e)}
                     style={{ cursor: "pointer" }}
+                    className={
+                      doc._id === selectedRowId
+                        ? "fila-seleccionada"
+                        : doc.selected
+                        ? "fila-marcada-checkbox"
+                        : ""
+                    }
                   >
                     <td
                       className="checkbox-cell"
