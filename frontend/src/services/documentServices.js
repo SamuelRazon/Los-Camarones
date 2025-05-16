@@ -152,12 +152,62 @@ const updateDocument = async ({
   }
 };
 
+const deleteDocument = async (id) => {
+  try {
+    // Verificar que haya un ID válido
+    if (!id) {
+      throw new Error('ID de documento no válido');
+    }
+
+    // Obtener el token
+    const token = Cookies.get("token");
+    if (!token) {
+      throw new Error('No hay token de autenticación');
+    }
+
+    // Log para debugging
+    console.log('Intentando eliminar documento:', { id, token });
+
+    const response = await fetch(`http://localhost:5000/api/documents/delete/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: token,
+      },
+    });
+
+    // Log de la respuesta
+    console.log('Respuesta del servidor:', response.status);
+
+    const data = await response.json();
+    console.log("Respuesta de la API:", data);
+
+    // Manejar respuesta no exitosa
+    if (!response.ok) {
+      throw new Error(data.error || "Error al eliminar el documento");
+    }
+
+    // Si todo sale bien, retornar los datos
+    return data;
+
+  } catch (error) {
+    // Log detallado del error
+    console.error("Error al eliminar documento:", {
+      message: error.message,
+      stack: error.stack
+    });
+    
+    // Re-lanzar el error para manejarlo en el componente
+    throw error;
+  }
+};
+
 const documentService = {
   uploadDocument,
   getAllDocuments,
   downloadDocument,
   getDocumentByID,
-  updateDocument
+  updateDocument,
+  deleteDocument
 };
 
 export default documentService;

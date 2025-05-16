@@ -204,6 +204,27 @@ const UpdateDocument = ({ onClose, onDocumentUploaded, document, rubro }) => {
     }
   };
 
+  const handleEliminar = async () => {
+    if (
+      !window.confirm("¿Estás seguro de que quieres eliminar este documento?")
+    )
+      return;
+
+    setIsLoading(true);
+
+    try {
+      const result = await documentService.deleteDocument(document._id);
+      console.log("Documento eliminado con éxito:", result);
+
+      if (onDocumentUploaded) onDocumentUploaded();
+      onClose();
+    } catch (error) {
+      console.error("Error al eliminar documento:", error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const renderCamposDinamicos = () => {
     if (!categoriaInfo) return null;
 
@@ -387,7 +408,7 @@ const UpdateDocument = ({ onClose, onDocumentUploaded, document, rubro }) => {
 
         {/* BOTONES */}
         <div className="save-moving">
-          <button className="btn-borrar" disabled={!modoEdicion}>
+          <button className="btn-borrar" onClick={handleEliminar}>
             <FontAwesomeIcon icon={faTrash} /> Eliminar
           </button>
 
