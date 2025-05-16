@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDownload, faSyncAlt, faTable, faTh } from "@fortawesome/free-solid-svg-icons";
+import {
+  faDownload,
+  faSyncAlt,
+  faTable,
+  faTh,
+} from "@fortawesome/free-solid-svg-icons";
 
 import "./Dashboard.css";
 import Top from "../../components/layout/Top";
@@ -24,18 +29,34 @@ const Dashboard = () => {
   const [selectedDocument, setSelectedDocument] = useState(null);
   const [loadingDocument, setLoadingDocument] = useState(false);
   const [selectedRowId, setSelectedRowId] = useState(null);
-  const [viewMode, setViewMode] = useState('table');
+  const [viewMode, setViewMode] = useState("table");
 
   const documentsPerPage = 15;
+
+  useEffect(() => {
+    fetchCategorias();
+  }, []);
+
+  useEffect(() => {
+    fetchDocuments(categoriaSeleccionada);
+  }, [categoriaSeleccionada]);
 
   const fetchDocuments = async (categoryId = null) => {
     setLoading(true);
     try {
       const data = await documentService.getAllDocuments();
+      const selectedFromStorage =
+        JSON.parse(localStorage.getItem("selectedDocs")) || [];
+
+      const updatedDocs = data.map((doc) => ({
+        ...doc,
+        selected: selectedFromStorage.includes(doc._id),
+      }));
+
       if (categoryId) {
-        setDocuments(data.filter((doc) => doc.rubro === categoryId));
+        setDocuments(updatedDocs.filter((doc) => doc.rubro === categoryId));
       } else {
-        setDocuments(data);
+        setDocuments(updatedDocs);
       }
     } catch (error) {
       console.error("Error al obtener los documentos:", error);
@@ -56,11 +77,6 @@ const Dashboard = () => {
       console.error("Error al obtener las categorías:", error);
     }
   };
-
-  useEffect(() => {
-    fetchDocuments();
-    fetchCategorias();
-  }, []);
 
   const handleSort = (key) => {
     setSortConfig((prev) => {
@@ -180,6 +196,28 @@ const Dashboard = () => {
     }
   };
 
+  const handleCheckboxChange = (docId) => {
+    setDocuments((prevDocs) =>
+      prevDocs.map((d) =>
+        d._id === docId ? { ...d, selected: !d.selected } : d
+      )
+    );
+
+    // Actualizar localStorage
+    const selectedFromStorage =
+      JSON.parse(localStorage.getItem("selectedDocs")) || [];
+
+    if (selectedFromStorage.includes(docId)) {
+      // Si ya estaba seleccionado, lo removemos
+      const updatedSelected = selectedFromStorage.filter((id) => id !== docId);
+      localStorage.setItem("selectedDocs", JSON.stringify(updatedSelected));
+    } else {
+      // Si no estaba seleccionado, lo agregamos
+      selectedFromStorage.push(docId);
+      localStorage.setItem("selectedDocs", JSON.stringify(selectedFromStorage));
+    }
+  };
+
   return (
     <div className="dashboard">
       <header>
@@ -190,6 +228,7 @@ const Dashboard = () => {
         <Sidebar
           setCategoriaSeleccionada={handleCategoriaSeleccionada}
           setDocuments={setDocuments}
+          fetchDocuments={fetchDocuments}
           selectedDocs={documents.filter((d) => d.selected)}
           clearSelectedDocuments={clearSelectedDocuments}
         />
@@ -203,16 +242,16 @@ const Dashboard = () => {
         )}
 
         <div className="view-controls">
-          <button 
-            className={`view-toggle ${viewMode === 'table' ? 'active' : ''}`}
-            onClick={() => setViewMode('table')}
+          <button
+            className={`view-toggle ${viewMode === "table" ? "active" : ""}`}
+            onClick={() => setViewMode("table")}
             title="Vista de tabla"
           >
             <FontAwesomeIcon icon={faTable} />
           </button>
-          <button 
-            className={`view-toggle ${viewMode === 'cards' ? 'active' : ''}`}
-            onClick={() => setViewMode('cards')}
+          <button
+            className={`view-toggle ${viewMode === "cards" ? "active" : ""}`}
+            onClick={() => setViewMode("cards")}
             title="Vista de tarjetas"
           >
             <FontAwesomeIcon icon={faTh} />
@@ -226,7 +265,7 @@ const Dashboard = () => {
           </button>
         </div>
 
-        {viewMode === 'table' ? (
+        {viewMode === "table" ? (
           <table>
             <thead>
               <tr>
@@ -287,15 +326,7 @@ const Dashboard = () => {
                         <input
                           type="checkbox"
                           checked={doc.selected || false}
-                          onChange={() =>
-                            setDocuments((prevDocs) =>
-                              prevDocs.map((d) =>
-                                d._id === doc._id
-                                  ? { ...d, selected: !d.selected }
-                                  : d
-                              )
-                            )
-                          }
+                          onChange={() => handleCheckboxChange(doc._id)}
                           className="custom-checkbox"
                         />
                       </td>
@@ -343,20 +374,26 @@ const Dashboard = () => {
             {loading ? (
               <Loader />
             ) : currentDocs.length === 0 ? (
-              <p className="no-documents">No hay documentos disponibles para esta categoría.</p>
+              <p className="no-documents">
+                No hay documentos disponibles para esta categoría.
+              </p>
             ) : (
               currentDocs.map((doc) => {
                 const idxNombre = doc.propiedadesnombre?.indexOf("nombre");
                 const idxFecha = doc.propiedadesnombre?.indexOf("fecha");
-                const nombre = idxNombre !== -1 ? doc.propiedades?.[idxNombre] : "";
-                const fecha = idxFecha !== -1 ? doc.propiedades?.[idxFecha] : "";
+                const nombre =
+                  idxNombre !== -1 ? doc.propiedades?.[idxNombre] : "";
+                const fecha =
+                  idxFecha !== -1 ? doc.propiedades?.[idxFecha] : "";
                 const rubroNombre = mapCategorias[doc.rubro] || "Desconocido";
                 const hasUrlDocumento = doc.hasOwnProperty("urldocumento");
 
                 return (
-                  <div 
+                  <div
                     key={doc._id}
-                    className={`document-card ${doc._id === selectedRowId ? 'selected' : ''} ${doc.selected ? 'marked' : ''}`}
+                    className={`document-card ${
+                      doc._id === selectedRowId ? "selected" : ""
+                    } ${doc.selected ? "marked" : ""}`}
                     onClick={(e) => handleRowClick(doc, e)}
                   >
                     <div className="card-header">

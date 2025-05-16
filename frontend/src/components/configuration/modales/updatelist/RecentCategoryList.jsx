@@ -14,7 +14,6 @@ const RecentCategoryList = ({ setDocuments, isSelected, onSelect }) => {
     try {
       const data = await documentService.getAllDocuments();
       setDocuments(data);
-      console.log("Documentos recientes:", data);
     } catch (error) {
       console.error("Error al obtener los documentos:", error);
     } finally {

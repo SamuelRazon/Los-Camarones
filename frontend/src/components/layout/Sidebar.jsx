@@ -58,7 +58,9 @@ const Sidebar = ({
   };
 
   const handleGenerateCV = async () => {
-    const selectedIds = selectedDocs.map((doc) => doc._id);
+    // Obtener IDs desde localStorage
+    const selectedIds = JSON.parse(localStorage.getItem("selectedDocs")) || [];
+
     if (selectedIds.length === 0) {
       showErrorToast("Selecciona al menos un documento para generar el CV.");
       return;
@@ -68,6 +70,8 @@ const Sidebar = ({
 
     try {
       await cvService.generateRubroPDF(selectedIds);
+      // Limpiar selección en localStorage después de generar el CV
+      localStorage.removeItem("selectedDocs");
       clearSelectedDocuments();
     } catch (error) {
       showErrorToast("Hubo un error al generar el PDF.");
