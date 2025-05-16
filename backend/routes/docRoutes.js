@@ -8,7 +8,7 @@ const default_category = require('../models/default_category');
 const personalized_category = require('../models/personalized_category');
 
 const AWS = require('aws-sdk');
-
+const { s3 } = require('../s3');
 
 
 
