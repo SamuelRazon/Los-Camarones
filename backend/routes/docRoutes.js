@@ -133,32 +133,45 @@ router.get('/byrubro/:id', authMiddleware, async (req, res) => {
 router.delete('/delete/:id', authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
+    const userId = req.user.id;
 
-    // Busca el documento en la base de datos
-    const document = await Document.findById(id);
+    // Busca el documento y verifica que pertenezca al usuario
+    const document = await Document.findOne({ 
+      _id: id,
+      usuario: userId 
+    });
+
     if (!document) {
-      return res.status(404).json({ error: 'Documento no encontrado' });
+      return res.status(404).json({ error: 'Documento no encontrado o no tienes permiso para eliminarlo' });
     }
 
-    // Configurar los parametros para eliminar el archivo de S3
-    const params = {
-      Bucket: process.env.AWS_BUCKET_NAME,
-      Key: document.urldocumento.split('/').pop(), // Extraer el nombre url
-    };
+    try {
+      // Configurar los parametros para eliminar el archivo de S3
+      const params = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: document.urldocumento.split('/').pop(),
+      };
 
-    // Eliminar el documento de S3
-    await s3.deleteObject(params).promise();
+      // Eliminar el documento de S3
+      await s3.deleteObject(params).promise();
+      
+      // Solo si se elimina correctamente de S3 se elimina de la base de datos
+      await Document.findByIdAndDelete(id);
+      
+      res.json({ message: 'Archivo eliminado correctamente' });
 
-    // Eliminar el documento de la base de datos
-    await Document.findByIdAndDelete(id);
+    } catch (s3Error) {
+      console.error('Error al eliminar archivo de S3:', s3Error);
+      return res.status(500).json({ 
+        error: 'Error al eliminar el archivo de S3. No se completó el borrado.' 
+      });
+    }
 
-    res.json({ message: 'Archivo eliminado correctamente' });
   } catch (error) {
     console.error('Error al eliminar el archivo:', error);
     res.status(500).json({ error: 'Error al eliminar el archivo' });
   }
 });
-
 
 
 
