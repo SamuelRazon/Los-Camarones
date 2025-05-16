@@ -13,7 +13,7 @@ import categoryService from "../../../services/categoryServices";
 import "./NewCategoryModal.css";
 import Loader from "../../../components/Loader";
 
-const NewCategoryModal = ({ onClose }) => {
+const NewCategoryModal = ({ onClose, onRefresh }) => {
   const [nombre, setNombre] = useState("");
   const [fields, setFields] = useState([
     { name: "Nombre del archivo", type: "text", required: true },
@@ -85,6 +85,8 @@ const NewCategoryModal = ({ onClose }) => {
 
       console.log("Categoría creada:", data);
       toast.success("Categoría creada correctamente.");
+      console.log("Refrescando lista de categorías...");
+      onRefresh();
       onClose();
     } catch (error) {
       console.error("Error al guardar categoría:", error);
