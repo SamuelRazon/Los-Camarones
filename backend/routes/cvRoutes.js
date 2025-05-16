@@ -145,29 +145,39 @@ router.post('/generate', authMiddleware ,async (req, res) => {
 
       doc.fontSize(12);
       docData.propiedadesnombre.forEach((nombre, i) => {
-        doc.text(`${nombre}: ${docData.propiedades[i]}`);
+        if(docData.propiedades[i] !== ""){
+          doc.text(`${nombre}: ${docData.propiedades[i]}`);
+        }
       });
 
       // Insertar QR y URL firmada si el documento tiene un adjunto
       if (docData.adjunto && docData.signedUrl) {
         doc.moveDown();
-        doc.text(`Documento: `);
-        if (docData.qrBuffer) {
-          doc.image(docData.qrBuffer, { width: 100, height: 100 });
-        }
-        doc.fontSize(10).fillColor('blue').text('Descargar documento', {
+        doc.fontSize(8).fillColor('blue').text('Escanea el QR o haz clic aquí para descargar el documento', {
           link: docData.signedUrl,
           underline: true
         });
+        doc.moveDown();
+        if (docData.qrBuffer) {
+          doc.image(docData.qrBuffer, { width: 100, height: 100 });
+        }
+        doc.fillColor('black');
+ 
       }
       doc.moveDown();
     });
 
     doc.end(); // Finaliza el PDF
 
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Error al generar el PDF.' });
+  }
+  catch (error) {
+    if (error.code === 'ERR_STREAM_WRITE_AFTER_END') {
+      console.error('Error al escribir en el stream:', error);
+      res.status(500).json({ error: 'Error al generar el PDF.' });
+    } else {
+      console.error(error);
+      res.status(500).json({ error: 'Error al generar el PDF.' });
+    }
   }
 });
 
