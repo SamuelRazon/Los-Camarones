@@ -32,22 +32,61 @@ router.get('/:id', authMiddleware, async (req, res) => {
   }
 })
 
+// Endpoint para obtener todos los documentos del usuario
+// Se pueden filtrar por rubro y propiedades
 router.get('/', authMiddleware, async (req, res) => {
   const userId = req.user.id
-  const { rubro } = req.query
+  const { rubro, propiedades, ciclo } = req.query
 
   
   try {
-    const filtro = {
+    // Filtrar documentos por usuario
+    const filtro = { 
       usuario: userId,
-      //fechadepapelera: null
     };
 
-    const documentos = await Document.find(filtro)
+    // Filtrar rubro
+    if (rubro) {
+      filtro.rubro = rubro;
+    }
+
+    // Filtrar propiedades
+    if (propiedades) {
+      const propiedadesRegex = new RegExp(propiedades, 'i'); // Coincidencia parcial, insensible a mayúsculas
+      filtro.propiedades = { $elemMatch: { $regex: propiedadesRegex } };
+    }
+
+    let documentos = await Document.find(filtro)
+    // Filtrar por ciclo
+    // Si se especificó ciclo, filtra por fechas contenidas en propiedades
+    if (ciclo) {
+      const cicloRegex = /^(\d{4})-(A|B)$/;
+      const match = ciclo.match(cicloRegex);
+
+      if (!match) {
+        return res.status(400).json({ error: 'Formato de ciclo inválido. Use el formato YYYY-A o YYYY-B.' });
+      }
+
+      const year = parseInt(match[1], 10);
+      const semester = match[2];
+
+      const startDate = semester === 'A' ? new Date(year, 0, 1) : new Date(year, 6, 1);
+      const endDate = semester === 'A' ? new Date(year, 5, 30) : new Date(year, 11, 31);
+
+      documentos = documentos.filter(doc => {
+      return doc.propiedades.some(prop => {
+      const date = new Date(prop);
+      return !isNaN(date) && date >= startDate && date <= endDate;
+    });
+  });
+  } 
+
+   
 
     return res.status(200).json(documentos)
     
   } catch (err) {
+    console.error('Error al obtener documentos:', err)
     return res.status(500).json({ error: "Error interno del servidor" })
   }
 
