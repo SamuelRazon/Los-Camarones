@@ -1,10 +1,12 @@
 const express = require('express')
+require('dotenv').config();
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const Usuario = require('../models/User')
 const RubroPersonalizado = require('../models/personalized_category')
 const { authMiddleware } = require('../middleware/auth')
 const router = express.Router()
+const nodemailer = require('nodemailer');
 
 const AWS = require('aws-sdk');
 const Document = require('../models/Document');
@@ -153,9 +155,90 @@ router.get('/perfil', authMiddleware, async (req, res) => {
   }
 })
 
+/* Se configura por donde se enviaran los correos*/
+const transporter = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
+  auth: {
+    user:process.env.GMAIL_USER,
+    pass:process.env.GMAIL_PASSWORD,
+  },
+});
 
 
+// Ruta para envier el correo de recuperacion hacia el debido usuario
+router.post('/send_reset_link', async (req, res) => {
+  const { correo } = req.body;
+  try {
+    console.log('GMAIL_USER=', process.env.GMAIL_USER);
+    console.log('GMAIL_PASSWORD=', process.env.GMAIL_PASSWORD);
+    // 1. Verifica que el usuario exista
+    const usuario = await Usuario.findOne({ correo });
+    if (!usuario) {
+      return res.status(404).json({ message: 'Usuario no encontrado.' });
+    }
 
+    // 2. Genera un JWT con expiración de 5 minutos
+    const payload = { sub: usuario._id };
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: '5m',
+    });
+    /* 
+    // 3. Construye el enlace al formulario de reset
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+    console.log(resetLink) */
+
+    console.log('TOKEN PARA RESETEO:', token);
+    // 4. Envía el correo de recuperación
+    await transporter.sendMail({
+      from: `"Shrimp Shelf" <${process.env.GMAIL_USER}>`,
+      to: usuario.correo,
+      subject: 'Recupera tu contraseña (válido 5 min)',
+      html: `
+        <p>Hola ${usuario.username || ''},</p>
+        <p>Haz clic en el siguiente enlace para establecer tu nueva contraseña. El enlace expirará en 5 minutos:</p>
+        <p>Restablecer contraseña</p>
+        <p>Si no solicitaste esto, simplemente ignora este correo.</p>
+      `,
+    });
+
+    return res.json({ message: 'Correo de recuperación enviado. Revisa tu bandeja.' });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Error interno.' });
+  }
+});
+
+// Verificar token de recuperacion de contraseña
+router.get('/verify-reset', (req, res) => {
+  const { token } = req.query;
+  try {
+    jwt.verify(token, process.env.JWT_SECRET);
+    return res.json({ ok: true });
+  } catch (err) {
+    return res.status(401).json({ ok: false, message: 'Token inválido o expirado.' });
+  }
+});
+
+// Resetear contraseña del usuario si y solo si el token sigue vigente
+router.post('/reset-password', async (req, res) => {
+  const { token, newPassword } = req.body;
+  try {
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    const usuario = await Usuario.findById(payload.sub);
+    if (!usuario) {
+      return res.status(404).json({ message: 'Usuario no encontrado.' });
+    }
+    // Hasheamos y guardamos
+    const salt = await bcrypt.genSalt(10);
+    usuario.contraseña = await bcrypt.hash(newPassword, salt);
+    await usuario.save();
+    return res.json({ message: 'Contraseña actualizada correctamente.' });
+  } catch (err) {
+    return res.status(400).json({ message: 'Token inválido o error en reset.' });
+  }
+});
 
 // Configuración de AWS S3
 const s3 = new AWS.S3({
