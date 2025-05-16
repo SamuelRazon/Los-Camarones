@@ -45,7 +45,6 @@ const Sidebar = ({
 
   const handleNewCategoryClose = () => {
     setIsNewCategoryOpen(false);
-    setRefreshCategorias((prev) => !prev);
   };
 
   const handleSelectRecientes = () => {
@@ -94,7 +93,16 @@ const Sidebar = ({
           <DocumentModal onClose={() => setIsConfigOpen(false)} />
         )}
         {isNewCategoryOpen && (
-          <NewCategoryModal onClose={handleNewCategoryClose} />
+          <NewCategoryModal
+            onClose={handleNewCategoryClose}
+            onRefresh={() =>
+              setRefreshCategorias((prev) => {
+                const newValue = !prev;
+                console.log("refreshCategorias cambiado a:", newValue);
+                return newValue;
+              })
+            }
+          />
         )}
 
         <div className="category">
@@ -118,6 +126,7 @@ const Sidebar = ({
           <CategoryList
             onSelect={handleSelectCategoria}
             selectedItem={selectedItem}
+            refresh={refreshCategorias}
           />
         </div>
 

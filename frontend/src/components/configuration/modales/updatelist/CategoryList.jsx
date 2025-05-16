@@ -6,36 +6,38 @@ import "./CategoryList.css";
 import Loader from "../../../Loader";
 import UpdateRubro from "../../modales/updaterubro/UpdateRubro";
 
-const CategoryList = ({ onSelect, refresh, selectedItem }) => {
+const CategoryList = ({ onSelect, refresh, selectedItem, onRefresh }) => {
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
-  const [selectedRubro, setSelectedRubro] = useState(null); // Estado para almacenar el rubro seleccionado
+  const [selectedRubro, setSelectedRubro] = useState(null);
+
+  // Definimos fetchCategorias fuera para poder llamarlo desde otras funciones
+  const fetchCategorias = async () => {
+    setLoading(true);
+    try {
+      const data = await categoryService.getCategories();
+      setCategorias(data);
+    } catch (error) {
+      console.error("Error al cargar categorías:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchCategorias = async () => {
-      setLoading(true);
-      try {
-        const data = await categoryService.getCategories();
-        setCategorias(data);
-      } catch (error) {
-        console.error("Error al cargar categorías:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchCategorias();
-  }, []);
+  }, [refresh]);
 
   const handleSelect = (cat) => {
     if (selectedItem === cat._id) return;
     onSelect(cat._id);
   };
 
-  const handleEdit = async (e, cat) => {
+  const handleEdit = (e, cat) => {
     e.stopPropagation();
-    setSelectedRubro(cat); // Establecer el rubro seleccionado para pasarlo al modal
-    setShowUpdateModal(true); // Mostrar el modal para actualizar
+    setSelectedRubro(cat);
+    setShowUpdateModal(true);
   };
 
   if (loading) return <Loader />;
@@ -70,8 +72,9 @@ const CategoryList = ({ onSelect, refresh, selectedItem }) => {
           onClose={() => setShowUpdateModal(false)}
           rubro={selectedRubro}
           onUpdate={() => {
-            setShowUpdateModal(false); // cerrar modal
-            if (typeof refresh === "function") refresh(); // notificar al padre
+            setShowUpdateModal(false);
+            fetchCategorias(); // refrescamos la lista
+            if (typeof onRefresh === "function") onRefresh(); // notificamos al padre si existe callback
           }}
         />
       )}
