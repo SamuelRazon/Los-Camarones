@@ -145,31 +145,29 @@ router.delete('/delete/:id', authMiddleware, async (req, res) => {
       return res.status(404).json({ error: 'Documento no encontrado o no tienes permiso para eliminarlo' });
     }
 
-    try {
-      // Configurar los parametros para eliminar el archivo de S3
-      const params = {
-        Bucket: process.env.AWS_BUCKET_NAME,
-        Key: document.urldocumento.split('/').pop(),
-      };
+    // Si existe un archivo en S3, intentar borrarlo
+    if (document.urldocumento) {
+      try {
+        const params = {
+          Bucket: process.env.AWS_BUCKET_NAME,
+          Key: document.urldocumento.split('/').pop(),
+        };
 
-      // Eliminar el documento de S3
-      await s3.deleteObject(params).promise();
-      
-      // Solo si se elimina correctamente de S3 se elimina de la base de datos
-      await Document.findByIdAndDelete(id);
-      
-      res.json({ message: 'Archivo eliminado correctamente' });
-
-    } catch (s3Error) {
-      console.error('Error al eliminar archivo de S3:', s3Error);
-      return res.status(500).json({ 
-        error: 'Error al eliminar el archivo de S3. No se completó el borrado.' 
-      });
+        await s3.deleteObject(params).promise();
+      } catch (s3Error) {
+        console.error('Error al eliminar archivo de S3:', s3Error);
+        // Continua con el proceso para borrar el registro de la BD
+      }
     }
 
+    // Eliminar el documento de la base de datos
+    await Document.findByIdAndDelete(id);
+    
+    res.json({ message: 'Documento eliminado correctamente' });
+
   } catch (error) {
-    console.error('Error al eliminar el archivo:', error);
-    res.status(500).json({ error: 'Error al eliminar el archivo' });
+    console.error('Error al eliminar el documento:', error);
+    res.status(500).json({ error: 'Error al eliminar el documento' });
   }
 });
 
