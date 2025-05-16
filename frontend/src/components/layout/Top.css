@@ -23,8 +23,8 @@
   font-size: 40px;
   margin: 0 10px;
 
-  transition: 0.5s, color .10s;
-    -webkit-transition: .5s, color .10s;
+  transition: .5s, color .10s;
+    -webkit-transition: .5s,color .10s;
     -moz-transition: .5s, color .10s;
 }
 
@@ -33,7 +33,7 @@
   cursor: pointer;
   color: #1e4a9a;
 
-  transform: scale(2, 0.5);
-    -webkit-transform: scale(1.2, 0.5);
-    -moz-transform: scale(1.2, 0.5);
+   transform: translate(0px,5px);
+    -webkit-transform: translate(0px, 5px);
+    -moz-transform: translate(0px,5px);
 }

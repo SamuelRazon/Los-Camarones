@@ -32,15 +32,6 @@ const DocumentModal = ({ onClose, onDocumentUploaded }) => {
     (cat) => cat.nombre === categoriaSeleccionada
   );
 
-  //creado para la animación del modal
-  const [isOpen, setIsOpen] = useState(false);
-
-  //creado para la animación del modal
-  useEffect(() => {
-        setIsOpen(true);
-        return () => setIsOpen(false); // Clean-up on unmount
-      }, []);
-
   useEffect(() => {
     const fetchCategorias = async () => {
       try {
@@ -246,10 +237,8 @@ const DocumentModal = ({ onClose, onDocumentUploaded }) => {
   if (isLoading) return <Loader />;
 
   return (
-    <div className={`documents-modal-overlay ${isOpen ? "open" : "closed"}`}>
-      <div className={`documents-modal ${isOpen ? "open" : "closed"}`}
-        onClick={(e) => e.stopPropagation()} // Evita que el clic en el modal cierre el overlay
-      >
+    <div className="documents-modal-overlay">
+      <div className="documents-modal">
         <div className="documents-top">
           <h3>Nuevo documento</h3>
           <div className="dropbox-category">

@@ -33,18 +33,10 @@
   cursor: pointer;
   transition: background-color 0.2s ease;
   margin-bottom: 15px;
-
-  transition: .5s, color 10s;
-    -webkit-transition: .5s, color .10s;
-    -moz-transition: .5s,color .10s;
 }
 
 .sidebar .button:hover {
   background-color: #1e4a9a; 
-
-  transform: scale3d(0.8, 1, 0.3);
-    -webkit-transform: scale3d(0.8, 1, 0.3);
-    -moz-transform: scale3d(0.8, 1, 0.3);
 }
 
 .sidebar .button button {

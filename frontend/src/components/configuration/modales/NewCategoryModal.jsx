@@ -96,23 +96,12 @@ const NewCategoryModal = ({ onClose }) => {
     }
   };
 
-   //creado para la animación del modal
-  const [isOpen, setIsOpen] = useState(false);
-  
-   //creado para la animación del modal
-    useEffect(() => {
-          setIsOpen(true);
-          return () => setIsOpen(false); // Clean-up on unmount
-        }, []);
-
   return (
     <>
       <ToastContainer />
       {loading && <Loader />}
-      <div className={`modal-background ${isOpen ? "open" : "closed"}`}>
-        <div className={`modal-container ${isOpen ? "open" : "closed"}`}
-          onClick={(e) => e.stopPropagation()} // Evita que el clic en el modal cierre el overlay
-        >
+      <div className="modal-background">
+        <div className="modal-container">
           <div className="modal-header">
             <h2>Nueva Categoría</h2>
             <div className="header-icons">
