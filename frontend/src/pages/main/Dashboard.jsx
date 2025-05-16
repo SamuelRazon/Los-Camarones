@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDownload, faSyncAlt } from "@fortawesome/free-solid-svg-icons";
+import { faDownload, faSyncAlt, faTable, faTh } from "@fortawesome/free-solid-svg-icons";
+
 import "./Dashboard.css";
 import Top from "../../components/layout/Top";
 import Sidebar from "../../components/layout/Sidebar";
@@ -23,6 +24,7 @@ const Dashboard = () => {
   const [selectedDocument, setSelectedDocument] = useState(null);
   const [loadingDocument, setLoadingDocument] = useState(false);
   const [selectedRowId, setSelectedRowId] = useState(null);
+  const [viewMode, setViewMode] = useState('table');
 
   const documentsPerPage = 15;
 
@@ -199,74 +201,165 @@ const Dashboard = () => {
             <Loader />
           </div>
         )}
-        <table>
-          <thead>
-            <tr>
-              <th></th>
-              <th onClick={() => handleSort("nombre")}>
-                Nombre {getArrow("nombre")}
-              </th>
-              <th onClick={() => handleSort("rubro")}>
-                Rubro {getArrow("rubro")}
-              </th>
-              <th onClick={() => handleSort("fecha")}>
-                Fecha {getArrow("fecha")}
-              </th>
-              <th>
-                <button
-                  onClick={refreshDocuments}
-                  title="Refrescar documentos"
-                  className="boton-refrescar"
-                >
-                  <FontAwesomeIcon
-                    icon={faSyncAlt}
-                    className="icono-refrescar"
-                  />
-                </button>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
+
+        <div className="view-controls">
+          <button 
+            className={`view-toggle ${viewMode === 'table' ? 'active' : ''}`}
+            onClick={() => setViewMode('table')}
+            title="Vista de tabla"
+          >
+            <FontAwesomeIcon icon={faTable} />
+          </button>
+          <button 
+            className={`view-toggle ${viewMode === 'cards' ? 'active' : ''}`}
+            onClick={() => setViewMode('cards')}
+            title="Vista de tarjetas"
+          >
+            <FontAwesomeIcon icon={faTh} />
+          </button>
+          <button
+            onClick={refreshDocuments}
+            title="Refrescar documentos"
+            className="boton-refrescar"
+          >
+            <FontAwesomeIcon icon={faSyncAlt} className="icono-refrescar" />
+          </button>
+        </div>
+
+        {viewMode === 'table' ? (
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th onClick={() => handleSort("nombre")}>
+                  Nombre {getArrow("nombre")}
+                </th>
+                <th onClick={() => handleSort("rubro")}>
+                  Rubro {getArrow("rubro")}
+                </th>
+                <th onClick={() => handleSort("fecha")}>
+                  Fecha {getArrow("fecha")}
+                </th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan={5}>
+                    <Loader />
+                  </td>
+                </tr>
+              ) : currentDocs.length === 0 ? (
+                <tr>
+                  <td colSpan={5}>
+                    No hay documentos disponibles para esta categoría.
+                  </td>
+                </tr>
+              ) : (
+                currentDocs.map((doc) => {
+                  const idxNombre = doc.propiedadesnombre?.indexOf("nombre");
+                  const idxFecha = doc.propiedadesnombre?.indexOf("fecha");
+                  const nombre =
+                    idxNombre !== -1 ? doc.propiedades?.[idxNombre] : "";
+                  const fecha =
+                    idxFecha !== -1 ? doc.propiedades?.[idxFecha] : "";
+                  const rubroNombre = mapCategorias[doc.rubro] || "Desconocido";
+                  const hasUrlDocumento = doc.hasOwnProperty("urldocumento");
+
+                  return (
+                    <tr
+                      key={doc._id}
+                      onClick={(e) => handleRowClick(doc, e)}
+                      style={{ cursor: "pointer" }}
+                      className={
+                        doc._id === selectedRowId
+                          ? "fila-seleccionada"
+                          : doc.selected
+                          ? "fila-marcada-checkbox"
+                          : ""
+                      }
+                    >
+                      <td
+                        className="checkbox-cell"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={doc.selected || false}
+                          onChange={() =>
+                            setDocuments((prevDocs) =>
+                              prevDocs.map((d) =>
+                                d._id === doc._id
+                                  ? { ...d, selected: !d.selected }
+                                  : d
+                              )
+                            )
+                          }
+                          className="custom-checkbox"
+                        />
+                      </td>
+                      <td>{nombre}</td>
+                      <td>{rubroNombre}</td>
+                      <td>{fecha}</td>
+                      <td
+                        className="acciones"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {hasUrlDocumento ? (
+                          <button
+                            onClick={() =>
+                              documentService.downloadDocument(doc._id)
+                            }
+                            className="boton-descargar"
+                            title="Descargar"
+                          >
+                            <FontAwesomeIcon
+                              icon={faDownload}
+                              className="icono-descargar"
+                            />
+                          </button>
+                        ) : (
+                          <button
+                            className="boton-descargar"
+                            disabled
+                            title="No disponible"
+                          >
+                            <FontAwesomeIcon
+                              icon={faDownload}
+                              className="icono-descargar"
+                            />
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        ) : (
+          <div className="documents-grid">
             {loading ? (
-              <tr>
-                <td colSpan={5}>
-                  <Loader />
-                </td>
-              </tr>
+              <Loader />
             ) : currentDocs.length === 0 ? (
-              <tr>
-                <td colSpan={5}>
-                  No hay documentos disponibles para esta categoría.
-                </td>
-              </tr>
+              <p className="no-documents">No hay documentos disponibles para esta categoría.</p>
             ) : (
               currentDocs.map((doc) => {
                 const idxNombre = doc.propiedadesnombre?.indexOf("nombre");
                 const idxFecha = doc.propiedadesnombre?.indexOf("fecha");
-                const nombre =
-                  idxNombre !== -1 ? doc.propiedades?.[idxNombre] : "";
-                const fecha =
-                  idxFecha !== -1 ? doc.propiedades?.[idxFecha] : "";
+                const nombre = idxNombre !== -1 ? doc.propiedades?.[idxNombre] : "";
+                const fecha = idxFecha !== -1 ? doc.propiedades?.[idxFecha] : "";
                 const rubroNombre = mapCategorias[doc.rubro] || "Desconocido";
                 const hasUrlDocumento = doc.hasOwnProperty("urldocumento");
 
                 return (
-                  <tr
+                  <div 
                     key={doc._id}
+                    className={`document-card ${doc._id === selectedRowId ? 'selected' : ''} ${doc.selected ? 'marked' : ''}`}
                     onClick={(e) => handleRowClick(doc, e)}
-                    style={{ cursor: "pointer" }}
-                    className={
-                      doc._id === selectedRowId
-                        ? "fila-seleccionada"
-                        : doc.selected
-                        ? "fila-marcada-checkbox"
-                        : ""
-                    }
                   >
-                    <td
-                      className="checkbox-cell"
-                      onClick={(e) => e.stopPropagation()}
-                    >
+                    <div className="card-header">
                       <input
                         type="checkbox"
                         checked={doc.selected || false}
@@ -279,48 +372,41 @@ const Dashboard = () => {
                             )
                           )
                         }
+                        onClick={(e) => e.stopPropagation()}
                         className="custom-checkbox"
                       />
-                    </td>
-                    <td>{nombre}</td>
-                    <td>{rubroNombre}</td>
-                    <td>{fecha}</td>
-                    <td
-                      className="acciones"
-                      onClick={(e) => e.stopPropagation()}
-                    >
                       {hasUrlDocumento ? (
                         <button
-                          onClick={() =>
-                            documentService.downloadDocument(doc._id)
-                          }
-                          className="boton-descargar"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            documentService.downloadDocument(doc._id);
+                          }}
+                          className="card-download-btn"
                           title="Descargar"
                         >
-                          <FontAwesomeIcon
-                            icon={faDownload}
-                            className="icono-descargar"
-                          />
+                          <FontAwesomeIcon icon={faDownload} />
                         </button>
                       ) : (
                         <button
-                          className="boton-descargar"
+                          className="card-download-btn"
                           disabled
                           title="No disponible"
                         >
-                          <FontAwesomeIcon
-                            icon={faDownload}
-                            className="icono-descargar"
-                          />
+                          <FontAwesomeIcon icon={faDownload} />
                         </button>
                       )}
-                    </td>
-                  </tr>
+                    </div>
+                    <h3 className="card-title">{nombre}</h3>
+                    <div className="card-info">
+                      <span className="card-category">{rubroNombre}</span>
+                      <span className="card-date">{fecha}</span>
+                    </div>
+                  </div>
                 );
               })
             )}
-          </tbody>
-        </table>
+          </div>
+        )}
 
         {documents.length > documentsPerPage && currentDocs.length > 0 && (
           <div className="pagination">

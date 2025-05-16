@@ -225,3 +225,128 @@ aside {
 .fila-marcada-checkbox td:last-child:hover {
   background-color: #f0f4f8;
 }
+
+/* Controles de vista */
+.view-controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.view-toggle {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #64748b;
+  transition: all 0.3s ease;
+}
+
+.view-toggle:hover {
+  background: #f8fafc;
+  color: #1e4a9a;
+}
+
+.view-toggle.active {
+  background: #1e4a9a;
+  color: white;
+  border-color: #1e4a9a;
+}
+
+/* Vista de tarjetas */
+.documents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  padding: 20px 0;
+}
+
+.document-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+
+
+.document-card:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.document-card.selected {
+  border-color: #1e4a9a;
+  background-color: #f0f7ff;
+}
+
+.document-card.marked {
+  background-color: #d0e3ff;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.card-download-btn {
+  background: transparent;
+  border: none;
+  color: #1e4a9a;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.card-download-btn:hover {
+  background: #f0f7ff;
+  transform: scale(1.1);
+}
+
+.card-download-btn:disabled {
+  color: #cbd5e1;
+  cursor: not-allowed;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+}
+
+.card-category {
+  background: #f1f5f9;
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: #1e4a9a;
+}
+
+.card-date {
+  color: #94a3b8;
+}
+
+.no-documents {
+  text-align: center;
+  color: #64748b;
+  grid-column: 1 / -1;
+  padding: 40px;
+}
