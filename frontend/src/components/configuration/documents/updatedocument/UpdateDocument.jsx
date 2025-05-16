@@ -9,12 +9,24 @@ import {
   faEye,
   faTrash,
   faPen,
+  faDownload,
 } from "@fortawesome/free-solid-svg-icons";
 import categoryService from "../../../../services/categoryServices";
 import documentService from "../../../../services/documentServices";
 import Loader from "../../../Loader";
 
-const UpdateDocument = ({ onClose, onDocumentUploaded, document, rubro }) => {
+const UpdateDocument = ({
+  onClose,
+  onDocumentUploaded,
+  document: documento,
+  rubro,
+}) => {
+  console.log("Props recibidas en UpdateDocument:", {
+    onClose,
+    onDocumentUploaded,
+    documento,
+    rubro,
+  });
   const [nombre, setNombre] = useState("");
   const [fecha, setFecha] = useState("");
   const [archivo, setArchivo] = useState(null);
@@ -56,36 +68,36 @@ const UpdateDocument = ({ onClose, onDocumentUploaded, document, rubro }) => {
   }, []);
 
   useEffect(() => {
-    if (categorias.length > 0 && document?.rubro) {
+    if (categorias.length > 0 && documento?.rubro) {
       const categoriaDelDocumento = categorias.find(
-        (cat) => cat._id === document.rubro
+        (cat) => cat._id === documento.rubro
       );
       if (categoriaDelDocumento) {
         setCategoriaSeleccionada(categoriaDelDocumento.nombre);
       }
     }
-  }, [categorias, document]);
+  }, [categorias, documento]);
 
   useEffect(() => {
-    if (document && rubro) {
-      const nombreIndex = document.propiedadesnombre.findIndex(
+    if (documento && rubro) {
+      const nombreIndex = documento.propiedadesnombre.findIndex(
         (n) => n === "nombre"
       );
-      const fechaIndex = document.propiedadesnombre.findIndex(
+      const fechaIndex = documento.propiedadesnombre.findIndex(
         (n) => n === "fecha"
       );
 
-      if (nombreIndex !== -1) setNombre(document.propiedades[nombreIndex]);
-      if (fechaIndex !== -1) setFecha(document.propiedades[fechaIndex]);
+      if (nombreIndex !== -1) setNombre(documento.propiedades[nombreIndex]);
+      if (fechaIndex !== -1) setFecha(documento.propiedades[fechaIndex]);
 
       const camposIniciales = {};
       rubro.propiedades.forEach((prop, index) => {
         if (prop === "nombre" || prop === "fecha") return;
-        const propIndex = document.propiedadesnombre.findIndex(
+        const propIndex = documento.propiedadesnombre.findIndex(
           (n) => n === prop
         );
         const tipo = rubro.propiedadesTipo?.[index] || "string";
-        let valor = propIndex !== -1 ? document.propiedades[propIndex] : "";
+        let valor = propIndex !== -1 ? documento.propiedades[propIndex] : "";
 
         if (tipo === "boolean") {
           valor = valor === true || valor === "true";
@@ -96,7 +108,7 @@ const UpdateDocument = ({ onClose, onDocumentUploaded, document, rubro }) => {
 
       setCamposDinamicos(camposIniciales);
     }
-  }, [document, rubro]);
+  }, [documento, rubro]);
 
   useEffect(() => {
     if (categoriaInfo) {
@@ -183,7 +195,7 @@ const UpdateDocument = ({ onClose, onDocumentUploaded, document, rubro }) => {
       });
 
       const payload = {
-        id: document._id, // Asegúrate de enviar el ID para updateDocument
+        id: documento._id, // Asegúrate de enviar el ID para updateDocument
         file: archivo || null, // Si no cambiaste el archivo, pasa null para no modificarlo
         rubro: categoriaInfo._id,
         rubroModel: categoriaInfo.model || "rubrosDefault",
@@ -213,7 +225,7 @@ const UpdateDocument = ({ onClose, onDocumentUploaded, document, rubro }) => {
     setIsLoading(true);
 
     try {
-      const result = await documentService.deleteDocument(document._id);
+      const result = await documentService.deleteDocument(documento._id);
       console.log("Documento eliminado con éxito:", result);
 
       if (onDocumentUploaded) onDocumentUploaded();
@@ -361,10 +373,12 @@ const UpdateDocument = ({ onClose, onDocumentUploaded, document, rubro }) => {
             type="text"
             className={`input-name ${errores.archivo ? "input-error" : ""}`}
             placeholder="Archivo seleccionado"
-            value={archivo?.name || ""}
+            value={
+              archivo?.name || documento?.urldocumento?.split("/").pop() || ""
+            }
             readOnly
           />
-          {archivo && archivoURL && (
+          {archivo && archivoURL ? (
             <button
               type="button"
               className="show-document"
@@ -372,7 +386,24 @@ const UpdateDocument = ({ onClose, onDocumentUploaded, document, rubro }) => {
             >
               <FontAwesomeIcon icon={faEye} />
             </button>
-          )}
+          ) : documento?.urldocumento ? (
+            <button
+              type="button"
+              className="show-document"
+              onClick={async () => {
+                setIsLoading(true);
+                try {
+                  await documentService.downloadDocument(documento._id);
+                } catch (error) {
+                  console.error("Error al descargar documento:", error.message);
+                } finally {
+                  setIsLoading(false);
+                }
+              }}
+            >
+              <FontAwesomeIcon icon={faDownload} />
+            </button>
+          ) : null}
         </div>
 
         {/* CAMPOS FIJOS */}

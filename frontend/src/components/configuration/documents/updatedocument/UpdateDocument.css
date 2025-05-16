@@ -95,7 +95,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 85px;
+    width: 25%;
     height: 45px;
     border: none;
     background: #335C94;
@@ -142,6 +142,7 @@
 
 .input-name,
 .documents-input {
+    background-color: white;
     width: 100%;
     padding: 8px;
     margin-top: 10px;
@@ -151,6 +152,11 @@
     transition: border-color 0.3s ease;
 }
 
+.input-name:focus,
+.documents-input:focus {
+    border-color: #ccc;
+    outline: none;
+}
 .input-name:hover,
 .documents-input:hover {
     border-color: #335c94;
@@ -294,3 +300,33 @@
   transform: none;
 }
 
+
+.show-document {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 35px;
+  height: 35px; /* igual altura y ancho para botón cuadrado */
+  cursor: pointer;
+  color: #335C94;
+  background: #FFFFFF;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  top: 0;
+  right: 0;
+  transform: none;
+}
+
+.show-document:hover {
+  color: #254975;
+}
+
+.newdocuments-button:disabled {
+    background-color: #ccc;
+    color: #888;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
