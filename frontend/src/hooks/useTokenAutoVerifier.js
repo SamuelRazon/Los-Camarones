@@ -4,24 +4,29 @@ import { useNavigate } from "react-router-dom";
 import authService from "../services/authServices";
 import throttle from "lodash.throttle";
 
-const useTokenAutoVerifier = ({
-  delay = 60000,
-  warningDelay = 900000,
-  throttleDelay = 3000, // Limita verificación a una vez cada 3 segundos
-} = {}) => {
+const useTokenAutoVerifier = ({ throttleDelay = 3000 } = {}) => {
   const navigate = useNavigate();
-  const timeoutRef = useRef(null);
-  const warningRef = useRef(null);
   const hasRedirectedRef = useRef(false);
+  const isVerifyingRef = useRef(false);
 
   const checkToken = useCallback(async () => {
+    if (isVerifyingRef.current) return; // Evita doble verificación simultánea
+
+    const token = Cookies.get("token");
+    if (!token) {
+      console.warn("No hay token en cookies, omitiendo verificación.");
+      return;
+    }
+
+    isVerifyingRef.current = true;
     try {
       await authService.verifytoken();
     } catch (error) {
       console.error("Token inválido:", error);
-      Cookies.remove("token");
 
       if (!hasRedirectedRef.current) {
+        Cookies.remove("token"); // Remover solo si es seguro
+
         hasRedirectedRef.current = true;
 
         const expiredEvent = new CustomEvent("token-expired", {
@@ -35,52 +40,30 @@ const useTokenAutoVerifier = ({
           navigate("/login");
         }, 2000);
       }
+    } finally {
+      isVerifyingRef.current = false;
     }
   }, [navigate]);
-
-  const resetTimer = useCallback(() => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    if (warningRef.current) clearTimeout(warningRef.current);
-
-    timeoutRef.current = setTimeout(() => {
-      checkToken();
-    }, delay);
-
-    warningRef.current = setTimeout(() => {
-      if (hasRedirectedRef.current) return;
-
-      const warningEvent = new CustomEvent("token-expiry-warning", {
-        detail: {
-          onExtend: () => {
-            resetTimer();
-            checkToken();
-          },
-          onLogout: () => {
-            Cookies.remove("token");
-            navigate("/login");
-          },
-        },
-      });
-      window.dispatchEvent(warningEvent);
-    }, warningDelay);
-  }, [checkToken, delay, warningDelay, navigate]);
 
   const throttledHandleActivity = useCallback(
     throttle(() => {
       checkToken();
-      resetTimer();
     }, throttleDelay),
-    [checkToken, resetTimer, throttleDelay]
+    [checkToken, throttleDelay]
   );
 
   useEffect(() => {
+    const initialToken = Cookies.get("token");
+    if (initialToken) {
+      setTimeout(() => {
+        checkToken();
+      }, 300);
+    }
+
     window.addEventListener("mousemove", throttledHandleActivity);
     window.addEventListener("click", throttledHandleActivity);
     window.addEventListener("keydown", throttledHandleActivity);
     window.addEventListener("scroll", throttledHandleActivity);
-
-    checkToken();
-    resetTimer();
 
     return () => {
       window.removeEventListener("mousemove", throttledHandleActivity);
@@ -88,11 +71,9 @@ const useTokenAutoVerifier = ({
       window.removeEventListener("keydown", throttledHandleActivity);
       window.removeEventListener("scroll", throttledHandleActivity);
 
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      if (warningRef.current) clearTimeout(warningRef.current);
-      throttledHandleActivity.cancel(); // Limpia el throttle
+      throttledHandleActivity.cancel();
     };
-  }, [checkToken, resetTimer, throttledHandleActivity]);
+  }, [checkToken, throttledHandleActivity]);
 
   return null;
 };
