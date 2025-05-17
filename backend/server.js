@@ -10,8 +10,6 @@ const downfilesRoutes = require('./routes/downfiles3Routes');
 const showuserdocRoutes = require('./routes/showuserdocRoutes');
 const cvRoutes = require('./routes/cvRoutes')
 
-//const cron = require('node-cron');  
-//const deleteOldTrashDocuments = require('./deleteOldTrashDocuments');
 
 
 dotenv.config()
@@ -32,10 +30,3 @@ app.use('/api/cv', cvRoutes);
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => console.log(`Server online in ${PORT}`))
 
-/*
-// Programar el cron job para ejecutarse todos los dias a las 00:00 horas
-cron.schedule('0 0 * * *', () => {
-    console.log('Ejecutando la limpieza de documentos...');
-    deleteOldTrashDocuments();
-  });
-*/
