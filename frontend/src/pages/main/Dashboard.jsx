@@ -226,6 +226,7 @@ const Dashboard = () => {
           isConfigOpen={isConfigOpen}
           setIsConfigOpen={setIsConfigOpen}
           setDocuments={setDocuments}
+          categoriaSeleccionada={categoriaSeleccionada}
         />
       </header>
 

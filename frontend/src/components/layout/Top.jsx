@@ -8,7 +8,12 @@ import ProfileModal from "../configuration/profile/ProfileModal";
 import SearchBar from "../../components/configuration/modales/updatelist/SearchBar";
 import documentService from "../../services/documentServices";
 
-const Top = ({ isConfigOpen, setIsConfigOpen, setDocuments }) => {
+const Top = ({
+  isConfigOpen,
+  setIsConfigOpen,
+  setDocuments,
+  categoriaSeleccionada,
+}) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [profileData, setProfileData] = useState(null);
 
@@ -35,11 +40,16 @@ const Top = ({ isConfigOpen, setIsConfigOpen, setDocuments }) => {
 
   const handleSearch = async (query) => {
     try {
-      const results = await documentService.searchDocuments({
-        propiedades: query,
-      });
-      console.log("Resultados de búsqueda:", results);
+      const filtros = { propiedades: query };
 
+      // Solo agregar el rubro si está seleccionado
+      if (categoriaSeleccionada) {
+        filtros.rubro = categoriaSeleccionada;
+      }
+
+      const results = await documentService.searchDocuments(filtros);
+
+      console.log("Resultados de búsqueda:", results);
       setDocuments(results);
     } catch (error) {
       console.error("Error en búsqueda de documentos:", error);

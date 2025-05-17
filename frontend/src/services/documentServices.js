@@ -201,12 +201,13 @@ const deleteDocument = async (id) => {
   }
 };
 
-const searchDocuments = async ({propiedades, ciclo }) => {
+const searchDocuments = async ({ rubro, propiedades, ciclo }) => {
   try {
     const token = Cookies.get("token");
 
     const params = new URLSearchParams();
 
+    if (rubro) params.append("rubro", rubro);
     if (propiedades) params.append("propiedades", propiedades); 
     if (ciclo) params.append("ciclo", ciclo);
 
