@@ -375,3 +375,82 @@ aside {
   color: #cbd5e1;
   background: transparent;
 }
+
+.view-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Contenedor de filtros - fondo muy claro y bordes sutiles */
+.filtros-mostrados {
+  margin-left: auto;
+  display: flex;
+  gap: 12px;
+  font-size: 0.9rem;
+  color: #5f6368; /* Gris suave tipo Google */
+  background-color: transparent;
+  padding: 6px 12px;
+  border-radius: 24px;
+  align-items: center;
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Ocultar scrollbar en Chrome, Edge, Safari */
+.filtros-mostrados::-webkit-scrollbar {
+  display: none;
+}
+
+/* Cada filtro individual */
+.filtros-mostrados span {
+  background-color: white; /* Gris muy claro */
+  color: #3c4043;
+  border: 1px solid #dadce0;
+  padding: 6px 14px;
+  border-radius: 16px;
+  font-weight: 400;
+  white-space: nowrap;
+  box-shadow: none;
+  transition: background-color 0.2s ease;
+  user-select: none;
+}
+
+/* Hover para filtro */
+.filtros-mostrados span:hover {
+  background-color: transparent; /* Azul claro */
+  color: #1967d2;
+  cursor: default;
+}
+
+/* Botón para remover filtro (X) */
+.btn-remove-filtro {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  color: #5f6368;
+  margin-left: 8px;
+  font-size: 14px;
+  line-height: 1;
+  transition: color 0.2s ease;
+  user-select: none;
+}
+
+.btn-remove-filtro:hover {
+  color: #d93025; /* Rojo Google para acción */
+}
+
+/* Para un layout responsivo en filtros */
+@media (max-width: 600px) {
+  .filtros-mostrados {
+    gap: 8px;
+    padding: 4px 8px;
+  }
+  
+  .filtros-mostrados span {
+    padding: 5px 10px;
+    font-size: 0.85rem;
+  }
+}

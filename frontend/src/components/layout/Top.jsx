@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleUser, faGear } from "@fortawesome/free-solid-svg-icons";
 import Modal from "../configuration/Modal";
@@ -17,6 +17,13 @@ const Top = ({
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [profileData, setProfileData] = useState(null);
 
+  // Estado filtros para persistencia
+  const [filters, setFilters] = useState(() => {
+    // Leer de localStorage o estado vacío
+    const saved = localStorage.getItem("filtrosDashboard");
+    return saved ? JSON.parse(saved) : {};
+  });
+
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -30,29 +37,40 @@ const Top = ({
     fetchProfile();
   }, []);
 
+  // Búsqueda combinada: query + filtros + rubro
+  const handleSearch = useCallback(
+    async (query, filtrosExternos = {}) => {
+      try {
+        // Combina filtros del modal + query + rubro
+        const filtros = {
+          ...filtrosExternos,
+          propiedades: query || undefined,
+        };
+
+        if (categoriaSeleccionada) {
+          filtros.rubro = categoriaSeleccionada;
+        }
+
+        // Guardar filtros en estado y localStorage para persistencia
+        setFilters(filtros);
+        localStorage.setItem("filtrosDashboard", JSON.stringify(filtros));
+
+        const results = await documentService.searchDocuments(filtros);
+
+        console.log("Resultados de búsqueda:", results);
+        setDocuments(results);
+      } catch (error) {
+        console.error("Error en búsqueda de documentos:", error);
+      }
+    },
+    [categoriaSeleccionada, setDocuments]
+  );
+
   const handleProfile = () => {
     if (profileData) {
       setIsProfileOpen(true);
     } else {
       console.warn("Perfil aún no cargado");
-    }
-  };
-
-  const handleSearch = async (query) => {
-    try {
-      const filtros = { propiedades: query };
-
-      // Solo agregar el rubro si está seleccionado
-      if (categoriaSeleccionada) {
-        filtros.rubro = categoriaSeleccionada;
-      }
-
-      const results = await documentService.searchDocuments(filtros);
-
-      console.log("Resultados de búsqueda:", results);
-      setDocuments(results);
-    } catch (error) {
-      console.error("Error en búsqueda de documentos:", error);
     }
   };
 
@@ -67,7 +85,7 @@ const Top = ({
       </div>
 
       <div className="top-section center">
-        <SearchBar onSearch={handleSearch} />
+        <SearchBar onSearch={handleSearch} initialFilters={filters} />
       </div>
 
       {isProfileOpen && profileData && (

@@ -201,7 +201,7 @@ const deleteDocument = async (id) => {
   }
 };
 
-const searchDocuments = async ({ rubro, propiedades, ciclo }) => {
+const searchDocuments = async ({ rubro, propiedades, ciclo, startDate,endDate }) => {
   try {
     const token = Cookies.get("token");
 
@@ -210,6 +210,9 @@ const searchDocuments = async ({ rubro, propiedades, ciclo }) => {
     if (rubro) params.append("rubro", rubro);
     if (propiedades) params.append("propiedades", propiedades); 
     if (ciclo) params.append("ciclo", ciclo);
+    if (startDate) params.append("startDate", startDate);
+    if (endDate) params.append("endDate", endDate); 
+  
 
     const response = await fetch(`http://localhost:5000/api/documents/?${params.toString()}`, {
       method: "GET",

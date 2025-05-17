@@ -1,0 +1,206 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 480px;
+  max-height: 90%;
+  overflow-y: auto;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  font-family: "Segoe UI", sans-serif;
+  color: #333333;
+}
+
+.modal h2 {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  color: #2e5aaa;
+  text-align: center;
+}
+
+.modal label {
+  display: block;
+  margin-top: 1rem;
+  margin-bottom: 0.4rem;
+  font-weight: 500;
+}
+
+.modal input,
+.modal select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  outline: none;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background-color: #f9f9f9;
+  padding-right: 2rem;
+}
+
+.modal input:focus,
+.modal select:focus {
+  border-color: #2e5aaa;
+  background-color: white;
+}
+
+.scrollable-select {
+  max-height: 220px;
+  overflow-y: auto;
+  margin-top: 0.5rem;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  position: relative;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 1.5rem;
+}
+
+.modal-buttons button {
+  padding: 0.6rem 1.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16);
+  width: 140px;
+  text-align: center;
+}
+
+/* Botón Cancelar */
+.modal-buttons button:nth-child(1) {
+  background-color: white;
+  border: #eee 1px solid;
+}
+.modal-buttons button:nth-child(1):hover {
+  background-color: white;
+  border: #ccc 1px solid;
+}
+
+/* Botón Aplicar (color de la cruz) */
+.modal-buttons button:last-child {
+  background-color: #2e5aaa;
+  color: white;
+}
+.modal-buttons button:last-child:hover {
+  background-color: #244a89;
+}
+
+.filter-field {
+  margin-top: 1rem;
+}
+
+.input-clear-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.input-clear-wrapper input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  outline: none;
+  font-size: 1rem;
+  background-color: #f9f9f9;
+  transition: all 0.3s ease;
+}
+
+.input-clear-wrapper input:focus {
+  border-color: #2e5aaa;
+  background-color: white;
+}
+
+.clear-field-btn {
+  background-color: transparent;
+  border: none;
+  color: #2e5aaa;
+  font-size: 1.6rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  user-select: none;
+  transition: all 0.3s ease;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+}
+
+.clear-field-btn:hover {
+  color: #244a89;
+  background-color: rgba(46, 90, 170, 0.1);
+}
+
+.scrollable-select-wrapper {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.scrollable-select-wrapper select {
+  flex: 1;
+  max-height: 220px;
+  overflow-y: auto;
+  margin-top: 0.5rem;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  outline: none;
+  font-size: 1rem;
+  background-color: #f9f9f9;
+  transition: all 0.3s ease;
+}
+
+.scrollable-select-wrapper select:focus {
+  border-color: #2e5aaa;
+  background-color: white;
+}
+
+.select-clear-btn {
+  font-size: 1.8rem;
+  margin-top: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  font-size: 1.4rem;
+  color: #464646;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+  line-height: 1;
+  user-select: none;
+}
+
+.modal-close-btn:hover {
+  color: red;
+}

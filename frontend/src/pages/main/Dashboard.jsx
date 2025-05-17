@@ -31,6 +31,57 @@ const Dashboard = () => {
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [viewMode, setViewMode] = useState("table");
 
+  const [filtrosGuardados, setFiltrosGuardados] = useState({
+    fechaDesde: "",
+    fechaHasta: "",
+    cicloEscolar: "",
+  });
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const filtros = JSON.parse(localStorage.getItem("filtrosDashboard")) || {
+        fechaDesde: "",
+        fechaHasta: "",
+        cicloEscolar: "",
+      };
+      setFiltrosGuardados(filtros);
+      fetchDocuments(categoriaSeleccionada, filtros); // Aplicar filtros directamente
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    // Llamada inicial
+    handleStorageChange();
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    // Función accesible desde el modal
+    window.actualizarFiltrosDashboard = () => {
+      const filtros = JSON.parse(localStorage.getItem("filtrosDashboard")) || {
+        fechaDesde: "",
+        fechaHasta: "",
+        cicloEscolar: "",
+      };
+      setFiltrosGuardados(filtros);
+      fetchDocuments(categoriaSeleccionada, filtros);
+    };
+  }, [categoriaSeleccionada]);
+
+  const eliminarFiltro = (clave) => {
+    const nuevosFiltros = { ...filtrosGuardados };
+    delete nuevosFiltros[clave];
+
+    setFiltrosGuardados(nuevosFiltros);
+    localStorage.setItem("filtrosDashboard", JSON.stringify(nuevosFiltros));
+
+    // Actualizar documentos aplicando los filtros restantes y la categoría seleccionada
+    fetchDocuments(categoriaSeleccionada, nuevosFiltros);
+  };
+
   const documentsPerPage = 15;
 
   useEffect(() => {
@@ -41,23 +92,45 @@ const Dashboard = () => {
     fetchDocuments(categoriaSeleccionada);
   }, [categoriaSeleccionada]);
 
-  const fetchDocuments = async (categoryId = null) => {
+  const fetchDocuments = async (
+    categoryId = null,
+    filtros = filtrosGuardados
+  ) => {
     setLoading(true);
     try {
       const data = await documentService.getAllDocuments();
       const selectedFromStorage =
         JSON.parse(localStorage.getItem("selectedDocs")) || [];
 
-      const updatedDocs = data.map((doc) => ({
+      let filteredDocs = data.map((doc) => ({
         ...doc,
         selected: selectedFromStorage.includes(doc._id),
       }));
 
       if (categoryId) {
-        setDocuments(updatedDocs.filter((doc) => doc.rubro === categoryId));
-      } else {
-        setDocuments(updatedDocs);
+        filteredDocs = filteredDocs.filter((doc) => doc.rubro === categoryId);
       }
+
+      // Filtrar por fecha y ciclo escolar
+      filteredDocs = filteredDocs.filter((doc) => {
+        const idxFecha = doc.propiedadesnombre?.indexOf("fecha");
+        const fechaDoc = idxFecha !== -1 ? doc.propiedades?.[idxFecha] : null;
+        const cumpleFechaDesde = filtros.fechaDesde
+          ? fechaDoc >= filtros.fechaDesde
+          : true;
+
+        const cumpleFechaHasta = filtros.fechaHasta
+          ? fechaDoc <= filtros.fechaHasta
+          : true;
+
+        const cumpleCiclo = filtros.cicloEscolar
+          ? doc.cicloEscolar === filtros.cicloEscolar
+          : true;
+
+        return cumpleFechaDesde && cumpleFechaHasta && cumpleCiclo;
+      });
+
+      setDocuments(filteredDocs);
     } catch (error) {
       console.error("Error al obtener los documentos:", error);
     } finally {
@@ -248,6 +321,45 @@ const Dashboard = () => {
         )}
 
         <div className="view-controls">
+          <div className="filtros-mostrados">
+            {filtrosGuardados.fechaDesde && (
+              <span>
+                Desde: <strong>{filtrosGuardados.fechaDesde}</strong>
+                <button
+                  className="btn-remove-filtro"
+                  onClick={() => eliminarFiltro("fechaDesde")}
+                  title="Eliminar filtro"
+                >
+                  ×
+                </button>
+              </span>
+            )}
+            {filtrosGuardados.fechaHasta && (
+              <span>
+                Hasta: <strong>{filtrosGuardados.fechaHasta}</strong>
+                <button
+                  className="btn-remove-filtro"
+                  onClick={() => eliminarFiltro("fechaHasta")}
+                  title="Eliminar filtro"
+                >
+                  ×
+                </button>
+              </span>
+            )}
+            {filtrosGuardados.cicloEscolar && (
+              <span>
+                Ciclo: <strong>{filtrosGuardados.cicloEscolar}</strong>
+                <button
+                  className="btn-remove-filtro"
+                  onClick={() => eliminarFiltro("cicloEscolar")}
+                  title="Eliminar filtro"
+                >
+                  ×
+                </button>
+              </span>
+            )}
+          </div>
+          {/* Botones de modo tabla y cards */}
           <button
             className={`view-toggle ${viewMode === "table" ? "active" : ""}`}
             onClick={() => setViewMode("table")}
