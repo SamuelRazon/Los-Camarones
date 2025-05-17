@@ -36,7 +36,7 @@ router.get('/:id', authMiddleware, async (req, res) => {
 // Se pueden filtrar por rubro y propiedades
 router.get('/', authMiddleware, async (req, res) => {
   const userId = req.user.id
-  const { rubro, propiedades, ciclo } = req.query
+  const { rubro, propiedades, ciclo , startDate, endDate } = req.query
 
   
   try {
@@ -57,6 +57,13 @@ router.get('/', authMiddleware, async (req, res) => {
     }
 
     let documentos = await Document.find(filtro)
+
+    // Verificar que no se combinen ciclo y fechas
+    if (ciclo && (startDate || endDate)) {
+      return res.status(400).json({ error: 'No se pueden combinar ciclo y fechas de inicio/fin.' });
+    }
+
+
     // Filtrar por ciclo
     // Si se especificó ciclo, filtra por fechas contenidas en propiedades
     if (ciclo) {
@@ -70,16 +77,38 @@ router.get('/', authMiddleware, async (req, res) => {
       const year = parseInt(match[1], 10);
       const semester = match[2];
 
-      const startDate = semester === 'A' ? new Date(year, 0, 1) : new Date(year, 6, 1);
-      const endDate = semester === 'A' ? new Date(year, 5, 30) : new Date(year, 11, 31);
+      const startDateC = semester === 'A' ? new Date(year, 0, 1) : new Date(year, 6, 1);
+      const endDateC = semester === 'A' ? new Date(year, 5, 30) : new Date(year, 11, 31);
 
       documentos = documentos.filter(doc => {
+        return doc.propiedades.some(prop => {
+          const date = new Date(prop);
+          return !isNaN(date) && date >= startDateC && date <= endDateC;
+        });
+      });
+    } 
+
+  if (startDate || endDate) {
+    // Verficar formato de fecha valido
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (startDate && !dateRegex.test(startDate)) {
+      return res.status(400).json({ error: 'Formato de fecha de inicio inválido. Use el formato YYYY-MM-DD.' });
+    }
+    if (endDate && !dateRegex.test(endDate)) {
+      return res.status(400).json({ error: 'Formato de fecha de fin inválido. Use el formato YYYY-MM-DD.' });
+    }
+
+    // Filtrar por fechas
+    const start = startDate ? new Date(startDate) : new Date(0); // Fecha mínima
+    const end = endDate ? new Date(endDate) : new Date(); // Fecha máxima
+    documentos = documentos.filter(doc => {
       return doc.propiedades.some(prop => {
-      const date = new Date(prop);
-      return !isNaN(date) && date >= startDate && date <= endDate;
-    });
-  });
-  } 
+        const date = new Date(prop);
+        return !isNaN(date) && date >= start && date <= end;
+      });
+    }
+    );
+  }
 
    
 
