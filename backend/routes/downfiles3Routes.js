@@ -36,15 +36,19 @@ router.get('/download/:docId', authMiddleware, async (req, res) => {
     const fileKey = urlParts[urlParts.length - 1];
     const decodedKey = decodeURIComponent(fileKey);
 
+    // Obtener el nombre original del archivo de las propiedades del documento
+    const nombreIndex = document.propiedadesnombre.indexOf('nombre');
+    const nombreArchivo = nombreIndex !== -1 ? document.propiedades[nombreIndex] : 'documento';
+    const nombreDescarga = nombreArchivo.toLowerCase().endsWith('.pdf') ? nombreArchivo : `${nombreArchivo}.pdf`;
 
     /* Creamos una signed URL para que solamente nuestro usuario pueda descargar el archivo
     * El tiempo que durara esa url sera de 60 segundos, pero si quieren menos o mas cambien el Expires*/
     const params = {
       Bucket: process.env.AWS_BUCKET_NAME,
       Key: decodedKey,
-      Expires: 60
+      Expires: 60,
+      ResponseContentDisposition: `attachment; filename*=UTF-8''${encodeURIComponent(nombreDescarga)}` 
     };
-
 
     const downloadUrl = s3.getSignedUrl('getObject', params);
     return res.status(200).json({ downloadUrl });
