@@ -155,6 +155,7 @@ const Dashboard = () => {
   };
 
   const refreshDocuments = async () => {
+    await fetchCategorias();
     await fetchDocuments(categoriaSeleccionada);
   };
 

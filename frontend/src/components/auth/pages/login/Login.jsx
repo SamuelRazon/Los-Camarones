@@ -41,6 +41,8 @@ const Login = () => {
     try {
       const data = await authService.loginUser(email, password);
       Cookies.set("token", data.token, { expires: 1, secure: false });
+      localStorage.clear();
+
       navigate("/dashboard");
     } catch (error) {
       console.error("Error en login:", error);
