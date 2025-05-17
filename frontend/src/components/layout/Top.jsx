@@ -5,16 +5,11 @@ import Modal from "../configuration/Modal";
 import "./Top.css";
 import authService from "../../services/authServices";
 import ProfileModal from "../configuration/profile/ProfileModal";
+import SearchBar from "../../components/configuration/modales/updatelist/SearchBar";
+import documentService from "../../services/documentServices";
 
-/*Se encarga de mostrar el contenido de arriba de las opciones, en este caso,
- * la imagen (con su modal), la búsqueda (de los documentos con el back),
- * el ciclo (de los rubros de los documentos con el back),
- * el icon (el de configuración con su modal), y el diseño.
- */
-
-const Top = ({ isConfigOpen, setIsConfigOpen }) => {
+const Top = ({ isConfigOpen, setIsConfigOpen, setDocuments }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-
   const [profileData, setProfileData] = useState(null);
 
   useEffect(() => {
@@ -38,6 +33,19 @@ const Top = ({ isConfigOpen, setIsConfigOpen }) => {
     }
   };
 
+  const handleSearch = async (query) => {
+    try {
+      const results = await documentService.searchDocuments({
+        propiedades: query,
+      });
+      console.log("Resultados de búsqueda:", results);
+
+      setDocuments(results);
+    } catch (error) {
+      console.error("Error en búsqueda de documentos:", error);
+    }
+  };
+
   return (
     <div className="top">
       <div className="picture">
@@ -48,7 +56,10 @@ const Top = ({ isConfigOpen, setIsConfigOpen }) => {
         />
       </div>
 
-      {/* Modal de perfil */}
+      <div className="top-section center">
+        <SearchBar onSearch={handleSearch} />
+      </div>
+
       {isProfileOpen && profileData && (
         <ProfileModal
           onClose={() => setIsProfileOpen(false)}

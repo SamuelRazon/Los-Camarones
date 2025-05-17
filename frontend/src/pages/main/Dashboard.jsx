@@ -222,7 +222,11 @@ const Dashboard = () => {
   return (
     <div className="dashboard">
       <header>
-        <Top isConfigOpen={isConfigOpen} setIsConfigOpen={setIsConfigOpen} />
+        <Top
+          isConfigOpen={isConfigOpen}
+          setIsConfigOpen={setIsConfigOpen}
+          setDocuments={setDocuments}
+        />
       </header>
 
       <aside>

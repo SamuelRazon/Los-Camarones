@@ -201,13 +201,44 @@ const deleteDocument = async (id) => {
   }
 };
 
+const searchDocuments = async ({propiedades, ciclo }) => {
+  try {
+    const token = Cookies.get("token");
+
+    const params = new URLSearchParams();
+
+    if (propiedades) params.append("propiedades", propiedades); 
+    if (ciclo) params.append("ciclo", ciclo);
+
+    const response = await fetch(`http://localhost:5000/api/documents/?${params.toString()}`, {
+      method: "GET",
+      headers: {
+        Authorization: token,
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Error al buscar documentos con filtros");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error en búsqueda de documentos:", error);
+    throw error;
+  }
+};
+
+
 const documentService = {
   uploadDocument,
   getAllDocuments,
   downloadDocument,
   getDocumentByID,
   updateDocument,
-  deleteDocument
+  deleteDocument,
+  searchDocuments
 };
 
 export default documentService;
