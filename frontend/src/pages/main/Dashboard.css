@@ -273,16 +273,9 @@ aside {
   position: relative;
 }
 
-
-
 .document-card:hover {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
-}
-
-.document-card.selected {
-  border-color: #1e4a9a;
-  background-color: #f0f7ff;
 }
 
 .document-card.marked {
@@ -349,4 +342,36 @@ aside {
   color: #64748b;
   grid-column: 1 / -1;
   padding: 40px;
+}
+
+.document-card.selected {
+  background-color: #3765b0;
+  color: white;
+}
+
+.document-card.selected .card-title {
+  color: white;
+}
+
+.document-card.selected .card-category {
+  background: white;
+  color: #3765b0;
+}
+
+.document-card.selected .card-date {
+  color: #d1d5db; /* gris claro para contraste suave */
+}
+
+.document-card.selected .card-download-btn {
+  color: white;
+}
+
+.document-card.selected .card-download-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.document-card.selected .card-download-btn:disabled {
+  color: #cbd5e1;
+  background: transparent;
 }

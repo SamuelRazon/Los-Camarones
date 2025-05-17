@@ -401,15 +401,7 @@ const Dashboard = () => {
                       <input
                         type="checkbox"
                         checked={doc.selected || false}
-                        onChange={() =>
-                          setDocuments((prevDocs) =>
-                            prevDocs.map((d) =>
-                              d._id === doc._id
-                                ? { ...d, selected: !d.selected }
-                                : d
-                            )
-                          )
-                        }
+                        onChange={() => handleCheckboxChange(doc._id)}
                         onClick={(e) => e.stopPropagation()}
                         className="custom-checkbox"
                       />
