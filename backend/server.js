@@ -10,6 +10,8 @@ const downfilesRoutes = require('./routes/downfiles3Routes');
 const showuserdocRoutes = require('./routes/showuserdocRoutes');
 const cvRoutes = require('./routes/cvRoutes')
 
+//const cron = require('node-cron');  
+//const deleteOldTrashDocuments = require('./deleteOldTrashDocuments');
 
 
 dotenv.config()

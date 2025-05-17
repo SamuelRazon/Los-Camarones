@@ -13,7 +13,7 @@ const DocumentSchema = new mongoose.Schema({
   propiedades: { type: [Schema.Types.Mixed], required: true },
   adjunto: { type: Boolean, default: false },
   urldocumento: { type: String },
-  enPapelera: { type: Boolean, default: false }
+  //fechadepapelera: {type: Date, default: null}
 });
 
 module.exports = mongoose.model('Documentos', DocumentSchema);

@@ -17,23 +17,6 @@ const upload = multer();
 
 router.post('/upload', authMiddleware, upload.single('file'), uploadDocument);
 
-
-
-// Listar documentos en papelera
-router.get('/trash', authMiddleware, async (req, res) => {
-  try {
-    const documents = await Document.find({
-      usuario: req.user.id,
-      enPapelera: true
-    });
-
-    res.json({ documents });
-  } catch (error) {
-    res.status(500).json({ error: 'Error al obtener documentos en la papelera' });
-  }
-});
-
-
 router.put('/update/:id', authMiddleware, upload.single('file'), updateDocument);
 
 router.get('/:id', authMiddleware, async (req, res) => {
@@ -60,7 +43,6 @@ router.get('/', authMiddleware, async (req, res) => {
     // Filtrar documentos por usuario
     const filtro = { 
       usuario: userId,
-      enPapelera: false
     };
 
     // Filtrar rubro
@@ -191,17 +173,17 @@ router.delete('/delete/:id', authMiddleware, async (req, res) => {
 
 
 
-
+/*
 
 // endpoint para mover documentos a la papelera
 router.put('/trash/:id', authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.id;
 
-    const document = await Document.findOneAndUpdate(
-      { _id: id, usuario: userId },
-      { enPapelera: true },
+    // Marca el documento como eliminado y registra la fecha de la papelera
+    const document = await Document.findByIdAndUpdate(
+      id,
+      { fechadepapelera: new Date() },
       { new: true }
     );
 
@@ -211,21 +193,35 @@ router.put('/trash/:id', authMiddleware, async (req, res) => {
 
     res.json({ message: 'Documento movido a la papelera', document });
   } catch (error) {
+    console.error('Error al mover el documento a la papelera:', error);
     res.status(500).json({ error: 'Error al mover el documento a la papelera' });
   }
 });
 
+// endpoint para listar documentos en la papelera
+router.get('/trash', authMiddleware, async (req, res) => {
+  try {
+    const documents = await Document.find({
+      usuario: req.user.id,
+      fechadepapelera: { $ne: null }, 
+    });
 
+    res.json({ documents });
+  } catch (error) {
+    console.error('Error al obtener documentos en la papelera:', error);
+    res.status(500).json({ error: 'Error al obtener documentos en la papelera' });
+  }
+});
 
-// Restaurar de papelera
+// endpoint para restaurar documentos de la papelera
 router.put('/restore/:id', authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.id;
 
-    const document = await Document.findOneAndUpdate(
-      { _id: id, usuario: userId },
-      { enPapelera: false },
+    // Restaurar el documento Se elimina la fecha de la papelera
+    const document = await Document.findByIdAndUpdate(
+      id,
+      { fechadepapelera: null },
       { new: true }
     );
 
@@ -235,10 +231,11 @@ router.put('/restore/:id', authMiddleware, async (req, res) => {
 
     res.json({ message: 'Documento restaurado', document });
   } catch (error) {
+    console.error('Error al restaurar el documento:', error);
     res.status(500).json({ error: 'Error al restaurar el documento' });
   }
 });
 
-
+*/
 
 module.exports = router;
