@@ -1,0 +1,129 @@
+/* Fondo oscuro que cubre toda la pantalla */
+.modal-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4); /* fondo oscuro semitransparente */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1100;
+}
+
+/* Contenedor del modal */
+.modal-container.confirm-modal {
+  max-width: 400px;
+  width: 90%;
+  background-color: #f4f8fb; /* Azul muy claro */
+  /* border: 2px solid #2e5aaa;  <-- quitado */
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px 25px;
+  box-sizing: border-box;
+  animation: modalFadeIn 0.3s ease forwards;
+}
+
+/* Animación de aparición */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Header del modal con espacio entre título e icono */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+/* Título de advertencia */
+.warning-title {
+  color: black; /* rojo suave */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+/* Icono de cerrar (X) */
+.icon-close.btn-icono {
+  color: black;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.icon-close.btn-icono:hover {
+  color: red; /* rojo para destacar */
+  transform: scale(1.1);
+}
+
+/* Línea separadora */
+hr {
+  border: none;
+  height: 1px;
+  background-color: #2e5aaa;
+  margin: 10px 0 15px;
+}
+
+/* Mensaje de confirmación */
+.confirm-message {
+  font-size: 1rem;
+  margin: 20px 0;
+  text-align: center;
+  color: black;
+}
+
+/* Footer con botones */
+.modal-footer {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+/* Botón cancelar */
+.btn-cancelar {
+  background-color: #95a5a6; /* Gris suave */
+  color: white;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 1rem;
+  flex: 1;
+  max-width: 140px;
+}
+
+.btn-cancelar:hover {
+  background-color: #7f8c8d;
+}
+
+/* Botón confirmar */
+.btn-confirmar {
+  background-color: red; /* Azul principal */
+  color: white;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 1rem;
+  flex: 1;
+  max-width: 140px;
+}
+
+.btn-confirmar:hover {
+  background-color: red; /* Azul más oscuro */
+}

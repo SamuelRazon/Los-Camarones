@@ -14,6 +14,7 @@ import {
 import categoryService from "../../../../services/categoryServices";
 import documentService from "../../../../services/documentServices";
 import Loader from "../../../Loader";
+import ConfirmDeleteModal from "../../modales/confirm/ConfirmDeleteModal";
 
 const UpdateDocument = ({
   onClose,
@@ -42,6 +43,7 @@ const UpdateDocument = ({
   });
   const [isLoading, setIsLoading] = useState(false);
   const [modoEdicion, setModoEdicion] = useState(false);
+  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
 
   const categoriaInfo = categorias.find(
     (cat) => cat.nombre === categoriaSeleccionada
@@ -217,13 +219,7 @@ const UpdateDocument = ({
   };
 
   const handleEliminar = async () => {
-    if (
-      !window.confirm("¿Estás seguro de que quieres eliminar este documento?")
-    )
-      return;
-
     setIsLoading(true);
-
     try {
       const result = await documentService.deleteDocument(documento._id);
       console.log("Documento eliminado con éxito:", result);
@@ -234,6 +230,7 @@ const UpdateDocument = ({
       console.error("Error al eliminar documento:", error.message);
     } finally {
       setIsLoading(false);
+      setMostrarConfirmacion(false);
     }
   };
 
@@ -406,6 +403,14 @@ const UpdateDocument = ({
           ) : null}
         </div>
 
+        {mostrarConfirmacion && (
+          <ConfirmDeleteModal
+            message="¿Estás seguro de que deseas eliminar este documento?"
+            onConfirm={handleEliminar}
+            onCancel={() => setMostrarConfirmacion(false)}
+          />
+        )}
+
         {/* CAMPOS FIJOS */}
         <div className="documents-name">
           <p className={errores.nombre ? "input-error-text" : ""}>Nombre:*</p>
@@ -439,7 +444,11 @@ const UpdateDocument = ({
 
         {/* BOTONES */}
         <div className="save-moving">
-          <button className="btn-borrar" onClick={handleEliminar}>
+          <button
+            className="btn-borrar"
+            onClick={() => setMostrarConfirmacion(true)}
+            disabled={isLoading}
+          >
             <FontAwesomeIcon icon={faTrash} /> Eliminar
           </button>
 

@@ -13,6 +13,7 @@ import "react-toastify/dist/ReactToastify.css";
 import categoryService from "../../../../services/categoryServices";
 import "./UpdateRubro.css";
 import Loader from "../../../../components/Loader";
+import ConfirmDeleteModal from "../confirm/ConfirmDeleteModal";
 
 const UpdateRubro = ({ rubro, onClose, onUpdate }) => {
   const [nombre, setNombre] = useState("");
@@ -22,6 +23,7 @@ const UpdateRubro = ({ rubro, onClose, onUpdate }) => {
   ]);
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   useEffect(() => {
     if (rubro) {
@@ -135,11 +137,6 @@ const UpdateRubro = ({ rubro, onClose, onUpdate }) => {
   };
 
   const handleDelete = async () => {
-    const confirmDelete = window.confirm(
-      "¿Estás seguro de que deseas eliminar este rubro?"
-    );
-    if (!confirmDelete) return;
-
     setLoading(true);
     try {
       await categoryService.deleteCategory(rubro._id);
@@ -262,6 +259,17 @@ const UpdateRubro = ({ rubro, onClose, onUpdate }) => {
             </div>
           ))}
 
+          {showConfirmModal && (
+            <ConfirmDeleteModal
+              message="¿Estás seguro de que deseas eliminar este rubro? Esta acción no se puede deshacer."
+              onCancel={() => setShowConfirmModal(false)}
+              onConfirm={async () => {
+                setShowConfirmModal(false);
+                await handleDelete();
+              }}
+            />
+          )}
+
           <div className="modal-footer">
             <button
               className="btn-add btn-icono"
@@ -273,7 +281,7 @@ const UpdateRubro = ({ rubro, onClose, onUpdate }) => {
 
             <button
               className="btn-borrar"
-              onClick={handleDelete}
+              onClick={() => setShowConfirmModal(true)}
               disabled={loading || !rubro?._id}
             >
               <FontAwesomeIcon icon={faTrash} /> Eliminar
