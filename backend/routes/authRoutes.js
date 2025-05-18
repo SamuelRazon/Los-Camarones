@@ -166,6 +166,51 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Ruta para envier el correo de recuperacion hacia el debido usuario
+router.post('/send_validation_link', async (req, res) => {
+  const { correo } = req.body;
+  try {
+
+    if (!correo) {
+      return res.status(400).json({ message: 'Correo requerido.' });
+    }
+    console.log("Generando token...");
+    // 2. Genera un JWT con expiración de 5 minutos
+    const token = jwt.sign(
+      { correo },               
+      process.env.JWT_SECRET,    
+      { expiresIn: '5m' }        
+    );
+   
+console.log("Construyendo link...");
+    // 3. Construye el enlace al formulario de reset
+    const link = `${process.env.FRONTEND_URL}/validation-email?token=${token}`;
+    console.log(link)
+
+    console.log('TOKEN PARA VALIDAR:', token);
+
+console.log("Enviando correo...");
+    // 4. Envía el correo de validacion
+    await transporter.sendMail({
+      from: `"Shrimp Shelf" <${process.env.GMAIL_USER}>`,
+      to: correo,
+      subject: 'Valida tu correo electronico (válido 5 min)',
+      html: `
+        <p>Haz clic en el siguiente enlace para validar tu correo electronico. El enlace expirará en 5 minutos:</p>
+       <p><a href="${link}">Validar Correo.</a></p>
+        <p>Si no solicitaste esto, simplemente ignora este correo.</p>
+      `,
+    });
+
+console.log("Correo enviado");
+
+    return res.json({ message: 'Correo de validacion enviado. Revisa tu bandeja.' });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Error interno.' });
+  }
+});
+
 
 // Ruta para envier el correo de recuperacion hacia el debido usuario
 router.post('/send_reset_link', async (req, res) => {
