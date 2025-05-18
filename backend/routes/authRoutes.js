@@ -12,74 +12,37 @@ const AWS = require('aws-sdk');
 const Document = require('../models/Document');
 
 
+/* Ruta para registrar un usuario a traves del link de un email */
+router.get('/validate-email', async (req, res) => {
+  const { token } = req.query;
+  if (!token) return res.status(400).send('Token requerido.');
 
-// Registro
-router.post('/register', async (req, res) => {
-  const { username, email, password, foto, customRubro } = req.body
-
+  let payload;
   try {
-    // Validación básica de datos requeridos
-    if (!username || !email || !password) {
-      return res.status(400).json({ error: 'Faltan datos requeridos' })
-    }
-
-    const salt = await bcrypt.genSalt(10)
-    const hashedPassword = await bcrypt.hash(password, salt)
-
-    // Se crea el usuario usando los campos del modelo:
-    // - correo: a partir de email
-    // - contraseña: password hasheado
-    // - username: de req.body
-    // - foto: opcional (se envía o se asigna cadena vacía)
-    // - rubrosDefault: inicialmente se deja vacío (ya que se trabajarán de forma predefinida)
-    // - rubrosPersonalizados: se llenará si el usuario crea alguno
-    const nuevoUsuario = new Usuario({
-      username,
-      correo: email,
-      contraseña: hashedPassword,
-      foto: foto || '',
-      rubrosDefault: [],
-      rubrosPersonalizados: []
-    })
-
-    try {
-      await nuevoUsuario.save()
-      console.log('Usuario guardado con éxito')
-    } catch (err) {
-      console.error('Error al guardar:', err)
-      if (err.code === 11000 && err.keyPattern && err.keyPattern.correo) {
-        return res.status(409).json({ error: 'El correo ya está registrado' })
-      }
-      return res.status(500).json({ error: 'Error registrando usuario' })
-    }
-
-    // Si se envía un objeto customRubro, se crea el rubro personalizado
-    if (
-      customRubro &&
-      customRubro.nombre &&
-      Array.isArray(customRubro.propiedades) &&
-      customRubro.propiedades.length > 0
-    ) {
-      const nuevoRubroPersonalizado = new RubroPersonalizado({
-        usuarioId: nuevoUsuario._id,
-        nombre: customRubro.nombre,
-        // La fecha se asigna automáticamente con default: Date.now
-        propiedades: customRubro.propiedades
-      })
-
-      const rubroGuardado = await nuevoRubroPersonalizado.save()
-
-      // Se actualiza el usuario para incluir el nuevo rubro personalizado
-      nuevoUsuario.rubrosPersonalizados.push(rubroGuardado._id)
-      await nuevoUsuario.save()
-    }
-
-    res.status(201).json({ message: 'Usuario registrado con éxito' })
-  } catch (error) {
-    console.error(error)
-    res.status(500).json({ error: 'Error registrando usuario' })
+    payload = jwt.verify(token, process.env.JWT_SECRET);
+  } catch {
+    return res.status(401).send('Token inválido o expirado.');
   }
-})
+
+  //Crea el usuario con los datos del payload
+  const nuevoUsuario = new Usuario({
+    correo:          payload.correo,
+    username:        payload.username,
+    contraseña:      payload.hashedPassword,
+    foto:            '',
+    rubrosDefault:   [],
+    rubrosPersonalizados: [],
+  });
+  try {
+    await nuevoUsuario.save();
+  } catch (err) {
+    return res.status(500).send('Error interno al guardar usuario.');
+  }
+
+  // Rederigimos al frontend
+  return res.redirect(`${process.env.FRONTEND_URL}`);
+});
+
 
 // Verificar si el correo ya está registrado
 router.post('/check-email', async (req, res) => {
@@ -166,49 +129,50 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Ruta para envier el correo de recuperacion hacia el debido usuario
+/* Ruta para enviar un correo de validacion */
 router.post('/send_validation_link', async (req, res) => {
-  const { correo } = req.body;
-  try {
-
-    if (!correo) {
-      return res.status(400).json({ message: 'Correo requerido.' });
-    }
-    console.log("Generando token...");
-    // 2. Genera un JWT con expiración de 5 minutos
-    const token = jwt.sign(
-      { correo },               
-      process.env.JWT_SECRET,    
-      { expiresIn: '5m' }        
-    );
-   
-console.log("Construyendo link...");
-    // 3. Construye el enlace al formulario de reset
-    const link = `${process.env.FRONTEND_URL}/validation-email?token=${token}`;
-    console.log(link)
-
-    console.log('TOKEN PARA VALIDAR:', token);
-
-console.log("Enviando correo...");
-    // 4. Envía el correo de validacion
-    await transporter.sendMail({
-      from: `"Shrimp Shelf" <${process.env.GMAIL_USER}>`,
-      to: correo,
-      subject: 'Valida tu correo electronico (válido 5 min)',
-      html: `
-        <p>Haz clic en el siguiente enlace para validar tu correo electronico. El enlace expirará en 5 minutos:</p>
-       <p><a href="${link}">Validar Correo.</a></p>
-        <p>Si no solicitaste esto, simplemente ignora este correo.</p>
-      `,
-    });
-
-console.log("Correo enviado");
-
-    return res.json({ message: 'Correo de validacion enviado. Revisa tu bandeja.' });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: 'Error interno.' });
+  const { correo, username, password} = req.body;
+  if (!correo || !username || !password) {
+    return res.status(400).json({ message: 'Faltan datos requeridos.' });
   }
+
+  // 1) Comprueba que el correo no exista
+  const exists = await Usuario.findOne({ correo });
+  if (exists) {
+    return res.status(409).json({ message: 'Este correo ya está en uso.' });
+  }
+
+  // 2) Hashea la contraseña
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+
+  // 3) Prepara el payload completo
+  const payload = {
+    correo,
+    username,
+    hashedPassword,
+  };
+
+  // 4) Firma el token con 5 min de validez
+  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '5m' });
+
+  // 5) Construye el link
+  const link = `${process.env.BACKEND_URL}/validate-email?token=${token}`;
+  
+  // 6) Envía el correo
+  await transporter.sendMail({
+    from: `"Shrimp Shelf" <${process.env.GMAIL_USER}>`,
+    to: correo,
+    subject: 'Valida tu correo electrónico (válido 5 min)',
+    html: `
+      <p>¡Bienvenido ${username}!</p>
+      <p>Haz clic en este enlace para confirmar tu correo y completar el registro. Expira en 5 min:</p>
+      <p><a href="${link}">Validar correo y registrarme.</a></p>
+      <p>Si no solicitaste esto, ignora este mensaje.</p>
+    `,
+  });
+
+  return res.json({ message: 'Correo de validación enviado. Revisa tu bandeja.' });
 });
 
 
@@ -216,8 +180,6 @@ console.log("Correo enviado");
 router.post('/send_reset_link', async (req, res) => {
   const { correo } = req.body;
   try {
-    console.log('GMAIL_USER=', process.env.GMAIL_USER);
-    console.log('GMAIL_PASSWORD=', process.env.GMAIL_PASSWORD);
     // 1. Verifica que el usuario exista
     const usuario = await Usuario.findOne({ correo });
     if (!usuario) {
@@ -229,22 +191,20 @@ router.post('/send_reset_link', async (req, res) => {
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: '5m',
     });
-    /* 
+     
     // 3. Construye el enlace al formulario de reset
-    const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
-    console.log(resetLink) */
+    const resetLink = `${process.env.BACKEND_URL}/verify-reset?token=${token}`;
 
-    console.log('TOKEN PARA RESETEO:', token);
     // 4. Envía el correo de recuperación
     await transporter.sendMail({
       from: `"Shrimp Shelf" <${process.env.GMAIL_USER}>`,
       to: usuario.correo,
       subject: 'Recupera tu contraseña (válido 5 min)',
       html: `
-        <p>Hola ${usuario.username || ''},</p>
+        <p>Hola ${usuario.username},</p>
         <p>Haz clic en el siguiente enlace para establecer tu nueva contraseña. El enlace expirará en 5 minutos:</p>
-        <p>Restablecer contraseña</p>
-        <p>Si no solicitaste esto, simplemente ignora este correo.</p>
+        <p><a href="${resetLink}">Recuperar contraseña.</a></p>
+        <p>Si no solicitaste esto, revisa los dispositivos conectados a tu cuenta.</p>
       `,
     });
 
@@ -260,7 +220,7 @@ router.get('/verify-reset', (req, res) => {
   const { token } = req.query;
   try {
     jwt.verify(token, process.env.JWT_SECRET);
-    return res.json({ ok: true });
+    return res.redirect(`${process.env.FRONTEND_URL1}`);
   } catch (err) {
     return res.status(401).json({ ok: false, message: 'Token inválido o expirado.' });
   }
