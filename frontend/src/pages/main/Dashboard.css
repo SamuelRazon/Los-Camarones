@@ -345,7 +345,7 @@ aside {
 }
 
 .document-card.selected {
-  background-color: #3765b0;
+  background-color: #1e4a9a;
   color: white;
 }
 
@@ -355,7 +355,7 @@ aside {
 
 .document-card.selected .card-category {
   background: white;
-  color: #3765b0;
+  color: #1e4a9a;
 }
 
 .document-card.selected .card-date {
@@ -420,7 +420,7 @@ aside {
 /* Hover para filtro */
 .filtros-mostrados span:hover {
   background-color: transparent; /* Azul claro */
-  color: #1967d2;
+  color: #1e4a9a;
   cursor: default;
 }
 

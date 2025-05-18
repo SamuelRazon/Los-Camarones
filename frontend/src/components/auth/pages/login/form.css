@@ -177,21 +177,21 @@
   -moz-transform: translate(0px,5px);
 }
 
-@media (0px <=width <=720px) {
+@media (max-width: 720px) {
   .body {
-      height: 100vh;
-      display: grid;
-      grid-template-rows: 30% 70%;
-      align-items: start;
+    height: 100vh;
+    display: grid;
+    grid-template-rows: 30% 70%;
+    align-items: start;
   }
 
   .container {
-      background-color: transparent;
-      width: 100%;
-      height: auto;
-      border-radius: 0;
-      box-shadow: none;
-      flex-flow: column;
+    background-color: transparent;
+    width: 100%;
+    height: auto;
+    border-radius: 0;
+    box-shadow: none;
+    flex-flow: column;
   }
 
   .logo {
@@ -200,31 +200,30 @@
     border-radius: 0;
     box-shadow: none;
     overflow: auto;
-
     display: grid;
     grid-template-rows: 40% 30% 30%;
     justify-items: center;
     align-items: center;
   }
 
-  .logo::before{
+  .logo::before {
     padding: 0;
     width: 7vw;
     height: auto;
   }
 
   .aside {
-      width: 100%;
-      height: 100%;
-      border-radius: 0;
-      box-shadow: none;
-
-      display: block;
-      grid-template-rows: 30% 70%;
-      justify-items: center;
-      align-items: center;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    box-shadow: none;
+    display: block;
+    grid-template-rows: 30% 70%;
+    justify-items: center;
+    align-items: center;
   }
 }
+
 /* Estilo para el icono de ojo para mostrar/ocultar la contraseña */
 .input .toggle-password {
   position: absolute;

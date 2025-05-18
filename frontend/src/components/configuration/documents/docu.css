@@ -9,8 +9,6 @@
     justify-content: center;
     align-items: center;
     z-index: 1000;
-
-    
 }
 
 .documents-modal {
@@ -116,7 +114,7 @@
 
 /* Hover para el botón */
 .newdocuments-button:hover {
-    background-color: #254975;
+    background-color: #1e4a9a;
 }
 
 .documents-name,
@@ -190,7 +188,7 @@
 }
 
 .save-documents:hover {
-    background-color: #254975;
+    background-color: #1e4a9a;
 
     transform: translate(0px,3px);
         -webkit-transform: translate(0px, 3px);

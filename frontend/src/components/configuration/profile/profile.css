@@ -72,7 +72,7 @@
 
 .perfil-avatar-icon {
   font-size: 40px;
-  color: #464646;
+  color: #2e5aaa;
 }
 
 .perfil-nombre {
@@ -85,13 +85,13 @@
   margin-left: 10px;
   font-size: 18px;
   cursor: pointer;
-  color: #464646;
+  color: #2e5aaa;
   transition: color 0.2s ease;
 }
 
 /* Hover por defecto para iconos */
 .btn-icono:hover {
-  color: #335c94;
+  color: #1e4a9a;
 }
 
 /* Hover amarillo para íconos de editar */
@@ -113,7 +113,7 @@
 
 .icono-correo {
   font-size: 20px;
-  color: #464646;
+  color: #1e4a9a;
 }
 
 .perfil-email-input {
@@ -134,7 +134,7 @@
 .acciones-contacto .btn-icono {
   font-size: 16px;
   cursor: pointer;
-  color: #464646;
+  color: #333;
   transition: color 0.2s ease;
 }
 

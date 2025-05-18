@@ -174,7 +174,7 @@ const UpdateRubro = ({ rubro, onClose, onUpdate }) => {
             </div>
           </div>
 
-          <hr />
+          <div className="documents-underline"></div>
 
           <label className="perfil-label">Nombre del Rubro*</label>
           <input
