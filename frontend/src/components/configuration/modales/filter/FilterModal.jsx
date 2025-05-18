@@ -51,23 +51,33 @@ const FilterModal = ({ isOpen, onClose, onApply }) => {
   const handleApply = () => {
     const filtrosOriginales = { fechaDesde, fechaHasta, cicloEscolar };
 
-    // Si quieres evitar claves específicas, puedes usar esta lista (opcional)
     const clavesProhibidas = ["startDate", "endDate", "ciclo"];
 
-    // Filtrar claves vacías y prohibidas
     const nuevosFiltros = Object.fromEntries(
       Object.entries(filtrosOriginales).filter(
         ([key, value]) => value !== "" && !clavesProhibidas.includes(key)
       )
     );
 
-    localStorage.setItem("filtrosDashboard", JSON.stringify(nuevosFiltros));
+    const filtrosActualesStr = localStorage.getItem("filtrosDashboard");
+    let filtrosActuales = {};
+    try {
+      if (filtrosActualesStr) {
+        filtrosActuales = JSON.parse(filtrosActualesStr);
+      }
+    } catch {
+      filtrosActuales = {};
+    }
+
+    const filtrosCombinados = { ...filtrosActuales, ...nuevosFiltros };
+
+    localStorage.setItem("filtrosDashboard", JSON.stringify(filtrosCombinados));
 
     if (typeof window.actualizarFiltrosDashboard === "function") {
       window.actualizarFiltrosDashboard();
     }
 
-    onApply(nuevosFiltros);
+    onApply(filtrosCombinados);
     onClose();
   };
 

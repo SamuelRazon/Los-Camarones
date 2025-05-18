@@ -1,23 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faFilter } from "@fortawesome/free-solid-svg-icons";
 import FilterModal from "../filter/FilterModal"; // importa el modal
 import "./SearchBar.css";
 
-const SearchBar = ({ onSearch }) => {
+const SearchBar = ({ onSearch, initialFilters, resetInputSignal }) => {
   const [query, setQuery] = useState("");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const handleChange = (e) => {
     const value = e.target.value;
     setQuery(value);
-    onSearch(value);
+    onSearch(value, {}); // Enviar texto y filtros vacíos
   };
 
   const handleFilterApply = (filters) => {
-    console.log("Filtros aplicados:", filters);
-    // Aquí podrías pasar los filtros al padre si lo necesitas
+    onSearch(query, filters);
+    setIsFilterOpen(false);
   };
+
+  // Este efecto limpia el input cuando cambia `resetInputSignal`
+  useEffect(() => {
+    setQuery("");
+  }, [resetInputSignal]);
 
   return (
     <div className="search-bar">

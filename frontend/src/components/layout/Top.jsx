@@ -19,7 +19,6 @@ const Top = ({
 
   // Estado filtros para persistencia
   const [filters, setFilters] = useState(() => {
-    // Leer de localStorage o estado vacío
     const saved = localStorage.getItem("filtrosDashboard");
     return saved ? JSON.parse(saved) : {};
   });
@@ -40,28 +39,43 @@ const Top = ({
   // Búsqueda combinada: query + filtros + rubro
   const handleSearch = useCallback(
     async (query, filtrosExternos = {}) => {
-      try {
-        // Combina filtros del modal + query + rubro
-        const filtros = {
-          ...filtrosExternos,
-          propiedades: query || undefined,
-        };
+      // Leer filtros de localStorage
+      const localFilters =
+        JSON.parse(localStorage.getItem("filtrosDashboard")) || {};
 
-        if (categoriaSeleccionada) {
-          filtros.rubro = categoriaSeleccionada;
-        }
+      // Combinar
+      const filtrosCombinados = {
+        ...localFilters,
+        ...filtrosExternos,
+      };
 
-        // Guardar filtros en estado y localStorage para persistencia
-        setFilters(filtros);
-        localStorage.setItem("filtrosDashboard", JSON.stringify(filtros));
-
-        const results = await documentService.searchDocuments(filtros);
-
-        console.log("Resultados de búsqueda:", results);
-        setDocuments(results);
-      } catch (error) {
-        console.error("Error en búsqueda de documentos:", error);
+      if (query && query.trim() !== "") {
+        filtrosCombinados.propiedades = query;
+      } else {
+        delete filtrosCombinados.propiedades;
       }
+
+      if (categoriaSeleccionada) {
+        filtrosCombinados.rubro = categoriaSeleccionada;
+      }
+
+      // Mapear a filtros backend
+      const filtrosBackend = {
+        rubro: filtrosCombinados.rubro,
+        propiedades: filtrosCombinados.propiedades,
+        ciclo: filtrosCombinados.ciclo,
+        startDate: filtrosCombinados.fechaDesde,
+        endDate: filtrosCombinados.fechaHasta,
+      };
+
+      setFilters(filtrosCombinados);
+      localStorage.setItem(
+        "filtrosDashboard",
+        JSON.stringify(filtrosCombinados)
+      );
+
+      const results = await documentService.searchDocuments(filtrosBackend);
+      setDocuments(results);
     },
     [categoriaSeleccionada, setDocuments]
   );

@@ -30,11 +30,13 @@ const Dashboard = () => {
   const [loadingDocument, setLoadingDocument] = useState(false);
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [viewMode, setViewMode] = useState("table");
+  const [busqueda, setBusqueda] = useState("");
 
   const [filtrosGuardados, setFiltrosGuardados] = useState({
     fechaDesde: "",
     fechaHasta: "",
     cicloEscolar: "",
+    propiedades: "",
   });
 
   useEffect(() => {
@@ -43,7 +45,9 @@ const Dashboard = () => {
         fechaDesde: "",
         fechaHasta: "",
         cicloEscolar: "",
+        propiedades: "",
       };
+      console.log("Filtros guardados en localStorage:", filtros);
       setFiltrosGuardados(filtros);
       fetchDocuments(categoriaSeleccionada, filtros); // Aplicar filtros directamente
     };
@@ -65,6 +69,7 @@ const Dashboard = () => {
         fechaDesde: "",
         fechaHasta: "",
         cicloEscolar: "",
+        propiedades: "",
       };
       setFiltrosGuardados(filtros);
       fetchDocuments(categoriaSeleccionada, filtros);
@@ -72,67 +77,62 @@ const Dashboard = () => {
   }, [categoriaSeleccionada]);
 
   const eliminarFiltro = (clave) => {
-    const nuevosFiltros = { ...filtrosGuardados };
-    delete nuevosFiltros[clave];
-
-    setFiltrosGuardados(nuevosFiltros);
-    localStorage.setItem("filtrosDashboard", JSON.stringify(nuevosFiltros));
-
-    // Actualizar documentos aplicando los filtros restantes y la categoría seleccionada
-    fetchDocuments(categoriaSeleccionada, nuevosFiltros);
+    const filtrosActuales =
+      JSON.parse(localStorage.getItem("filtrosDashboard")) || {};
+    delete filtrosActuales[clave];
+    localStorage.setItem("filtrosDashboard", JSON.stringify(filtrosActuales));
+    setFiltrosGuardados(filtrosActuales);
   };
 
   const documentsPerPage = 15;
 
   useEffect(() => {
-    fetchCategorias();
-  }, []);
+    // Cada vez que cambian los filtros guardados, recarga los documentos
+    fetchDocuments(categoriaSeleccionada, filtrosGuardados);
+  }, [filtrosGuardados, categoriaSeleccionada]);
 
   useEffect(() => {
-    fetchDocuments(categoriaSeleccionada);
-  }, [categoriaSeleccionada]);
+    fetchCategorias();
+  }, []);
 
   const fetchDocuments = async (
     categoryId = null,
     filtros = filtrosGuardados
   ) => {
+    console.log(
+      "filtros guardados despues de borrar: FETCHDOCUMENTS",
+      filtrosGuardados
+    );
     setLoading(true);
     try {
-      const data = await documentService.getAllDocuments();
+      // Log del contenido de filtros que llegan a la función
+      console.log("Filtros recibidos para la consulta:", filtros);
+
+      // Construcción de los parámetros de búsqueda
+      const searchParams = {
+        rubro: categoryId,
+        ciclo: filtros.cicloEscolar || "",
+        startDate: filtros.fechaDesde || "",
+        endDate: filtros.fechaHasta || "",
+        propiedades: filtros.propiedades || "",
+      };
+
+      // Log de los parámetros que se enviarán en la consulta fetch
+      console.log("Parámetros enviados a searchDocuments:", searchParams);
+
+      const data = await documentService.searchDocuments(searchParams);
+
       const selectedFromStorage =
         JSON.parse(localStorage.getItem("selectedDocs")) || [];
 
-      let filteredDocs = data.map((doc) => ({
+      const filteredDocs = data.map((doc) => ({
         ...doc,
         selected: selectedFromStorage.includes(doc._id),
       }));
 
-      if (categoryId) {
-        filteredDocs = filteredDocs.filter((doc) => doc.rubro === categoryId);
-      }
-
-      // Filtrar por fecha y ciclo escolar
-      filteredDocs = filteredDocs.filter((doc) => {
-        const idxFecha = doc.propiedadesnombre?.indexOf("fecha");
-        const fechaDoc = idxFecha !== -1 ? doc.propiedades?.[idxFecha] : null;
-        const cumpleFechaDesde = filtros.fechaDesde
-          ? fechaDoc >= filtros.fechaDesde
-          : true;
-
-        const cumpleFechaHasta = filtros.fechaHasta
-          ? fechaDoc <= filtros.fechaHasta
-          : true;
-
-        const cumpleCiclo = filtros.cicloEscolar
-          ? doc.cicloEscolar === filtros.cicloEscolar
-          : true;
-
-        return cumpleFechaDesde && cumpleFechaHasta && cumpleCiclo;
-      });
-
       setDocuments(filteredDocs);
     } catch (error) {
-      console.error("Error al obtener los documentos:", error);
+      console.error("Error al buscar documentos:", error);
     } finally {
       setLoading(false);
     }
@@ -224,12 +224,26 @@ const Dashboard = () => {
 
   const handleCategoriaSeleccionada = (categoriaId) => {
     setCategoriaSeleccionada(categoriaId);
-    fetchDocuments(categoriaId);
+
+    const filtros = JSON.parse(localStorage.getItem("filtrosDashboard")) || {
+      fechaDesde: "",
+      fechaHasta: "",
+      cicloEscolar: "",
+      propiedades: "",
+    };
+    setFiltrosGuardados(filtros);
+    fetchDocuments(categoriaId, filtros);
   };
 
   const refreshDocuments = async () => {
     await fetchCategorias();
-    await fetchDocuments(categoriaSeleccionada);
+    const filtros = JSON.parse(localStorage.getItem("filtrosDashboard")) || {
+      fechaDesde: "",
+      fechaHasta: "",
+      cicloEscolar: "",
+      propiedades: "",
+    };
+    await fetchDocuments(categoriaSeleccionada, filtros);
   };
 
   const handleRowClick = async (doc, event) => {
@@ -300,6 +314,8 @@ const Dashboard = () => {
           setIsConfigOpen={setIsConfigOpen}
           setDocuments={setDocuments}
           categoriaSeleccionada={categoriaSeleccionada}
+          busqueda={busqueda}
+          setBusqueda={setBusqueda}
         />
       </header>
 
