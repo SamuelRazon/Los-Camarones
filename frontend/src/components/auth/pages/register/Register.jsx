@@ -94,7 +94,7 @@ const Register = () => {
       <div className="container">
         <div className="logo"></div>
         <div className="aside">
-          <div className="text">Formulario de registro</div>
+          <div className="text">Registrate en Shrimp Shelf</div>
 
           <form className="inputs">
             <div className="input">
@@ -145,9 +145,9 @@ const Register = () => {
               />
             </div>
 
-            <div className="submit-container">
+            <div className="soldsubmit--container">
               <button
-                className="submit first-button"
+                className="soldsubmit first--button"
                 onClick={(e) => {
                   e.preventDefault();
                   handleRegister();
@@ -156,7 +156,7 @@ const Register = () => {
                 Registrarse
               </button>
 
-              <Link to="/login" className="submit second-button">
+              <Link to="/login" className="soldsubmit second--button">
                 Volver
               </Link>
             </div>
