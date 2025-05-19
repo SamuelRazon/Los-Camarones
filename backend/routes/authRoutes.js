@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const Usuario = require('../models/User')
 const RubroPersonalizado = require('../models/personalized_category')
+const RubroDefault = require('../models/default_category')
 const { authMiddleware } = require('../middleware/auth')
 const router = express.Router()
 const nodemailer = require('nodemailer');
@@ -36,9 +37,45 @@ router.get('/validate-email', async (req, res) => {
   try {
     await nuevoUsuario.save();
   } catch (err) {
+    console.error(err); 
     return res.status(500).send('Error interno al guardar usuario.');
   }
 
+  /*try {
+    // IDs de los rubros default que se deben copiar
+    const rubroDefaultIds = [
+      "67eb8ab9101822e4446b1416",
+      "67eb8ab9101822e4446b1418",
+      "67eb8ab9101822e4446b1419",
+      "67eb8ab9101822e4446b1417",
+      "67eb8ab9101822e4446b141c",
+      "67eb8ab9101822e4446b141a",
+    ];
+
+    // Obtener los rubros default correspondientes
+    const rubrosDefault = await RubroDefault.find({ _id: { $in: rubroDefaultIds } });
+
+    // Crear copias de los rubros default en rubros personalizados
+    const rubrosPersonalizados = rubrosDefault.map((rubro) => ({
+      usuarioId: nuevoUsuario._id,
+      nombre: rubro.nombre,
+      propiedades: rubro.propiedades,
+      propiedadtipo: rubro.propiedadtipo,
+      propiedadobligatorio: rubro.propiedadobligatorio,
+    }));
+
+    console.log(rubrosPersonalizados);
+
+    // Guardar los nuevos rubros personalizados
+    await RubroPersonalizado.insertMany(rubrosPersonalizados,{ ordered: true });
+
+  
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send('Error interno al guardar rubros personalizados.');
+  }
+
+*/
   // Rederigimos al frontend
   return res.redirect(`${process.env.FRONTEND_URL}`);
 });
@@ -51,6 +88,7 @@ router.post('/check-email', async (req, res) => {
   try {
     const usuario = await Usuario.findOne({ correo: email });
     if (usuario) {
+      console.log(`El correo ${email} ya está registrado`);
       return res.status(200).json({ exists: true });
     }
     res.status(200).json({ exists: false });
@@ -64,6 +102,8 @@ router.post('/check-email', async (req, res) => {
 router.post('/login', async (req, res) => {
   const { email, password } = req.body
 
+
+
   try {
     const usuario = await Usuario.findOne({ correo: email })
     if (!usuario) return res.status(400).json({ error: 'Usuario no encontrado' })
@@ -72,6 +112,36 @@ router.post('/login', async (req, res) => {
     if (!isMatch) return res.status(400).json({ error: 'Contraseña no válida' })
 
     const token = jwt.sign({ id: usuario._id }, process.env.JWT_SECRET, { expiresIn: '1h' })
+
+  // Verificar si el usuario ya tiene un rubro personalizado llamado "Datos personales"
+  const rubroPersonalizado = await RubroPersonalizado.findOne({
+    usuarioId: usuario._id,
+    nombre: 'Datos personales',
+  });
+
+  if (!rubroPersonalizado) {
+    // IDs de los rubros default que se deben copiar
+    const rubroDefaultIds = [
+      "67eb8ab9101822e4446b1416",
+    ];
+
+    // Obtener los rubros default correspondientes
+    const rubrosDefault = await RubroDefault.find({ _id: { $in: rubroDefaultIds } });
+
+    // Crear copias de los rubros default en rubros personalizados
+    const rubrosPersonalizados = rubrosDefault.map((rubro) => ({
+      usuarioId: usuario._id,
+      nombre: rubro.nombre,
+      propiedades: rubro.propiedades,
+      propiedadtipo: rubro.propiedadtipo,
+      propiedadobligatorio: rubro.propiedadobligatorio,
+    }));
+
+    // Guardar los nuevos rubros personalizados
+    await RubroPersonalizado.insertMany(rubrosPersonalizados);
+
+    
+  }
 
     res.json({
       token,
