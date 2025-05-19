@@ -4,6 +4,10 @@ const multer = require('multer');
 const { uploadDocument, updateDocument } = require('../controllers/documentController');
 const { authMiddleware } = require('../middleware/auth');
 const Document = require('../models/Document');
+const User = require('../models/User')
+const archiver = require('archiver');
+const axios = require('axios');
+const path = require('path');
 const default_category = require('../models/default_category');
 const personalized_category = require('../models/personalized_category');
 
@@ -200,6 +204,64 @@ router.delete('/delete/:id', authMiddleware, async (req, res) => {
   }
 });
 
+router.get('/export_zip', authMiddleware, async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    // 1. Verificar usuario
+    const usuario = await Usuario.findById(userId);
+    if (!usuario) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    // 2. Obtener todos los rubros del usuario (default y personalizados)
+    //    Asumo que en Rubro tienes un campo userId para los personalizados,
+    //    y que los default son comunes (p.ej. sin userId o con un flag).
+    const rubros = await Rubro.find({
+      $or: [
+        { tipo: 'default' },
+        { userId: userId }
+      ]
+    });
+
+    // 3. Configurar la respuesta para descarga de zip
+    res.setHeader('Content-Type', 'application/zip');
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename=${usuario.username || 'export'}_documents.zip`
+    );
+
+    // 4. Crear el archive y pipe al response
+    const archive = archiver('zip', { zlib: { level: 9 } });
+    archive.on('error', err => { throw err; });
+    archive.pipe(res);
+
+    // 5. Por cada rubro, crear una carpeta dentro del zip y añadir sus documentos
+    for (const rubro of rubros) {
+      // Obtener documentos asociados al rubro
+      const documentos = await Documento.find({ rubroId: rubro._id, userId });
+
+      for (const doc of documentos) {
+        // Asumo que Documento tiene un campo path que apunta al archivo en disco
+        // o un campo buffer si lo guardas en BD.
+        // Si es disco:
+        archive.file(doc.path, { name: `${rubro.nombre}/${doc.nombreArchivo}` });
+        // Si es buffer:
+        // archive.append(doc.buffer, { name: `${rubro.nombre}/${doc.nombreArchivo}` });
+      }
+    }
+
+    // 6. Finalizar el ZIP
+    await archive.finalize();
+
+    // ¡El stream se encarga de enviar el zip al cliente!
+  } catch (err) {
+    console.error(err);
+    // Si el ZIP ya empezó a enviarse, no puedes enviar JSON de error. 
+    // Pero asumimos que falla antes de pipe.
+    res.status(500).json({ error: 'Error del servidor al crear el ZIP' });
+  }
+});
 
 
 // Mover a papelera
