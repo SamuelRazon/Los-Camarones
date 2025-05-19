@@ -6,6 +6,7 @@ import NotFound from "./pages/notfound/NotFound";
 import RedirectIfAuthenticated from "./components/auth/RedirectIfAuthenticated";
 import EmailSent from "./components/auth/pages/register/EmailSent";
 import ForgotPassword from "./components/auth/pages/forgotpassword/ForgotPassword";
+import ResetPassword from "./components/auth/pages/forgotpassword/ResetPassword";
 /*import Docencia from "./components/category/Docencia";
 import Modal from "./components/configuration/Modal";*/
 
@@ -67,6 +68,16 @@ const router = createBrowserRouter([
       <div>
         <RedirectIfAuthenticated>
           <ForgotPassword />
+        </RedirectIfAuthenticated>
+      </div>
+    ),
+  },
+  {
+    path: "/reset-password",
+    element: (
+      <div>
+        <RedirectIfAuthenticated>
+          <ResetPassword />
         </RedirectIfAuthenticated>
       </div>
     ),
