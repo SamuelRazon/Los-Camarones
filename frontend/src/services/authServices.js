@@ -141,6 +141,28 @@ import Cookies from "js-cookie";
   }
 };
   
+const resetPassword = async (newPassword, token) => {
+  try {
+    const url = "http://localhost:5000/api/auth/reset-password";
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token, newPassword }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Error al cambiar la contraseña.");
+    }
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 
   const authService = {
     loginUser,
@@ -148,7 +170,8 @@ import Cookies from "js-cookie";
     isEmailRegister,
     getProfile,
     verifytoken,
-    sendPasswordResetEmail
+    sendPasswordResetEmail,
+    resetPassword
   };
 
   export default authService;
