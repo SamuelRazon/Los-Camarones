@@ -107,9 +107,15 @@ const NewCategoryModal = ({ onClose, onRefresh }) => {
           <div className="modal-header">
             <h2>Nueva Categoría</h2>
             <div className="header-icons">
+              {/**Deja la cosa fea aquí, para que alla se vea bien */}
               <FontAwesomeIcon
                 icon={faQuestionCircle}
                 className="icon-help btn-icono"
+                 title="Es obligatorio que escriba el nombre de rubro. 
+El botón de añadir, le permite crear una propiedad 
+personalizada, usted puede decidir su nombre, 
+el tipo (texto, fecha o número) y si es opcional o
+obligatorio. "
               />
               <FontAwesomeIcon
                 icon={faTimes}

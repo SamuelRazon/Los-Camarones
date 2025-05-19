@@ -39,7 +39,10 @@ const Modal = ({ onClose }) => {
         <div className="modal-header">
           <h3>Configuración</h3>
           <div className="header-icons">
-            <FontAwesomeIcon icon={faQuestionCircle} className="help-icon" />
+            <FontAwesomeIcon icon={faQuestionCircle} 
+              className="help-icon" 
+              title="Puedes cambiar la información a tu preferencia, aquí puedes cerrar sesión también"
+            />
             {/* Icono para cerrar el modal */}
             <FontAwesomeIcon
               icon={faXmark}
@@ -54,7 +57,7 @@ const Modal = ({ onClose }) => {
           {" "}
           {/*Cambio del modo oscuro (luego buscar como se hace bien esto)*/}
           <p>Modo</p>
-          <div className="radioo-group">
+          <div className="radio--group">
             <label>
               <input type="radio" name="modo" value="claro" defaultChecked />
               Claro

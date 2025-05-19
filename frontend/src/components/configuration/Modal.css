@@ -93,20 +93,20 @@
   margin-bottom: 10px;
 }
 
-.radioo-group {
+.radio--group {
   display: flex;
   flex-direction: column;
   gap: 8px;
   margin-bottom: 25px;
 }
 
-.radioo-group label {
+.radio--group label {
   display: flex;
   align-items: center;
   font-size: 16px;
 }
 
-.radioo-group input {
+.radio--group input {
   margin-right: 10px;
   cursor: pointer;
 }

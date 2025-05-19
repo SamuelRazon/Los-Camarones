@@ -162,9 +162,13 @@ const UpdateRubro = ({ rubro, onClose, onUpdate }) => {
           <div className="modal-header">
             <h2>Actualizar Rubro</h2>
             <div className="header-icons">
+              {/**Dejen lo feo aquí, allá se ve aceptable */}
               <FontAwesomeIcon
                 icon={faQuestionCircle}
                 className="icon-help btn-icono"
+                 title=" Presione el botón de 'Editar' para cambiar
+la información, si selecciona el botón de 'Eliminar', 
+borra la categoría y sus componentes, ten cuidado"
               />
               <FontAwesomeIcon
                 icon={faTimes}
