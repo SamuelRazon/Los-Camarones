@@ -334,8 +334,17 @@ const UpdateDocument = ({
               ))}
             </select>
           </div>
+          {/**Dejen lo feo, se ve aceptable en el GUI*/}
           <div className="top-icons">
-            <FontAwesomeIcon icon={faQuestionCircle} className="helpicon" />
+            <FontAwesomeIcon icon={faQuestionCircle} 
+              className="helpicon" 
+               title=" Seleccione la categoría primero (si no 
+tiene, primero haga una categoría), 
+si selecciona 'Editar', puede cambiar 
+los campo que contiene; si selecciona 
+'Eliminar', elimina el documento,
+ten cuidado."
+            />
             <FontAwesomeIcon
               icon={faXmark}
               className="closemodal"

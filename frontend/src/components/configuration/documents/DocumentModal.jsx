@@ -261,8 +261,15 @@ const DocumentModal = ({ onClose, onDocumentUploaded }) => {
               ))}
             </select>
           </div>
-          <div className="top-icons">
-            <FontAwesomeIcon icon={faQuestionCircle} className="helpicon" />
+          <div className="top-icons"> 
+            {/*Dejen esto así, es para el icono de ayuda se vea bien, se que se ve feo en la acá*/}
+            <FontAwesomeIcon icon={faQuestionCircle} 
+              className="helpicon"  
+              title=" Seleccione la categoría primero 
+(si no tiene, primero haga una categoría),
+luego, rellene el campo de nombre y fecha. 
+El archivo puede quedar en blanco."
+            />
             <FontAwesomeIcon
               icon={faXmark}
               className="closemodal"

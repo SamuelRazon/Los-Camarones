@@ -23,12 +23,12 @@
   margin-bottom: 20px;
 }
 
-h2 {
+.email-sent-container h2 {
   color: #2e5aaa;
   margin-bottom: 10px;
 }
 
-p {
+.email-sent-container p {
   color: #555;
   margin-bottom: 30px;
 }
