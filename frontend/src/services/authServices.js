@@ -24,25 +24,28 @@ import Cookies from "js-cookie";
     }
   };
 
-  const registerUser = async ({ name, email, password, repassword }) => {
-    try {
-      const url = "http://localhost:5000/api/auth/register";
+ const registerUser = async ({ name, email, password }) => {
+  try {
+    const url = "http://localhost:5000/api/auth/send_validation_link";
 
-      const payload = { username: name, email, password, repassword, foto: "" };
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ correo: email, username: name, password }),
+    });
 
-      const response = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        return;
-      }
-    } catch (error) {
-      console.error("Error:", error);
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "No se pudo enviar el correo de verificación.");
     }
-  };
+
+    return await response.json(); // mensaje: 'Correo de validación enviado. Revisa tu bandeja.'
+  } catch (error) {
+    console.error("Error al enviar correo de verificación:", error);
+    throw error;
+  }
+};
+
 
   const isEmailRegister = async ({ email }) => {
     try {

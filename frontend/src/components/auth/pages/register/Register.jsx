@@ -13,6 +13,7 @@ import {
   faEyeSlash,
 } from "@fortawesome/free-solid-svg-icons";
 import authService from "../../../../services/authServices";
+import Loader from "../../../Loader";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -20,6 +21,7 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [repassword, setRepassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false); // Estado para loader
 
   const navigate = useNavigate();
 
@@ -57,15 +59,17 @@ const Register = () => {
       return;
     }
 
-    const emailExists = await authService.isEmailRegister({ email });
-    if (emailExists) {
-      toast.error("El correo electrónico ya está registrado.");
-      return;
-    }
-
     try {
+      setLoading(true); // Mostrar loader
+
+      const emailExists = await authService.isEmailRegister({ email });
+      if (emailExists) {
+        toast.error("El correo electrónico ya está registrado.");
+        setLoading(false);
+        return;
+      }
+
       await authService.registerUser({ name, email, password, repassword });
-      toast.success("Registro exitoso");
 
       // Limpiar campos
       setName("");
@@ -73,17 +77,20 @@ const Register = () => {
       setPassword("");
       setRepassword("");
 
-      // Redirigir en caso de requerirlo
-      // navigate("/login");
+      // Redirigir a página de éxito
+      navigate("/verify-email");
     } catch (error) {
       console.error("Error al registrar:", error);
       toast.error(error.message || "Error al registrar. Intenta nuevamente.");
+    } finally {
+      setLoading(false); // Ocultar loader
     }
   };
 
   return (
     <div className="body">
       <ToastContainer />
+      {loading && <Loader />}
       <div className="container">
         <div className="logo"></div>
         <div className="aside">
