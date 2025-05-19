@@ -10,40 +10,55 @@ const useTokenAutoVerifier = ({ throttleDelay = 3000 } = {}) => {
   const isVerifyingRef = useRef(false);
 
   const checkToken = useCallback(async () => {
-    if (isVerifyingRef.current) return; // Evita doble verificación simultánea
+  if (isVerifyingRef.current) return;
 
-    const token = Cookies.get("token");
-    if (!token) {
-      console.warn("No hay token en cookies, omitiendo verificación.");
-      return;
+  const token = Cookies.get("token");
+  if (!token) {
+    console.warn("No hay token en cookies, redirigiendo al login.");
+
+    if (!hasRedirectedRef.current) {
+      hasRedirectedRef.current = true;
+
+      const expiredEvent = new CustomEvent("token-expired", {
+        detail: {
+          message: "Tu sesión ha expirado.",
+        },
+      });
+      window.dispatchEvent(expiredEvent);
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
     }
 
-    isVerifyingRef.current = true;
-    try {
-      await authService.verifytoken();
-    } catch (error) {
-      console.error("Token inválido:", error);
+    return;
+  }
 
-      if (!hasRedirectedRef.current) {
-        Cookies.remove("token"); // Remover solo si es seguro
+  isVerifyingRef.current = true;
+  try {
+    await authService.verifytoken();
+  } catch (error) {
+    console.error("Token inválido:", error);
 
-        hasRedirectedRef.current = true;
+    if (!hasRedirectedRef.current) {
+      Cookies.remove("token");
+      hasRedirectedRef.current = true;
 
-        const expiredEvent = new CustomEvent("token-expired", {
-          detail: {
-            message: "Tu sesión ha expirado.",
-          },
-        });
-        window.dispatchEvent(expiredEvent);
+      const expiredEvent = new CustomEvent("token-expired", {
+        detail: {
+          message: "Tu sesión ha expirado.",
+        },
+      });
+      window.dispatchEvent(expiredEvent);
 
-        setTimeout(() => {
-          navigate("/login");
-        }, 2000);
-      }
-    } finally {
-      isVerifyingRef.current = false;
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
     }
-  }, [navigate]);
+  } finally {
+    isVerifyingRef.current = false;
+  }
+}, [navigate]);
 
   const throttledHandleActivity = useCallback(
     throttle(() => {
