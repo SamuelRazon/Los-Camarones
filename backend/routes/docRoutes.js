@@ -6,7 +6,6 @@ const { authMiddleware } = require('../middleware/auth');
 const Document = require('../models/Document');
 const User = require('../models/User')
 const archiver = require('archiver');
-const axios = require('axios');
 const path = require('path');
 const default_category = require('../models/default_category');
 const personalized_category = require('../models/personalized_category');
@@ -204,64 +203,112 @@ router.delete('/delete/:id', authMiddleware, async (req, res) => {
   }
 });
 
-router.get('/export_zip', authMiddleware, async (req, res) => {
-  const userId = req.user.id;
-
-  try {
-    // 1. Verificar usuario
-    const usuario = await Usuario.findById(userId);
-    if (!usuario) {
-      return res.status(404).json({ error: 'Usuario no encontrado' });
-    }
-
-    // 2. Obtener todos los rubros del usuario (default y personalizados)
-    //    Asumo que en Rubro tienes un campo userId para los personalizados,
-    //    y que los default son comunes (p.ej. sin userId o con un flag).
-    const rubros = await Rubro.find({
-      $or: [
-        { tipo: 'default' },
-        { userId: userId }
-      ]
-    });
-
-    // 3. Configurar la respuesta para descarga de zip
-    res.setHeader('Content-Type', 'application/zip');
-    res.setHeader(
-      'Content-Disposition',
-      `attachment; filename=${usuario.username || 'export'}_documents.zip`
-    );
-
-    // 4. Crear el archive y pipe al response
-    const archive = archiver('zip', { zlib: { level: 9 } });
-    archive.on('error', err => { throw err; });
-    archive.pipe(res);
-
-    // 5. Por cada rubro, crear una carpeta dentro del zip y añadir sus documentos
-    for (const rubro of rubros) {
-      // Obtener documentos asociados al rubro
-      const documentos = await Documento.find({ rubroId: rubro._id, userId });
-
-      for (const doc of documentos) {
-        // Asumo que Documento tiene un campo path que apunta al archivo en disco
-        // o un campo buffer si lo guardas en BD.
-        // Si es disco:
-        archive.file(doc.path, { name: `${rubro.nombre}/${doc.nombreArchivo}` });
-        // Si es buffer:
-        // archive.append(doc.buffer, { name: `${rubro.nombre}/${doc.nombreArchivo}` });
+/* Empaqueta en un ZIP todos los documentos de un usuario
+   en carpetas por cada categoría (default y personalizada). */
+  router.get('/export_zip', authMiddleware, async (req, res) => {
+    const userId = req.user.id;
+  
+    try {
+      // 1. Verificar usuario
+      const usuario = await User.findById(userId);
+      if (!usuario) {
+        return res.status(404).json({ error: 'Usuario no encontrado' });
       }
+      const defaultIds = usuario.rubrosDefault       || [];
+      const customIds  = usuario.rubrosPersonalizados || [];
+  
+      // 2. Recuperar categorías
+      const [defaultCats, customCats] = await Promise.all([
+        default_category.find({ _id: { $in: defaultIds } }),
+        personalized_category.find({ _id: { $in: customIds } })
+      ]);
+  
+      // 3. Cabeceras para descarga del ZIP
+      res.setHeader('Content-Type',  'application/zip');
+      res.setHeader(
+        'Content-Disposition',
+        `attachment; filename=${usuario.username || 'export'}_documents.zip`
+      );
+  
+      // 4. Crear ZIP y pipe al response
+      const archive = archiver('zip', { zlib: { level: 9 } });
+      archive.on('error', err => {
+        console.error('Error del ZIP:', err);
+        if (!res.headersSent) {
+          res.status(500).json({ error: 'Error al crear el ZIP', detalle: err.message });
+        } else {
+          res.end();
+        }
+      });
+      archive.on('warning', warning => console.warn(warning));
+      archive.pipe(res);
+  
+      // 5. Función auxiliar para cada categoría
+      const addDocs = async (cat, modelName) => {
+        try{
+          const docs = await Document.find({
+            rubro:      cat._id,
+            rubroModel: modelName,
+            usuario:    userId
+          });
+    
+          for (const doc of docs) {
+            if (!doc.adjunto) continue;
+    
+            // Extraer la key del objeto S3
+            const key = decodeURIComponent(path.basename(doc.urldocumento));
+    
+            // Construir el nombre de descarga
+            let filename = key;
+            if (doc.propiedadesnombre.includes('nombre')) {
+              const idx  = doc.propiedadesnombre.indexOf('nombre');
+              const base = `${doc.propiedades[idx]}`.trim();
+              filename = base.toLowerCase().endsWith('.pdf')
+                ? base
+                : `${base}.pdf`;
+            }
+    
+            // Obtener el stream directamente desde S3
+            const s3Stream = s3.getObject({
+              Bucket: process.env.AWS_BUCKET_NAME,
+              Key:    key
+            }).createReadStream();
+
+            s3Stream.on('error', err => {
+              console.error(`Error al obtener ${key} de S3:`, err);
+              archive.append('Error al obtener archivo\n', { name: `${cat.nombre}/ERROR_${filename}` });
+            });
+    
+            // Añadir al ZIP dentro de la carpeta de la categoría
+            archive.append(s3Stream, {
+              name: `${cat.nombre}/${filename}`
+            });
+          }
+        } catch (err) {
+          console.error(`Error al procesar documentos de ${cat.nombre}:`, err);
+        }
+      };
+  
+      // 6. Recorrer default y personalizado
+      for (const cat of defaultCats) {
+        await addDocs(cat, 'rubrosDefault');
+      }
+      for (const cat of customCats) {
+        await addDocs(cat, 'rubrosPersonalizados');
+      }
+  
+      // 7. Finalizar el ZIP (esto dispara el envío)
+      await archive.finalize();
+  
+    } catch (err) {
+      console.error('Error export_zip:', err);
+      if (!res.headersSent) {
+        return res.status(500).json({ error: 'Error al crear el ZIP' });
+      }
+      // Si ya empezó el stream, simplemente lo cerramos
+      res.end();
     }
-
-    // 6. Finalizar el ZIP
-    await archive.finalize();
-
-    // ¡El stream se encarga de enviar el zip al cliente!
-  } catch (err) {
-    console.error(err);
-    // Si el ZIP ya empezó a enviarse, no puedes enviar JSON de error. 
-    // Pero asumimos que falla antes de pipe.
-    res.status(500).json({ error: 'Error del servidor al crear el ZIP' });
-  }
-});
+  });
 
 
 // Mover a papelera
