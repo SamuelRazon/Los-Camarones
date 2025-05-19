@@ -215,35 +215,51 @@ router.post('/send_reset_link', async (req, res) => {
   }
 });
 
-// Verificar token de recuperacion de contraseña
+// Verificar token de recuperación de contraseña y redirecciona al frontend indicado
 router.get('/verify-reset', (req, res) => {
   const { token } = req.query;
   try {
     jwt.verify(token, process.env.JWT_SECRET);
-    return res.redirect(`${process.env.FRONTEND_URL1}`);
+    return res.redirect(`${process.env.FRONTEND_URL1}?token=${token}`);
   } catch (err) {
     return res.status(401).json({ ok: false, message: 'Token inválido o expirado.' });
   }
 });
 
+
+
 // Resetear contraseña del usuario si y solo si el token sigue vigente
 router.post('/reset-password', async (req, res) => {
-  const { token, newPassword } = req.body;
+  // 1) Primero intenta leer el token del body
+  const token = req.body.token;
+  const { newPassword } = req.body;
+
+  if (!token) {
+    return res.status(400).json({ message: 'Token ausente.' });
+  }
+  if (!newPassword) {
+    return res.status(400).json({ message: 'Nueva contraseña requerida.' });
+  }
+
   try {
+    // 2) Verifica el token igual que antes
     const payload = jwt.verify(token, process.env.JWT_SECRET);
     const usuario = await Usuario.findById(payload.sub);
     if (!usuario) {
       return res.status(404).json({ message: 'Usuario no encontrado.' });
     }
-    // Hasheamos y guardamos
+
+    // 3) Hashea y guarda la nueva contraseña
     const salt = await bcrypt.genSalt(10);
     usuario.contraseña = await bcrypt.hash(newPassword, salt);
     await usuario.save();
+
     return res.json({ message: 'Contraseña actualizada correctamente.' });
   } catch (err) {
-    return res.status(400).json({ message: 'Token inválido o error en reset.' });
+    return res.status(401).json({ message: 'Token inválido o expirado.' });
   }
 });
+
 
 // Configuración de AWS S3
 const s3 = new AWS.S3({
