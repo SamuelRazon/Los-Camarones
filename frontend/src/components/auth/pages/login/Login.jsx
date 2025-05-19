@@ -92,7 +92,7 @@ const Login = () => {
 
             <div className="forgot-password">
               ¿Olvidaste la contraseña? <br />
-              <span>Haz click aquí</span>
+              <Link to="/forgot-password">Haz click aquí</Link>
             </div>
           </form>
         </div>

@@ -117,6 +117,29 @@ import Cookies from "js-cookie";
       throw error;
     }
   };
+
+  const sendPasswordResetEmail = async (email) => {
+  try {
+    const url = "http://localhost:5000/api/auth/send_reset_link";
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ correo: email }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "No se pudo enviar el correo de recuperación.");
+    }
+
+    const data = await response.json(); 
+    return data;
+  } catch (error) {
+    console.error("Error al enviar correo de recuperación:", error);
+    throw error;
+  }
+};
   
 
   const authService = {
@@ -124,7 +147,8 @@ import Cookies from "js-cookie";
     registerUser,
     isEmailRegister,
     getProfile,
-    verifytoken
+    verifytoken,
+    sendPasswordResetEmail
   };
 
   export default authService;
