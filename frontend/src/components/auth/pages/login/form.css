@@ -108,14 +108,13 @@
     cursor: pointer;
   }
   
-  .submit-container {
+  .oldsubmit-container {
     display: flex;
     justify-content: space-between;
     gap: 10px;
   }
   
-  .submit {
-
+  .oldsubmit {
     background-color: white;
     color: #2e5aaa;
     border: 1px solid #2e5aaa;
@@ -129,12 +128,12 @@
     transition: background-color 0.3s;
   }
   
-  .submit:hover {
+  .oldsubmit:hover {
     background-color: #f0f2f5;
   }
   
   /* Style for the second button (Register) */
-  .submit-container a {
+  .oldsubmit-container a {
     flex: 1;
     text-decoration: none;
   }

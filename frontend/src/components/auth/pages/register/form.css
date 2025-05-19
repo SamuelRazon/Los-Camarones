@@ -108,13 +108,13 @@
     cursor: pointer;
   }
   
-  .submit-container {
+  .soldsubmit--container {
     display: flex;
     justify-content: space-between;
     gap: 10px;
   }
   
-  .submit {
+  .soldsubmit {
 
     background-color: white;
     color: #2e5aaa;
@@ -129,18 +129,18 @@
     transition: background-color 0.3s;
   }
   
-  .submit:hover {
+  .soldsubmit:hover {
     background-color: #f0f2f5;
   }
   
   /* Style for the second button (Register) */
-  .submit-container a {
+  .soldsubmit--container a {
     flex: 1;
     text-decoration: none;
   }
   
   /* Estilo para el botón azul: "Iniciar sesión" */
-.first-button {
+.first--button {
   background-color: #2e5aaa;
   color: white;
   border: 1px solid #2e5aaa;
@@ -150,7 +150,7 @@
   -moz-transition: .5s, color .10s;
 }
 
-.first-button:hover {
+.first--button:hover {
   background-color: #1e4a9a;
 
   transform: translate(0px,5px);
@@ -159,7 +159,7 @@
 }
 
 /* Estilo para el botón blanco con borde azul: "Registrarse" */
-.second-button {
+.second--button {
   background-color: white;
   color: #2e5aaa;
   border: 1px solid #2e5aaa;
@@ -169,7 +169,7 @@
   -moz-transition: .5s, color .10s;
 }
 
-.second-button:hover {
+.second--button:hover {
   background-color: #f0f2f5;
 
   transform: translate(0px,5px);
